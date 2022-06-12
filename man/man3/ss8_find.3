@@ -1,0 +1,141 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_FIND 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_find, ss8_find_cstr, ss8_find_bytes, ss8_find_ch, ss8_find_not_ch,
+ss8_rfind, ss8_rfind_cstr, ss8_rfind_bytes, ss8_rfind_ch, ss8_rfind_not_ch \-
+find a string or character in an ssstr byte string
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "size_t ss8_find(ss8str const *" haystack ", size_t " start ","
+.BI "                ss8str const *" needle ");"
+.BI "size_t ss8_find_cstr(ss8str const *" haystack ", size_t " start ","
+.BI "                char const *" needle ");"
+.BI "size_t ss8_find_bytes(ss8str const *" haystack ", size_t " start ","
+.BI "                char const *" needle ", size_t " needlelen ");"
+.BI "size_t ss8_find_ch(ss8str const *" haystack ", size_t " start ","
+.BI "                char " needle ");"
+.BI "size_t ss8_find_not_ch(ss8str const *" haystack ", size_t " start ","
+.BI "                char " needle ");"
+.PP
+.BI "size_t ss8_rfind(ss8str const *" haystack ", size_t " start ","
+.BI "                ss8str const *" needle ");"
+.BI "size_t ss8_rfind_cstr(ss8str const *" haystack ", size_t " start ","
+.BI "                char const *" needle ");"
+.BI "size_t ss8_rfind_bytes(ss8str const *" haystack ", size_t " start ","
+.BI "                char const *" needle ", size_t " needlelen ");"
+.BI "size_t ss8_rfind_ch(ss8str const *" haystack ", size_t " start ","
+.BI "                char " needle ");"
+.BI "size_t ss8_rfind_not_ch(ss8str const *" haystack ", size_t " start ","
+.BI "                char " needle ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_find ()
+finds the first occurrence of the substring equal to the
+.B ss8str
+at
+.I needle
+in the
+.B ss8str
+at
+.IR haystack .
+Only matches that begin at or after the byte position
+.I start
+are considered.
+Behavior is undefined unless
+.I haystack
+and
+.I needle
+both point to valid
+.B ss8str
+objects and
+.I start
+is less than or equal to the length of the haystack string.
+.PP
+.BR ss8_find_cstr ()
+is like
+.BR ss8_find ()
+but finds the first occurrence of the null-terminated byte string
+.IR needle .
+Behavior is undefined unless
+.I haystack
+points to a valid
+.B ss8str
+object,
+.I start
+is less than or equal to the length of the haystack string, and
+.I needle
+is a null-terminated byte string.
+.PP
+.BR ss8_find_bytes ()
+is like
+.BR ss8_find ()
+but finds the first occurrence of the byte string of length
+.I needlelen
+located at
+.IR needle .
+Behavior is undefined unless
+.I haystack
+points to a valid
+.B ss8str
+object,
+.I start
+is less than or equal to the length of the haystack string, and
+.I needle
+is an array of at least
+.I needlelen
+bytes.
+.PP
+.BR ss8_find_ch ()
+is like
+.BR ss8_find ()
+but finds the first occurrence of the byte
+.IR needle .
+Behavior is undefined unless
+.I haystack
+points to a valid
+.B ss8str
+object and
+.I start
+is less than or equal to the length of the haystack string.
+.PP
+.BR ss8_find_not_ch ()
+is like
+.BR ss8_find_ch ()
+except that it finds the first occurrence of a byte that is not equal to
+.IR needle .
+.PP
+.BR ss8_rfind (),
+.BR ss8_rfind_cstr (),
+.BR ss8_rfind_bytes (),
+.BR ss8_rfind_ch (),
+and
+.BR ss8_rfind_not_ch ()
+are like the corresponding functions without the
+.B r
+in the name, except that they find the last, rather than first, occurrence of
+.IR needle .
+Only matches that begin at or before the byte position
+.I start
+are considered.
+.SH RETURN VALUE
+All 10 functions return the position, counting from the beginning of the
+haystack string, of the first byte of the match.
+If there is no match,
+.B SIZE_MAX
+is returned.
+.PP
+If
+.I needle
+is the empty string,
+.I start
+is returned.
+.SH SEE ALSO
+.BR ss8_contains (3),
+.BR ss8_equals (3),
+.BR ss8_find_first_of (3),
+.BR ssstr (7)

@@ -1,0 +1,132 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_STRIP 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_strip, ss8_strip_cstr, ss8_strip_bytes, ss8_strip_ch, ss8_lstrip,
+ss8_lstrip_cstr, ss8_lstrip_bytes, ss8_lstrip_ch, ss8_rstrip, ss8_rstrip_cstr,
+ss8_rstrip_bytes, ss8_rstrip_ch \- remove certain characters from the ends of
+an ssstr byte string
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "ss8str *ss8_strip(ss8str *restrict " str ","
+.BI "                  ss8str const *restrict " chars ");"
+.BI "ss8str *ss8_strip_cstr(ss8str *restrict " str ","
+.BI "                  char const *restrict " chars ");"
+.BI "ss8str *ss8_strip_bytes(ss8str *restrict " str ","
+.BI "                  char const *restrict " chars ", size_t " count ");"
+.BI "ss8str *ss8_strip_ch(ss8str *" str ", char " ch ");"
+.PP
+.BI "ss8str *ss8_lstrip(ss8str *restrict " str ","
+.BI "                  ss8str const *restrict " chars ");"
+.BI "ss8str *ss8_lstrip_cstr(ss8str *restrict " str ","
+.BI "                  char const *restrict " chars ");"
+.BI "ss8str *ss8_lstrip_bytes(ss8str *restrict " str ","
+.BI "                  char const *restrict " chars ", size_t " count ");"
+.BI "ss8str *ss8_lstrip_ch(ss8str *" str ", char " ch ");"
+.PP
+.BI "ss8str *ss8_rstrip(ss8str *restrict " str ","
+.BI "                  ss8str const *restrict " chars ");"
+.BI "ss8str *ss8_rstrip_cstr(ss8str *restrict " str ","
+.BI "                  char const *restrict " chars ");"
+.BI "ss8str *ss8_rstrip_bytes(ss8str *restrict " str ","
+.BI "                  char const *restrict " chars ", size_t " count ");"
+.BI "ss8str *ss8_rstrip_ch(ss8str *" str ", char " ch ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_strip ()
+removes the prefix and suffix of the
+.B ss8str
+at
+.I str
+consisting of bytes that appear in the
+.B ss8str
+at
+.IR chars .
+Behavior is undefined unless
+.I str
+and
+.I chars
+point to valid and distinct
+.B ss8str
+objects.
+.PP
+.BR ss8_strip_cstr ()
+removes the prefix and suffix of the
+.B ss8str
+at
+.I str
+consisting of bytes that appear in the null-terminated byte string
+.IR chars .
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object and
+.I chars
+is a null-terminated byte string.
+.PP
+.BR ss8_strip_bytes ()
+removes the prefix and suffix of the
+.B ss8str
+at
+.I str
+consisting of bytes that appear in the byte string of length
+.I count
+located at
+.IR chars .
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object and
+.I chars
+points to an array of at least
+.I count
+bytes.
+.PP
+.BR ss8_strip_ch ()
+removes the prefix and suffix of the
+.B ss8str
+at
+.I str
+consisting of any number of copies of the byte
+.IR ch .
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object.
+.PP
+.BR ss8_lstrip (),
+.BR ss8_lstrip_cstr (),
+.BR ss8_lstrip_bytes (),
+and
+.BR ss8_lstrip_ch ()
+are like the corresponding functions without the
+.B l
+in the name, except that they only remove the prefix consisting of
+.I chars
+or
+.IR ch .
+.PP
+.BR ss8_rstrip (),
+.BR ss8_rstrip_cstr (),
+.BR ss8_rstrip_bytes (),
+and
+.BR ss8_rstrip_ch ()
+are like the corresponding functions without the
+.B r
+in the name, except that they only remove the suffix consisting of
+.I chars
+or
+.IR ch .
+.SH RETURN VALUE
+All 12 functions return
+.IR str .
+.SH SEE ALSO
+.BR ss8_find_first_of (3),
+.BR ssstr (7)

@@ -1,0 +1,79 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_COPY_TO_CSTR 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_copy_to_cstr, ss8_copy_to_bytes \- copy an ssstr byte string to a buffer
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "bool ss8_copy_to_cstr(ss8str const *restrict " str ","
+.BI "                      char *restrict " buf ", size_t " bufsize ");"
+.BI "bool ss8_copy_to_bytes(ss8str const *restrict " str ","
+.BI "                      char *restrict " buf ", size_t " bufsize ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_copy_to_cstr ()
+and
+.BR ss8_copy_to_bytes ()
+copy the contents of the
+.B ss8str
+at
+.I str
+to the buffer located at
+.IR buf .
+.BR ss8_copy_to_cstr ()
+then appends a null byte.
+.PP
+At most
+.I bufsize
+bytes are written; if
+.I bufsize
+is not sufficient to hold the string (and null terminator for
+.BR ss8_copy_to_cstr ()),
+the copied string is truncated at
+.IB bufsize " - 1"
+bytes (for
+.BR ss8_copy_to_cstr ())
+or
+.I bufsize
+bytes (for
+.BR ss8_copy_to_bytes ()).
+.PP
+.BR ss8_copy_to_cstr ()
+always places a null terminator at the end of the copied string unless
+.I bufsize
+is zero.
+.PP
+Behavior is undefined unless
+.I str
+is a valid
+.B ss8str
+object and
+.I buf
+is a buffer of at least
+.I bufsize
+bytes that is not part of the internal buffer of
+.IR str .
+.SH RETURN VALUE
+.BR ss8_copy_to_cstr ()
+and
+.BR ss8_copy_to_bytes ()
+return
+.B true
+if
+.I bufsize
+is sufficiently large to copy the whole of the
+.B ss8str
+at
+.I str
+(including the null terminator in the case of
+.BR ss8_copy_to_cstr ()).
+Otherwise, they return
+.BR false .
+.SH SEE ALSO
+.BR ss8_copy_bytes (3),
+.BR ss8_copy_cstr (3),
+.BR ssstr (7)

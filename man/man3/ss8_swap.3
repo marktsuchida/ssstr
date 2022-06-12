@@ -1,0 +1,36 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_SWAP 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_swap \- swap the contents of two ssstr byte strings
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "void ss8_swap(ss8str *restrict " str1 ", ss8str *restrict " str2 ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_swap ()
+swaps the values of the two
+.B ss8str
+objects pointed to by
+.I str1
+and
+.IR str2 .
+.PP
+No memory allocation or deallocation is performed.
+.PP
+Behavior is undefined unless
+.I str1
+and
+.I str2
+point to valid and distinct
+.B ss8str
+objects.
+.SH SEE ALSO
+.BR ss8_copy (3),
+.BR ss8_init_move_destroy (3),
+.BR ss8_move (3),
+.BR ssstr (7)

@@ -1,0 +1,100 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_CMP 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_cmp, ss8_cmp_cstr, ss8_cmp_bytes, ss8_cmp_ch \- compare ssstr byte string
+with string or character
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "int ss8_cmp(ss8str const *" lhs ", ss8str const *" rhs ");"
+.BI "int ss8_cmp_cstr(ss8str const *" lhs ", char const *" rhs ");"
+.BI "int ss8_cmp_bytes(ss8str const *" lhs ", char const *" rhs ","
+.BI "                  size_t " rhslen ");"
+.BI "int ss8_cmp_ch(ss8str const *" lhs ", char " rhs ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_cmp ()
+compares the
+.B ss8str
+at
+.I lhs
+with the
+.B ss8str
+at
+.IR rhs .
+Behavior is undefined unless both
+.I lhs
+and
+.I rhs
+point to valid
+.B ss8str
+objects.
+.PP
+.BR ss8_cmp_cstr ()
+compares the
+.B ss8str
+at
+.I lhs
+with the null-terminated byte string
+.IR rhs .
+Behavior is undefined unless
+.I lhs
+points to a valid
+.B ss8str
+object and
+.I rhs
+is a null-terminated byte string.
+.PP
+.BR ss8_cmp_bytes ()
+compares the
+.B ss8str
+at
+.I lhs
+with the byte string of length
+.I rhslen
+located at
+.IR rhs .
+Behavior is undefined unless
+.I lhs
+points to a valid
+.B ss8str
+object and
+.I rhs
+points to an array of at least
+.I rhslen
+bytes.
+.PP
+.BR ss8_cmp_ch ()
+compares the
+.B ss8str
+at
+.I lhs
+with the byte string consisting of the single byte
+.IR rhs.
+Behavior is undefined unless
+.I lhs
+points to a valid
+.B ss8str
+object.
+.SH RETURN VALUE
+All 4 functions return a negative, zero, or positive value, respectively, if
+.I lhs
+is less than, equal to, or greater than
+.IR rhs ,
+in a byte-wise lexicographical comparison.
+.SH NOTES
+The byte-wise lexicographical comparison performed by these functions does not
+take into account the encoding of the strings.
+If the strings are UTF-8-encoded, the comparison will be equivalent to a
+code-point-wise lexicographical comparison, but will not take into account
+canonical equivalents if the strings are not normalized ahead of time.
+.SH SEE ALSO
+.BR ss8_contains (3),
+.BR ss8_ends_with (3),
+.BR ss8_equals (3),
+.BR ss8_starts_with (3),
+.BR ssstr (7)

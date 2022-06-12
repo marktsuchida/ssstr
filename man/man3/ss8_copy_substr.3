@@ -1,0 +1,83 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_COPY_SUBSTR 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_copy_substr, ss8_substr_inplace \- get the substring of an ssstr byte
+string
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "ss8str *ss8_copy_substr(ss8str *restrict " dest ","
+.BI "                        ss8str const *restrict " src ","
+.BI "                        size_t " start ", size_t " len ");"
+.BI "ss8str *ss8_substr_inplace(ss8str *" str ", size_t " start ","
+.BI "                           size_t " len ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_copy_substr ()
+copies a substring of the
+.B ss8str
+at
+.IR src ,
+starting at byte position
+.I start
+and having length up to
+.I len
+(limited by the length of the source string) to the
+.B ss8str
+at
+.IR dest .
+Behavior is undefined unless
+.I dest
+and
+.I src
+point to valid and distinct
+.B ss8str
+objects and
+.I start
+is less than or equal to the length of the
+.B ss8str
+at
+.IR src .
+.PP
+.BR ss8_substr_inplace ()
+sets the
+.B ss8str
+at
+.I str
+to its own substring starting at byte position
+.I start
+and having length up to
+.IR len .
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object and
+.I start
+is less than or equal to the length of the
+.B ss8str
+at
+.IR str .
+.PP
+For either function, if
+.IB start " + " len
+is greater than the length of the source string, the substring starting at
+position
+.I start
+and extending to the end of the string is taken.
+.SH RETURN VALUE
+.BR ss8_copy_substr ()
+returns
+.IR dest .
+.PP
+.BR ss8_substr_inplace ()
+returns
+.IR str .
+.SH SEE ALSO
+.BR ss8_copy (3),
+.BR ss8_erase (3),
+.BR ssstr (7)

@@ -1,0 +1,91 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_INIT_MOVE 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_init_move, ss8_init_move_destroy \- initialize an ssstr byte string by
+moving the value of another byte string
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "ss8str *ss8_init_move(ss8str *restrict " str ","
+.BI "                      ss8str *restrict " src ");"
+.BI "ss8str *ss8_init_move_destroy(ss8str *restrict " str ","
+.BI "                      ss8str *restrict " src ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_init_move ()
+initializes the
+.B ss8str
+object that
+.I str
+points to, and sets its value to that of the
+.B ss8str
+object at
+.IR src .
+The object at
+.I src
+remains valid but its value becomes indeterminate. 
+.PP
+.BR ss8_init_move_destroy ()
+is like
+.BR ss8_init_move (),
+except that the
+.B ss8str
+object at
+.I src
+becomes invalid (destroyed) after the move; that is,
+.PP
+.in +4
+.EX
+.BI "ss8_init_move_destroy(" str ", " src ");"
+.EE
+.in
+.PP
+is equivalent to
+.PP
+.in +4
+.EX
+.BI "ss8_init_move(" str ", " src ");"
+.BI "ss8_destroy(" src ");"
+.EE
+.in
+.PP
+For both functions, behavior is undefined unless
+.I str
+points to an invalid
+.B ss8str
+object,
+.I src
+points to a valid
+.B ss8str
+object, and
+.I str
+and
+.I src
+point to distinct objects.
+.PP
+No memory allocation or deallocation is performed.
+.SH RETURN VALUE
+.BR ss8_init_move ()
+and
+.BR ss8_init_move_destroy ()
+return
+.IR dest .
+.SH NOTES
+Care should be taken not to use the value of the
+.B ss8str
+object at
+.I src
+after the move.
+It must still be destroyed in the case of
+.BR ss8_init_move ().
+.SH SEE ALSO
+.BR ss8_destroy (3),
+.BR ss8_init (3),
+.BR ss8_init_copy (3),
+.BR ss8_move (3),
+.BR ss8_swap (3),
+.BR ssstr (7)

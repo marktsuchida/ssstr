@@ -1,0 +1,114 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_CSTR 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_cstr, ss8_const_cstr, ss8_cstr_suffix, ss8_const_cstr_suffix \- access the
+bytes of an ssstr byte string as a null-terminated byte string
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "char       *ss8_cstr(ss8str *" str ");"
+.BI "char const *ss8_const_cstr(ss8str const *" str ");"
+.BI "char       *ss8_cstr_suffix(ss8str *" str ", size_t " start ");"
+.BI "char const *ss8_const_cstr_suffix(ss8str const *" str ","
+.BI "                                  size_t " start ");"
+.fi
+.SH DESCRIPTION
+The
+.BR ss8_cstr ()
+family of functions provide direct access to the internal buffer of the
+.B ss8str
+that
+.I str
+points to.
+.PP
+.BR ss8_cstr ()
+and
+.BR ss8_const_cstr ()
+return the pointer to the beginning of the string buffer.
+A null terminator is always placed after the end of the buffer.
+.BR ss8_cstr_suffix ()
+and
+.BR ss8_const_cstr_suffix ()
+return a pointer offsetted by
+.I start
+bytes, corresponding to a suffix of the string.
+Calling
+.BR ss8_cstr ()
+or
+.BR ss8_const_cstr ()
+is equivalent to calling
+.BR ss8_cstr_suffix ()
+or
+.BR ss8_const_cstr_suffix (),
+respectively, with
+.I start
+set to zero.
+.PP
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object, and
+.I start
+is less than or equal to the length of the string.
+.PP
+.BR ss8_const_cstr ()
+and
+.BR ss8_const_cstr_suffix ()
+are suitable for passing the contents of an
+.B ss8str
+to a function expecting a read-only null-terminated byte string, or a read-only
+byte string with length at most equal to the length of
+.I str
+(as determined by
+.BR ss8_len ()
+and subtracting
+.IR start
+in the case of
+.BR ss8_const_cstr_suffix ()).
+.PP
+.BR ss8_cstr ()
+and
+.BR ss8_cstr_suffix ()
+allow the use of an
+.B ss8str
+as the destination when calling a function that fills a caller-provided buffer
+with a null-terminated or bound-length byte string.
+The available buffer size can be adjusted with
+.BR ss8_set_len ()
+beforehand, and the same function, or
+.BR ss8_set_len_to_cstrlen (),
+can be used afterwards to crop the string to the desired length, if necessary.
+In the case of
+.BR ss8_cstr_suffix (),
+.I start
+must be subtracted from the available length.
+.PP
+It is permissible to write 1 byte more than the available length, provided that
+the last byte written is always a null byte.
+.PP
+See
+.BR ss8_set_len (3)
+for examples.
+.SH RETURN VALUE
+All 4 functions return a pointer to the internal string buffer of the
+.B ss8str
+pointed to by
+.IR str ,
+offset by
+.I start
+if applicable.
+The returned pointer remains valid as long as the
+.B ss8str
+at
+.I str
+remains valid and unmodified.
+.SH SEE ALSO
+.BR ss8_len (3),
+.BR ss8_set_len (3),
+.BR ss8_set_len_to_cstrlen (3),
+.BR ssstr (7)

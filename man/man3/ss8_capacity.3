@@ -1,0 +1,113 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_CAPACITY 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_capacity, ss8_reserve, ss8_shrink_to_fit \- query and modify buffer
+capacity of ssstr byte strings
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "size_t  ss8_capacity(ss8str const *" str ");"
+.BI "ss8str *ss8_reserve(ss8str *" str ", size_t " capacity ");"
+.BI "ss8str *ss8_shrink_to_fit(ss8str *" str ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_capacity ()
+queries the
+.B ss8str
+at
+.I str
+for its capacity, which is the maximum length of the byte string that it can
+hold without the need to allocate additional (or any) dynamic storage.
+.PP
+.BR ss8_reserve ()
+ensures that the
+.B ss8str
+at
+.I str
+has at least the given
+.I capacity
+by enlarging its buffer if necessary.
+The length and contents of the string do not change.
+.BR ss8_reserve ()
+never lessens the capacity.
+.PP
+Reserving capacity ahead of time can improve efficiency when a large number of
+insertions, concatenations, or replacements are about to be performed and the
+final length of the string is known, either precisely or approximately.
+.PP
+Reserved capacity is not available length; writing to
+.BI ss8_cstr( str )
+beyond the length of
+.BI * str
+results in undefined behavior. See
+.BR ss8_set_len (3)
+for ways to change the available length.
+.PP
+.BR ss8_shrink_to_fit ()
+reallocates the internal buffer of the
+.B ss8str
+at
+.I str
+so that it is the minimum size required to hold its contents.
+.PP
+Shrinking to fit may improve memory usage if an
+.B ss8str
+is shortened by a large factor and then retained for a long duration.
+.PP
+Behavior of these 3 functions is undefined unless
+.I str
+points to a valid
+.B ss8str
+object.
+.SH RETURN VALUE
+.BR ss8_capacity ()
+returns the maximum length of the byte string that the
+.B ss8str
+pointed to by
+.I str
+can hold without allocating additional dynamic storage.
+.PP
+.BR ss8_reserve ()
+and
+.BR ss8_shrink_to_fit ()
+return
+.IR str .
+.SH NOTES
+The capacity of an
+.B ss8str
+is never zero but has a platform-dependent fixed minimum.
+Therefore, the capacity after performing
+.PP
+.in +4
+.EX
+.BI "ss8_shrink_to_fit(ss8_clear(" str "));"
+.EE
+.in
+.PP
+is guaranteed to be greater than zero.
+This also means that the capacity does not necessarily match the length after
+calling
+.BR ss8_shrink_to_fit ().
+.PP
+In general,
+.B ss8str
+functions that assign (copy) a string reserve just the capacity needed for the
+destination string.
+Functions that insert, append, or replace a substring heuristically grow the
+capacity in an attempt to minimize reallocation.
+When a function shortens a string, or does not require more than its current
+capacity, it does not alter its capacity.
+Only a call to
+.BR ss8_shrink_to_fit ()
+decreases the capacity of an
+.BR ss8str .
+.SH SEE ALSO
+.BR ss8_grow_len (3),
+.BR ss8_len (3),
+.BR ss8_set_len (3),
+.BR ss8_set_len_to_cstrlen (3),
+.BR ssstr (7)

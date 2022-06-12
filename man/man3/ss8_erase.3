@@ -1,0 +1,45 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_ERASE 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_erase \- erase a portion of an ssstr byte string
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "ss8str *ss8_erase(ss8str *" str ", size_t " pos ", size_t " len ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_erase ()
+removes the substring of the
+.B ss8str
+at
+.I str
+starting at byte position
+.I pos
+and having length up to
+.I len
+(limited by the length of the string).
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object and
+.I pos
+is less than or equal to the length of the string.
+.PP
+The string is shortened by the number of bytes removed.
+Any portion of the original string located after the removed substring is
+shifted to position
+.IR pos .
+.SH RETURN VALUE
+.BR ss8_erase ()
+returns
+.IR str .
+.SH SEE ALSO
+.BR ss8_insert (3),
+.BR ss8_replace (3),
+.BR ss8_substr_inplace (3),
+.BR ssstr (7)

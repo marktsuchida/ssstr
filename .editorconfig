@@ -1,0 +1,11 @@
+# This file is part of the Ssstr string library.
+# Copyright 2022, Board of Regents of the University of Wisconsin System
+# SPDX-License-Identifier: MIT
+
+# https://editorconfig.org/
+
+root = true
+
+[*]
+charset = utf-8
+insert_final_newline = true

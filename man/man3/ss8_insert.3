@@ -1,0 +1,131 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_INSERT 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_insert, ss8_insert_cstr, ss8_insert_bytes, ss8_insert_ch, ss8_insert_ch_n
+\- insert a string or characters at a given position of an ssstr byte string
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "ss8str *ss8_insert(ss8str *restrict " dest ", size_t " pos ","
+.BI "                   ss8str const *restrict " src ");"
+.BI "ss8str *ss8_insert_cstr(ss8str *restrict " dest ", size_t " pos ","
+.BI "                   char const *restrict " src ");"
+.BI "ss8str *ss8_insert_bytes(ss8str *restrict " dest ", size_t " pos ","
+.BI "                   char const *restrict " src ", size_t " srclen ");"
+.BI "ss8str *ss8_insert_ch(ss8str *" dest ", size_t " pos ", char " ch ");"
+.BI "ss8str *ss8_insert_ch_n(ss8str *" dest ", size_t " pos ", char " ch ","
+.BI "                   size_t " count ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_insert ()
+inserts the
+.B ss8str
+at
+.I src
+at byte position
+.I pos
+of the
+.B ss8str
+at
+.IR dest .
+Behavior is undefined unless
+.I dest
+and
+.I src
+point to valid and distinct
+.B ss8str
+objects and
+.I pos
+is less than or equal to the length of the destination string.
+.PP
+.BR ss8_insert_cstr ()
+inserts the null-terminated byte string
+.I src
+at byte position
+.I pos
+of the
+.B ss8str
+at
+.IR dest .
+Behavior is undefined unless
+.I dest
+points to a valid
+.B ss8str
+object,
+.I pos
+is less than or equal to the length of the destination string, and
+.I src
+is a null-terminated byte string that is not part of the internal buffer of
+.IR dest .
+.PP
+.BR ss8_insert_bytes ()
+inserts the byte string of length
+.I srclen
+located at
+.I src
+at byte position
+.I pos
+of the
+.B ss8str
+at
+.IR dest .
+Behavior is undefined unless
+.I dest
+points to a valid
+.B ss8str
+object,
+.I pos
+is less than or equal to the length of the destination string, and
+.I src
+points to an array of at least
+.I srclen
+bytes that is not part of the internal buffer of
+.IR dest .
+.PP
+.BR ss8_insert_ch ()
+inserts the single byte
+.I ch
+at byte position
+.I pos
+of the
+.B ss8str
+at
+.IR dest .
+Behavior is undefined unless
+.I dest
+points to a valid
+.B ss8str
+object and
+.I pos
+is less than or equal to the length of the destination string.
+.PP
+.BR ss8_insert_ch_n ()
+inserts
+.I count
+copies of the byte
+.I ch
+at byte position
+.I pos
+of the
+.B ss8str
+at
+.IR dest .
+Behavior is undefined unless
+.I dest
+points to a valid
+.B ss8str
+object and
+.I pos
+is less than or equal to the length of the destination string.
+.SH RETURN VALUE
+All 5 functions return
+.IR dest .
+.SH SEE ALSO
+.BR ss8_cat (3),
+.BR ss8_erase (3),
+.BR ss8_replace (3),
+.BR ssstr (7)

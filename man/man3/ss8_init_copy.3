@@ -1,0 +1,113 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_INIT_COPY 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_init_copy, ss8_init_copy_cstr, ss8_init_copy_bytes, ss8_init_copy_ch,
+ss8_init_copy_ch_n \- initialize an ssstr byte string from a string or
+characters
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "ss8str *ss8_init_copy(ss8str *restrict " str ","
+.BI "                      ss8str const *restrict " src ");"
+.BI "ss8str *ss8_init_copy_cstr(ss8str *restrict " str ","
+.BI "                      char const *restrict " src ");"
+.BI "ss8str *ss8_init_copy_bytes(ss8str *restrict " str ","
+.BI "                      char const *restrict " src ", size_t " len ");"
+.BI "ss8str *ss8_init_copy_ch(ss8str *" str ", char " ch ");"
+.BI "ss8str *ss8_init_copy_ch_n(ss8str *" str ", char " ch ","
+.BI "                      size_t " count ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_init_copy ()
+initializes the
+.B ss8str
+object that
+.I str
+points to, and sets its value to a copy of the value of the
+.B ss8str
+object at
+.IR src .
+Behavior is undefined unless
+.I str
+points to an invalid (that is, uninitialized or previously freed)
+.B ss8str
+object and
+.I src
+points to a valid
+.B ss8str
+object.
+.PP
+.BR ss8_init_copy_cstr ()
+initializes the
+.B ss8str
+object at
+.I str
+and sets its value to a copy of the null-terminated byte string
+.IR src .
+Behavior is undefined unless
+.I str
+points to an invalid
+.B ss8str
+object and
+.I src
+is a null-terminated byte string.
+.PP
+.BR ss8_init_copy_bytes ()
+initializes the
+.B ss8str
+object at
+.I str
+and sets its value to a copy of the byte string of length
+.I len
+located at
+.IR src .
+Behavior is undefined unless
+.I str
+points to an invalid
+.B ss8str
+object and
+.I src
+points to an array of at least
+.I len
+bytes.
+.PP
+.BR ss8_init_copy_ch ()
+initializes the
+.B ss8str
+object at
+.I str
+and sets its value to the string consisting of the single byte
+.IR ch .
+Behavior is undefined unless
+.I str
+points to an invalid
+.B ss8str
+object.
+.PP
+.BR ss8_init_copy_ch_n ()
+initializes the
+.B ss8str
+object at
+.I str
+and sets its value to the string consisting of
+.I count
+copies of the byte
+.IR ch .
+Behavior is undefined unless
+.I str
+points to an invalid
+.B ss8str
+object.
+.SH RETURN VALUE
+All 5 functions return
+.IR str .
+.SH SEE ALSO
+.BR ss8_copy (3),
+.BR ss8_destroy (3),
+.BR ss8_init (3),
+.BR ss8_init_move (3),
+.BR ssstr (7)

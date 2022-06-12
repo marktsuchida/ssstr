@@ -1,0 +1,109 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_CAT 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_cat, ss8_cat_cstr, ss8_cat_bytes, ss8_cat_ch, ss8_cat_ch_n \- concatenate a
+string or characters to an ssstr byte string
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "ss8str *ss8_cat(ss8str *restrict " dest ","
+.BI "                ss8str const *restrict " src ");"
+.BI "ss8str *ss8_cat_cstr(ss8str *restrict " dest ","
+.BI "                char const *restrict " src ");"
+.BI "ss8str *ss8_cat_bytes(ss8str *restrict " dest ","
+.BI "                char const *restrict " src ", size_t " srclen ");"
+.BI "ss8str *ss8_cat_ch(ss8str *" dest ", char " ch ");"
+.BI "ss8str *ss8_cat_ch_n(ss8str *" dest ", char " ch ", size_t " count ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_cat ()
+appends the
+.B ss8str
+at
+.I src
+to the end of the
+.B ss8str
+at
+.IR dest .
+Behavior is undefined unless
+.I dest
+and
+.I src
+point to a valid and distinct
+.B ss8str
+objects.
+.PP
+.BR ss8_cat_cstr ()
+appends the null-terminated byte string
+.I src
+to the end of the
+.B ss8str
+at
+.IR dest .
+Behavior is undefined unless
+.I dest
+points to a valid
+.B ss8str
+object and
+.I src
+is a null-terminated byte string that is not part of the internal buffer of
+.IR dest .
+.PP
+.BR ss8_cat_bytes ()
+appends the byte string of length
+.I srclen
+located at
+.I src
+to the end of the
+.B ss8str
+at
+.IR dest .
+Behavior is undefined unless
+.I dest
+points to a valid
+.B ss8str
+object and
+.I src
+points to an array of at least
+.I srclen
+bytes that is not part of the internal buffer of
+.IR dest .
+.PP
+.BR ss8_cat_ch ()
+appends the single byte
+.I ch
+to the end of the
+.B ss8str
+at
+.IR dest .
+Behavior is undefined unless
+.I dest
+points to a valid
+.B ss8str
+object.
+.PP
+.BR ss8_cat_ch_n ()
+appends
+.I count
+copies of the byte
+.I ch
+to the end of the
+.B ss8str
+at
+.IR dest .
+Behavior is undefined unless
+.I dest
+points to a valid
+.B ss8str
+object.
+.SH RETURN VALUE
+All 5 functions return
+.IR dest .
+.SH SEE ALSO
+.BR ss8_copy (3),
+.BR ss8_insert (3),
+.BR ssstr (7)

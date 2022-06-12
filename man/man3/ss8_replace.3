@@ -1,0 +1,144 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_REPLACE 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_replace, ss8_replace_cstr, ss8_replace_bytes, ss8_replace_ch,
+ss8_replace_ch_n \- replace a portion of an ssstr byte string with a string or
+characters
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "ss8str *ss8_replace(ss8str *restrict " dest ", size_t " pos ","
+.BI "                    size_t " len ", ss8str const *restrict " src ");"
+.BI "ss8str *ss8_replace_cstr(ss8str *restrict " dest ", size_t " pos ","
+.BI "                    size_t " len ", char const *restrict " src ");"
+.BI "ss8str *ss8_replace_bytes(ss8str *restrict " dest ", size_t " pos ","
+.BI "                    size_t " len ", char const *restrict " src ","
+.BI "                    size_t " srclen ");"
+.BI "ss8str *ss8_replace_ch(ss8str *" dest ", size_t " pos ","
+.BI "                    size_t " len ", char " ch ");"
+.BI "ss8str *ss8_replace_ch_n(ss8str *" dest ", size_t " pos ","
+.BI "                    size_t " len ", char " ch ", size_t " count ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_replace ()
+replaces the substring of the
+.B ss8str
+at
+.I dest
+starting at byte position
+.I start
+and having length up to
+.I len
+(limited by the length of the destination string) with the contents of the
+.B ss8str
+at
+.IR src .
+Behavior is undefined unless
+.I dest
+and
+.I src
+point to valid and distinct
+.B ss8str
+objects and
+.I pos
+is less than or equal to the length of the destination string.
+.PP
+.BR ss8_replace_cstr ()
+replaces the substring of the
+.B ss8str
+at
+.I dest
+starting at byte position
+.I start
+and having length up to
+.I len
+with the null-terminated byte string
+.IR src .
+Behavior is undefined unless
+.I dest
+points to a valid
+.B ss8str
+object,
+.I pos
+is less than or equal to the length of the destination string, and
+.I src
+is a null-terminated byte string that is not part of the internal buffer of
+.IR dest .
+.PP
+.BR ss8_replace_bytes ()
+replaces the substring of the
+.B ss8str
+at
+.I dest
+starting at byte position
+.I start
+and having length up to
+.I len
+with the byte string of length
+.I srclen
+located at
+.IR src .
+Behavior is undefined unless
+.I dest
+points to a valid
+.B ss8str
+object,
+.I pos
+is less than or equal to the length of the destination string, and
+.I src
+points to an array of at least
+.I srclen
+bytes that is not part of the internal buffer of
+.IR dest .
+.PP
+.BR ss8_replace_ch ()
+replaces the substring of the
+.B ss8str
+at
+.I dest
+starting at byte position
+.I start
+and having length up to
+.I len
+with the single byte
+.IR ch .
+Behavior is undefined unless
+.I dest
+points to a valid
+.B ss8str
+object and
+.I pos
+is less than or equal to the length of the destination string.
+.PP
+.BR ss8_replace_ch_n ()
+replaces the substring of the
+.B ss8str
+at
+.I dest
+starting at byte position
+.I start
+and having length up to
+.I len
+with
+.I count
+copies of the byte
+.IR ch .
+Behavior is undefined unless
+.I dest
+points to a valid
+.B ss8str
+object and
+.I pos
+is less than or equal to the length of the destination string.
+.SH RETURN VALUE
+All 5 functions return
+.IR dest .
+.SH SEE ALSO
+.BR ss8_cat (3),
+.BR ss8_erase (3),
+.BR ss8_insert (3),
+.BR ssstr (7)

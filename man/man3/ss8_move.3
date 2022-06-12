@@ -1,0 +1,84 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_MOVE 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_move, ss8_move_destroy \- move one ssstr byte string to another
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "ss8str *ss8_move(ss8str *restrict " dest ", ss8str *restrict " src ");"
+.BI "ss8str *ss8_move_destroy(ss8str *restrict " dest ","
+.BI "                         ss8str *restrict " src ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_move ()
+takes the value of the
+.B ss8str
+object at
+.I src
+and places it in the
+.B ss8str
+object at
+.IR dest .
+After the move, the
+.B ss8str
+object at
+.I src
+remains valid but its value becomes indeterminate.
+.PP
+.BR ss8_move_destroy ()
+is like
+.BR ss8_move (),
+except that the
+.B ss8str
+object at
+.I src
+becomes invalid (destroyed) after the move; that is,
+.PP
+.in +4
+.EX
+.BI "ss8_move_destroy(" dest ", " src ");"
+.EE
+.in
+.PP
+is equivalent to
+.PP
+.in +4
+.EX
+.BI "ss8_move(" dest ", " src ");"
+.BI "ss8_destroy(" src ");"
+.EE
+.in
+.PP
+For both functions, behavior is undefined unless
+.I dest
+and
+.I src
+point to valid and distinct
+.B ss8str
+objects.
+.PP
+No memory allocation is performed, but deallocation may be performed.
+.SH RETURN VALUE
+.BR ss8_move ()
+and
+.BR ss8_move_destroy ()
+return
+.IR dest .
+.SH NOTES
+Care should be taken not to use the value of the
+.B ss8str
+object at
+.I src
+after the move.
+It must still be destroyed in the case of
+.BR ss8_move ().
+.SH SEE ALSO
+.BR ss8_copy (3),
+.BR ss8_destroy (3),
+.BR ss8_init_move (3),
+.BR ss8_swap (3),
+.BR ssstr (7)

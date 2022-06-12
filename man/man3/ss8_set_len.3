@@ -1,0 +1,212 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_SET_LEN 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_set_len, ss8_grow_len, ss8_set_len_to_cstrlen \- set length of ssstr byte
+string
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "void ss8_set_len(ss8str *" str ", size_t " newlen ");"
+.BI "size_t ss8_grow_len(ss8str *" str ", size_t " maxlen ","
+.BI "                    size_t " maxdelta ");"
+.BI "void ss8_set_len_to_cstrlen(ss8str *" str ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_set_len ()
+forcefully sets the length of the
+.B ss8str
+at
+.I str
+to
+.IR newlen .
+If
+.I newlen
+is less than the current length, the string is truncated.
+If
+.I newlen
+is greater than the current length, the new portion of the string is filled
+with indeterminate bytes, except that the byte after the former last byte is
+guaranteed to contain a null byte.
+.PP
+If the capacity of the
+.B ss8str
+is not sufficient to hold the new length, it is increased to match the new
+length; otherwise, no memory allocation or deallocation is performed.
+.PP
+.BR ss8_grow_len ()
+is like
+.BR ss8_set_len (),
+but automatically chooses a new length that is greater than the current length
+by a constant factor, or equal to the current capacity, whichever is larger.
+Because the capacity is never zero, an appropriate length greater than zero is
+chosen if the current length is zero.
+.PP
+The amount by which the lengh is increased is limited to no more than
+.IR maxdelta ,
+and the final length is limited to no more than
+.IR maxlen .
+These two parameters can be set to
+.B SIZE_MAX
+to request the maximum allowed limits.
+.PP
+If the current length exceeds
+.IR maxlen ,
+no change is made (the caller should avoid this case in typical usage).
+.PP
+.BR ss8_set_len_to_cstrlen ()
+truncates the
+.B ss8str
+at
+.I str
+to its length when viewed as a null-terminated byte string.
+That is,
+.PP
+.in +4
+.EX
+.BI "ss8_set_len_to_cstrlen(" str ");"
+.EE
+.in
+.PP
+is equivalent to
+.PP
+.in +4
+.EX
+.BI "ss8_set_len(" str ", strlen(ss8_const_cstr(" str "));"
+.EE
+.in
+.PP
+No memory allocation or deallocation is performed.
+.PP
+These functions are intended for the purpose of using an
+.B ss8str
+as a destination when calling functions that fill a caller-provided buffer with
+a string.
+.BR ss8_grow_len ()
+is useful when it is necessary to retry such a function call with successively
+larger buffers.
+.SH RETURN VALUE
+.BR ss8_grow_len ()
+returns the amount (in bytes) by which the length of
+.I str
+was increased.
+A zero return value indicates that the length of
+.I str
+was already greater than or equal to
+.IR maxlen ,
+or that
+.I maxdelta
+was set to zero.
+.SH EXAMPLES
+To read at most 1024 bytes from the file
+.IR fp :
+.PP
+.in +4
+.nf
+.EX
+#include <ss8str.h>
+#include <stdio.h>
+
+ss8str bytes;
+ss8_init(&bytes);
+
+ss8_set_len(&bytes, 1024);
+size_t nread = fread(ss8_cstr(&bytes),
+                     ss8_len(&bytes), 1, fp);
+ss8_set_len(&bytes, nread);
+
+// ...
+
+ss8_destroy(&bytes);
+.EE
+.fi
+.in
+.PP
+To format the current local time:
+.PP
+.in +4
+.nf
+.EX
+#include <ss8str.h>
+#include <stdint.h>
+#include <time.h>
+
+time_t now = time(NULL);
+ss8str timestr;
+ss8_init(&timestr);
+
+for (;;) {
+    ss8_grow_len(&timestr, SIZE_MAX, SIZE_MAX);
+
+    // strftime() only returns zero (given "%c") if the buffer is
+    // too small to fit the result.
+    size_t n = strftime(ss8_cstr(&timestr), ss8_len(&timestr) + 1,
+                        "%c", localtime(&now));
+    if (n > 0) {
+        ss8_set_len(&timestr, n);
+        break;
+    }
+}
+
+// ...
+
+ss8_destroy(&timestr);
+.EE
+.fi
+.in
+.PP
+To read a whole line from the file
+.IR fp :
+.PP
+.in +4
+.nf
+.EX
+#include <ss8str.h>
+#include <limits.h>
+#include <stdint.h>
+#include <stdio.h>
+
+ss8str line;
+ss8_init(&line);
+
+size_t nread = 0;
+do {
+    // fgets() takes an int count; limit buffer growth accordingly
+    int growth = (int)ss8_grow_len(&line, SIZE_MAX, INT_MAX - 1);
+    if (growth == 0) {        // Reached limit
+        ss8_clear(&line);
+        break;
+    }
+
+    if (!fgets(ss8_cstr_suffix(&line, nread), growth + 1, fp)) {
+        ss8_clear(&line);
+        break;
+    }
+
+    ss8_set_len_to_cstrlen(&line);
+    nread = ss8_len(&line);
+} while (!ss8_ends_with_ch(&line, '\(rsn'));
+
+// ...
+
+ss8_destroy(&line);
+.EE
+.fi
+.in
+.PP
+The last example is inteded for text input that does not contain null bytes.
+If null bytes do occur, the read line will be silently corrupted but the
+program will not crash or leak memory.
+Other edge cases occur if the line is longer than
+.B SIZE_MAX - 1
+bytes or the input reaches end-of-file before a newline.
+.SH SEE ALSO
+.BR ss8_cstr (3),
+.BR ss8_len (3),
+.BR ss8_reserve (3),
+.BR ss8_shrink_to_fit (3),
+.BR ss8_substr_inplace (3),
+.BR ssstr (7)

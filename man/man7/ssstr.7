@@ -1,0 +1,169 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SSSTR 7  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ssstr, ss8str \- short-string-optimized byte string routines
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.fi
+.SH DESCRIPTION
+.B ssstr
+is a header-only library for representing and manipulating byte strings.
+.SS String representation
+Strings are represented by the opaque type
+.BR ss8str ,
+which is suitable for use as a regular automatic (stack) variable, or as a
+member of a larger data structure.
+(It is 32 bytes on 64-bit platforms and 16 bytes on 32-bit platforms.)
+.PP
+When the string is small, it is stored directly in the
+.B ss8str
+object; otherwise, dynamic (heap) storage is allocated to store the string.
+.PP
+The
+.B ss8str
+stores the length of the string explicitly, allowing the handling of strings
+that contain embedded null bytes in addition to more efficient operations.
+.PP
+Objects of type
+.B ss8str
+must be initialized before use and destroyed after use, exactly once each.
+See
+.BR ss8_init (3)
+and
+.BR ss8_destroy (3).
+.SH FUNCTIONS
+.SS Initialization and cleanup
+.BR ss8_init (3),
+.BR ss8_init_copy (3),
+.BR ss8_init_move (3),
+.BR ss8_init_move_destroy (3),
+.BR ss8_destroy (3),
+and variants of
+.B ss8_init_copy
+with
+.BR _cstr ,
+.BR _bytes ,
+.BR _ch ,
+or
+.B _ch_n
+.SS Basic string operations
+.BR ss8_clear (3),
+.BR ss8_is_empty (3),
+.BR ss8_len (3)
+.SS Copying and assigning strings
+.BR ss8_copy (3),
+.BR ss8_init_copy (3),
+and their variants with
+.BR _cstr ,
+.BR _bytes ,
+.BR _ch ,
+or
+.B _ch_n
+.SS Moving strings
+.BR ss8_move (3),
+.BR ss8_move_destroy (3),
+.BR ss8_init_move (3),
+.BR ss8_init_move_destroy (3),
+.BR ss8_swap (3)
+.SS Passing ss8str to C string functions
+.BR ss8_const_cstr (3),
+.BR ss8_const_cstr_suffix (3)
+.SS Using ss8str as the destination for functions producing C strings
+.BR ss8_cstr (3),
+.BR ss8_cstr_suffix (3),
+.BR ss8_set_len (3),
+.BR ss8_set_len_to_cstrlen (3),
+.BR ss8_grow_len (3)
+.SS Converting from standard C strings and byte buffers
+.BR ss8_copy_cstr (3),
+.BR ss8_copy_bytes (3),
+.BR ss8_init_copy_cstr (3),
+.BR ss8_init_copy_bytes (3)
+.SS Converting to standard C strings and byte buffers
+.BR ss8_copy_to_cstr (3),
+.BR ss8_copy_to_bytes (3)
+.SS Accessing single bytes in strings
+.BR ss8_at (3),
+.BR ss8_front (3),
+.BR ss8_back (3),
+.BR ss8_set_at (3),
+.BR ss8_set_front (3),
+.BR ss8_set_back (3)
+.SS Concatenating strings
+.BR ss8_cat (3)
+and its variants with
+.BR _cstr ,
+.BR _bytes ,
+.BR _ch ,
+or
+.B _ch_n
+.SS Managing buffer capacity
+.BR ss8_capacity (3),
+.BR ss8_reserve (3),
+.BR ss8_shrink_to_fit (3)
+.SS Getting substrings
+.BR ss8_copy_substr (3),
+.BR ss8_substr_inplace (3)
+.SS Inserting, replacing, and erasing substrings
+.BR ss8_insert (3),
+.BR ss8_replace (3),
+and their variants with
+.BR _cstr ,
+.BR _bytes ,
+.BR _ch ,
+or
+.BR _ch_n ;
+.BR ss8_erase (3)
+.SS Comparing strings
+.BR ss8_cmp (3),
+.BR ss8_equals (3),
+.BR ss8_contains (3),
+.BR ss8_starts_with (3),
+.BR ss8_ends_with (3),
+and their variants with
+.BR _cstr ,
+.BR _bytes ,
+or 
+.B _ch
+.SS Searching for strings
+.BR ss8_find (3),
+.BR ss8_rfind (3),
+and their variants with
+.BR _cstr ,
+.BR _bytes ,
+.BR _ch ,
+or
+.B _not_ch
+.SS Searching for characters
+.BR ss8_find_first_of (3),
+.BR ss8_find_first_not_of (3),
+.BR ss8_find_last_of (3),
+.BR ss8_find_last_not_of (3),
+and their variants with
+.B _cstr
+or
+.B _bytes
+.SS Trimming certain characters from the ends
+.BR ss8_strip (3),
+.BR ss8_lstrip (3),
+.BR ss8_rstrip (3),
+and their variants with
+.BR _cstr ,
+.BR _bytes ,
+or 
+.B _ch
+.SS Formatting strings
+.BR ss8_sprintf (3),
+.BR ss8_cat_sprintf (3),
+and their variants with
+.BR _snprintf ,
+.BR _vsprintf ,
+or
+.B _vsnprintf
+.SH SEE ALSO
+.BR bstring (3),
+.BR string (3)

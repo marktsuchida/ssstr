@@ -1,0 +1,96 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_CONTAINS 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_contains, ss8_contains_cstr, ss8_contains_bytes, ss8_contains_ch \- check
+if an ssstr byte string contains a string
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "bool ss8_contains(ss8str const *" str ", ss8str const *" infix ");"
+.BI "bool ss8_contains_cstr(ss8str const *" str ", char const *" infix ");"
+.BI "bool ss8_contains_bytes(ss8str const *" str ","
+.BI "                        char const *" infix ", size_t " infixlen ");"
+.BI "bool ss8_contains_ch(ss8str const *" str ", char " ch ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_contains ()
+tests whether the
+.B ss8str
+at
+.I str
+contains as a substring the
+.B ss8str
+at
+.IR infix .
+Behavior is undefined unless both
+.I str
+and
+.I infix
+point to valid
+.B ss8str
+objects.
+.PP
+.BR ss8_contains_cstr ()
+tests whether the
+.B ss8str
+at
+.I str
+contains as a substring the null-terminated byte string
+.IR infix .
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object and
+.I infix
+is a null-terminated byte string.
+.PP
+.BR ss8_contains_bytes ()
+tests whether the
+.B ss8str
+at
+.I str
+contains as a substring the byte string of length
+.I infixlen
+located at
+.IR infix .
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object and
+.I infix
+points to an array of at least
+.I infixlen
+bytes.
+.PP
+.BR ss8_contains_ch ()
+tests whether the
+.B ss8str
+at
+.I str
+contains the byte
+.IR ch .
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object.
+.SH RETURN VALUE
+All 4 functions return
+.B true
+if
+.I infix
+is found in
+.IR str ;
+otherwise, they return
+.BR false .
+.SH SEE ALSO
+.BR ss8_ends_with (3),
+.BR ss8_find (3),
+.BR ss8_starts_with (3),
+.BR ssstr (7)

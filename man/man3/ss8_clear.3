@@ -1,0 +1,37 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_CLEAR 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_clear \- clear an ssstr byte string
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "ss8str *ss8_clear(ss8str *" str ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_clear ()
+sets the
+.B ss8str
+pointed to by
+.I str
+to the empty string.
+.PP
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object.
+.PP
+No memory allocation or deallocation is performed.
+.SH RETURN VALUE
+.BR ss8_clear ()
+returns
+.IR str .
+.SH SEE ALSO
+.BR ss8_destroy (3),
+.BR ss8_erase (3),
+.BR ss8_is_empty (3),
+.BR ssstr (7)

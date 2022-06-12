@@ -1,0 +1,110 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_AT 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_at, ss8_front, ss8_back, ss8_set_at, ss8_set_front, ss8_set_back \- read or
+modify a single byte in an ssstr byte string
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "char    ss8_at(ss8str const *" str ", size_t " pos ");"
+.BI "char    ss8_front(ss8str const *" str ");"
+.BI "char    ss8_back(ss8str const *" str ");"
+.BI "ss8str *ss8_set_at(ss8str *" str ", size_t " pos ", char " ch ");"
+.BI "ss8str *ss8_set_front(ss8str *" str ", char " ch ");"
+.BI "ss8str *ss8_set_back(ss8str *" str ", char " ch ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_at ()
+reads the byte at position
+.I pos
+in the
+.B ss8str
+pointed to by
+.IR str .
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object and
+.I pos
+is less than the length of the string.
+.PP
+.BR ss8_front ()
+and
+.BR ss8_back ()
+read the first and last byte, respectively, in the
+.B ss8str
+pointed to by
+.IR str .
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object whose value is non-empty.
+.PP
+.BR ss8_set_at ()
+sets the byte at position
+.I pos
+in the
+.B ss8str
+pointed to by
+.IR str ,
+to
+.IR ch .
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object and
+.I pos
+is less than the length of the string.
+.PP
+.BR ss8_set_front ()
+and
+.BR ss8_set_back ()
+set the first and last byte, respectively, in the
+.B ss8str
+pointed to by
+.IR str ,
+to
+.IR ch .
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object whose value is non-empty.
+.SH RETURN VALUE
+.BR ss8_at ()
+returns the byte at position
+.I pos
+of the
+.B ss8str
+at
+.IR str .
+.PP
+.BR ss8_front ()
+returns the first byte of the
+.B ss8str
+at
+.IR str .
+.PP
+.BR ss8_back ()
+returns the last byte of the
+.B ss8str
+at
+.IR str .
+.PP
+.BR ss8_set_at (),
+.BR ss8_set_front (),
+and
+.BR ss8_set_back ()
+return
+.IR str .
+.SH SEE ALSO
+.BR ss8_copy_substr (3),
+.BR ss8_replace (3),
+.BR ssstr (7)

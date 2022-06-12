@@ -1,0 +1,60 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_LEN 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_len, ss8_is_empty \- query length of ssstr byte string
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "size_t ss8_len(ss8str const *" str ");"
+.BI "bool   ss8_is_empty(ss8str const *" str ");"
+.fi
+.SH DESCRIPTION
+.BR ss8_len ()
+queries the length of the
+.B ss8str
+pointed to by
+.IR str .
+.PP
+.BR ss8_is_empty ()
+tests whether the
+.B ss8str
+pointed to by
+.I str
+is empty, that is, has a length of zero.
+.PP
+For either function, behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object.
+.PP
+The length of an
+.B ss8str
+is stored explicitly and is not affected by the byte string it contains.
+Specifically, if the byte string contains embedded null bytes, its length will
+differ from what
+.BR strlen ()
+would return when called on the equivalent string.
+.SH RETURN VALUE
+.BR ss8_len ()
+returns the length, in bytes, of the string at
+.IR str ,
+not including the null terminator that would be part of the string when viewed
+as a null-terminated byte string.
+Any embedded null bytes in the string do not affect the length.
+.PP
+.BR ss8_is_empty ()
+returns
+.B true
+when
+.I str
+has a length of zero; otherwise it returns
+.BR false .
+.SH SEE ALSO
+.BR ss8_capacity (3),
+.BR ss8_set_len (3),
+.BR ssstr (7)

@@ -1,0 +1,74 @@
+.\" This file is part of the Ssstr string library.
+.\" Copyright 2022, Board of Regents of the University of Wisconsin System
+.\" SPDX-License-Identifier: MIT
+.\"
+.TH SS8_INIT 3  2022-06-12 SSSTR "Ssstr Manual"
+.SH NAME
+ss8_init, ss8_destroy \- initialize and destroy ssstr byte strings
+.SH SYNOPSIS
+.nf
+.B #include <ss8str.h>
+.PP
+.BI "ss8str *ss8_init(ss8str *" str ");"
+.BI "void    ss8_destroy(ss8str *" str ");"
+.PP
+.BI "static ss8str " s " = SS8_STATIC_INITIALIZER;"
+.fi
+.SH DESCRIPTION
+.BR ss8_init ()
+initializes the
+.B ss8str
+object that
+.I str
+points to.
+The object becomes valid and its value is set to the empty string.
+No memory allocation is performed.
+Behavior is undefined unless
+.I str
+points to an invalid (that is, uninitialized or previously destroyed)
+.B ss8str
+object.
+.PP
+For global or static variables,
+.B SS8_STATIC_INITIALIZER
+can be used as a static initialization value instead of calling
+.BR ss8_init ().
+Note that a zero-initialized
+.B ss8str
+object is not valid.
+.PP
+All valid
+.B ss8str
+objects must be destroyed by calling
+.BR ss8_destroy ()
+after last use; otherwise dynamically allocated memory may be leaked.
+.PP
+.BR ss8_destroy ()
+destroys the
+.B ss8str
+object that
+.I str
+points to, deallocating any associated dynamic storage.
+Behavior is undefined unless
+.I str
+points to a valid
+.B ss8str
+object.
+.PP
+A destroyed
+.B ss8str
+object is invalid and must be re-initialized before reuse.
+.SH RETURN VALUE
+.BR ss8_init ()
+returns
+.IR str .
+.SH NOTES
+.B SS8_STATIC_INITIALIZER
+works also for initializing local or dynamically allocated variables.
+However, it can result in less efficient code being generated when compared to
+calling
+.BR ss8_init ().
+.SH SEE ALSO
+.BR ss8_clear (3),
+.BR ss8_init_copy (3),
+.BR ssstr (7)
