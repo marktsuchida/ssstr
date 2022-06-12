@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>ss8_at(3) &mdash; Ssstr Manual</title>
+</head>
+<body>
+<pre>
+SS8_AT(3)                        <a href="../man7/ssstr.7.html">Ssstr Manual</a>                        SS8_AT(3)
+
+
+
+<b>NAME</b>
+       ss8_at,  ss8_front, ss8_back, ss8_set_at, ss8_set_front, ss8_set_back −
+       read or modify a single byte in an ssstr byte string
+
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
+
+       <b>char    ss8_at(ss8str const *</b><i>str</i><b>, size_t</b> <i>pos</i><b>);</b>
+       <b>char    ss8_front(ss8str const *</b><i>str</i><b>);</b>
+       <b>char    ss8_back(ss8str const *</b><i>str</i><b>);</b>
+       <b>ss8str *ss8_set_at(ss8str *</b><i>str</i><b>, size_t</b> <i>pos</i><b>, char</b> <i>ch</i><b>);</b>
+       <b>ss8str *ss8_set_front(ss8str *</b><i>str</i><b>, char</b> <i>ch</i><b>);</b>
+       <b>ss8str *ss8_set_back(ss8str *</b><i>str</i><b>, char</b> <i>ch</i><b>);</b>
+
+<b>DESCRIPTION</b>
+       <b>ss8_at</b>() reads the byte at position <i>pos</i> in the  <b>ss8str</b>  pointed  to  by
+       <i>str</i>.   Behavior is undefined unless <i>str</i> points to a valid <b>ss8str</b> object
+       and <i>pos</i> is less than the length of the string.
+
+       <b>ss8_front</b>() and <b>ss8_back</b>() read the first and last byte,  respectively,
+       in  the  <b>ss8str</b>  pointed  to  by <i>str</i>.  Behavior is undefined unless <i>str</i>
+       points to a valid <b>ss8str</b> object whose value is non‐empty.
+
+       <b>ss8_set_at</b>() sets the byte at position <i>pos</i> in the <b>ss8str</b> pointed to  by
+       <i>str</i>,  to <i>ch</i>.  Behavior is undefined unless <i>str</i> points to a valid <b>ss8str</b>
+       object and <i>pos</i> is less than the length of the string.
+
+       <b>ss8_set_front</b>() and <b>ss8_set_back</b>() set the first and last byte, respec‐
+       tively,  in the <b>ss8str</b> pointed to by <i>str</i>, to <i>ch</i>.  Behavior is undefined
+       unless <i>str</i> points to a valid <b>ss8str</b> object whose value is non‐empty.
+
+<b>RETURN VALUE</b>
+       <b>ss8_at</b>() returns the byte at position <i>pos</i> of the <b>ss8str</b> at <i>str</i>.
+
+       <b>ss8_front</b>() returns the first byte of the <b>ss8str</b> at <i>str</i>.
+
+       <b>ss8_back</b>() returns the last byte of the <b>ss8str</b> at <i>str</i>.
+
+       <b>ss8_set_at</b>(), <b>ss8_set_front</b>(), and <b>ss8_set_back</b>() return <i>str</i>.
+
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_copy_substr.3.html"><b>ss8_copy_substr</b>(3)</a>, <a href="../man3/ss8_replace.3.html"><b>ss8_replace</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+
+
+
+SSSTR                             2022‐06‐12                         SS8_AT(3)
+</pre>
+</body>
+</html>

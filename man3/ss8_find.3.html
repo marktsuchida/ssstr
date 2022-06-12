@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>ss8_find(3) &mdash; Ssstr Manual</title>
+</head>
+<body>
+<pre>
+SS8_FIND(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>                      SS8_FIND(3)
+
+
+
+<b>NAME</b>
+       ss8_find,  ss8_find_cstr, ss8_find_bytes, ss8_find_ch, ss8_find_not_ch,
+       ss8_rfind,     ss8_rfind_cstr,      ss8_rfind_bytes,      ss8_rfind_ch,
+       ss8_rfind_not_ch − find a string or character in an ssstr byte string
+
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
+
+       <b>size_t ss8_find(ss8str const *</b><i>haystack</i><b>, size_t</b> <i>start</i><b>,</b>
+                       <b>ss8str const *</b><i>needle</i><b>);</b>
+       <b>size_t ss8_find_cstr(ss8str const *</b><i>haystack</i><b>, size_t</b> <i>start</i><b>,</b>
+                       <b>char const *</b><i>needle</i><b>);</b>
+       <b>size_t ss8_find_bytes(ss8str const *</b><i>haystack</i><b>, size_t</b> <i>start</i><b>,</b>
+                       <b>char const *</b><i>needle</i><b>, size_t</b> <i>needlelen</i><b>);</b>
+       <b>size_t ss8_find_ch(ss8str const *</b><i>haystack</i><b>, size_t</b> <i>start</i><b>,</b>
+                       <b>char</b> <i>needle</i><b>);</b>
+       <b>size_t ss8_find_not_ch(ss8str const *</b><i>haystack</i><b>, size_t</b> <i>start</i><b>,</b>
+                       <b>char</b> <i>needle</i><b>);</b>
+
+       <b>size_t ss8_rfind(ss8str const *</b><i>haystack</i><b>, size_t</b> <i>start</i><b>,</b>
+                       <b>ss8str const *</b><i>needle</i><b>);</b>
+       <b>size_t ss8_rfind_cstr(ss8str const *</b><i>haystack</i><b>, size_t</b> <i>start</i><b>,</b>
+                       <b>char const *</b><i>needle</i><b>);</b>
+       <b>size_t ss8_rfind_bytes(ss8str const *</b><i>haystack</i><b>, size_t</b> <i>start</i><b>,</b>
+                       <b>char const *</b><i>needle</i><b>, size_t</b> <i>needlelen</i><b>);</b>
+       <b>size_t ss8_rfind_ch(ss8str const *</b><i>haystack</i><b>, size_t</b> <i>start</i><b>,</b>
+                       <b>char</b> <i>needle</i><b>);</b>
+       <b>size_t ss8_rfind_not_ch(ss8str const *</b><i>haystack</i><b>, size_t</b> <i>start</i><b>,</b>
+                       <b>char</b> <i>needle</i><b>);</b>
+
+<b>DESCRIPTION</b>
+       <b>ss8_find</b>()  finds  the  first  occurrence of the substring equal to the
+       <b>ss8str</b> at <i>needle</i> in the <b>ss8str</b> at <i>haystack</i>.  Only matches that begin at
+       or after the byte position <i>start</i> are considered.  Behavior is undefined
+       unless <i>haystack</i> and <i>needle</i> both point to valid <b>ss8str</b> objects and <i>start</i>
+       is less than or equal to the length of the haystack string.
+
+       <b>ss8_find_cstr</b>()  is  like  <b>ss8_find</b>() but finds the first occurrence of
+       the null‐terminated byte string <i>needle</i>.  Behavior is  undefined  unless
+       <i>haystack</i>  points  to a valid <b>ss8str</b> object, <i>start</i> is less than or equal
+       to the length of the haystack string, and <i>needle</i> is  a  null‐terminated
+       byte string.
+
+       <b>ss8_find_bytes</b>()  is  like <b>ss8_find</b>() but finds the first occurrence of
+       the byte string of length <i>needlelen</i> located  at  <i>needle</i>.   Behavior  is
+       undefined  unless  <i>haystack</i>  points  to a valid <b>ss8str</b> object, <i>start</i> is
+       less than or equal to the length of the haystack string, and <i>needle</i>  is
+       an array of at least <i>needlelen</i> bytes.
+
+       <b>ss8_find_ch</b>()  is like <b>ss8_find</b>() but finds the first occurrence of the
+       byte <i>needle</i>.  Behavior is undefined unless <i>haystack</i> points to  a  valid
+       <b>ss8str</b>  object  and  <i>start</i>  is  less than or equal to the length of the
+       haystack string.
+
+       <b>ss8_find_not_ch</b>() is like <b>ss8_find_ch</b>() except that it finds the  first
+       occurrence of a byte that is not equal to <i>needle</i>.
+
+       <b>ss8_rfind</b>(),  <b>ss8_rfind_cstr</b>(),  <b>ss8_rfind_bytes</b>(), <b>ss8_rfind_ch</b>(), and
+       <b>ss8_rfind_not_ch</b>() are like the corresponding functions without  the  <b>r</b>
+       in  the name, except that they find the last, rather than first, occur‐
+       rence of <i>needle</i>.  Only matches that begin at or before the  byte  posi‐
+       tion <i>start</i> are considered.
+
+<b>RETURN VALUE</b>
+       All  10  functions  return the position, counting from the beginning of
+       the haystack string, of the first byte of the match.  If  there  is  no
+       match, <b>SIZE_MAX</b> is returned.
+
+       If <i>needle</i> is the empty string, <i>start</i> is returned.
+
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_contains.3.html"><b>ss8_contains</b>(3)</a>, <a href="../man3/ss8_equals.3.html"><b>ss8_equals</b>(3)</a>, <a href="../man3/ss8_find_first_of.3.html"><b>ss8_find_first_of</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+
+
+
+SSSTR                             2022‐06‐12                       SS8_FIND(3)
+</pre>
+</body>
+</html>

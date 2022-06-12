@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>ss8_contains(3) &mdash; Ssstr Manual</title>
+</head>
+<body>
+<pre>
+SS8_CONTAINS(3)                  <a href="../man7/ssstr.7.html">Ssstr Manual</a>                  SS8_CONTAINS(3)
+
+
+
+<b>NAME</b>
+       ss8_contains,  ss8_contains_cstr, ss8_contains_bytes, ss8_contains_ch −
+       check if an ssstr byte string contains a string
+
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
+
+       <b>bool ss8_contains(ss8str const *</b><i>str</i><b>, ss8str const *</b><i>infix</i><b>);</b>
+       <b>bool ss8_contains_cstr(ss8str const *</b><i>str</i><b>, char const *</b><i>infix</i><b>);</b>
+       <b>bool ss8_contains_bytes(ss8str const *</b><i>str</i><b>,</b>
+                               <b>char const *</b><i>infix</i><b>, size_t</b> <i>infixlen</i><b>);</b>
+       <b>bool ss8_contains_ch(ss8str const *</b><i>str</i><b>, char</b> <i>ch</i><b>);</b>
+
+<b>DESCRIPTION</b>
+       <b>ss8_contains</b>() tests whether the <b>ss8str</b> at <i>str</i> contains as a  substring
+       the  <b>ss8str</b>  at <i>infix</i>.  Behavior is undefined unless both <i>str</i> and <i>infix</i>
+       point to valid <b>ss8str</b> objects.
+
+       <b>ss8_contains_cstr</b>() tests whether the <b>ss8str</b> at <i>str</i> contains as a  sub‐
+       string  the  null‐terminated  byte string <i>infix</i>.  Behavior is undefined
+       unless <i>str</i> points to a valid <b>ss8str</b> object and <i>infix</i> is  a  null‐termi‐
+       nated byte string.
+
+       <b>ss8_contains_bytes</b>() tests whether the <b>ss8str</b> at <i>str</i> contains as a sub‐
+       string the byte string of length <i>infixlen</i> located at  <i>infix</i>.   Behavior
+       is  undefined  unless  <i>str</i>  points  to  a valid <b>ss8str</b> object and <i>infix</i>
+       points to an array of at least <i>infixlen</i> bytes.
+
+       <b>ss8_contains_ch</b>() tests whether the <b>ss8str</b> at <i>str</i> contains the byte <i>ch</i>.
+       Behavior is undefined unless <i>str</i> points to a valid <b>ss8str</b> object.
+
+<b>RETURN VALUE</b>
+       All  4  functions return <b>true</b> if <i>infix</i> is found in <i>str</i>; otherwise, they
+       return <b>false</b>.
+
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_starts_with.3.html"><b>ss8_ends_with</b>(3)</a>, <a href="../man3/ss8_find.3.html"><b>ss8_find</b>(3)</a>, <a href="../man3/ss8_starts_with.3.html"><b>ss8_starts_with</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+
+
+
+SSSTR                             2022‐06‐12                   SS8_CONTAINS(3)
+</pre>
+</body>
+</html>

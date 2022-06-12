@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>ss8_swap(3) &mdash; Ssstr Manual</title>
+</head>
+<body>
+<pre>
+SS8_SWAP(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>                      SS8_SWAP(3)
+
+
+
+<b>NAME</b>
+       ss8_swap − swap the contents of two ssstr byte strings
+
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
+
+       <b>void ss8_swap(ss8str *restrict</b> <i>str1</i><b>, ss8str *restrict</b> <i>str2</i><b>);</b>
+
+<b>DESCRIPTION</b>
+       <b>ss8_swap</b>()  swaps  the  values  of the two <b>ss8str</b> objects pointed to by
+       <i>str1</i> and <i>str2</i>.
+
+       No memory allocation or deallocation is performed.
+
+       Behavior is undefined unless <i>str1</i> and <i>str2</i> point to valid and  distinct
+       <b>ss8str</b> objects.
+
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_copy.3.html"><b>ss8_copy</b>(3)</a>, <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move_destroy</b>(3)</a>, <a href="../man3/ss8_move.3.html"><b>ss8_move</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+
+
+
+SSSTR                             2022‐06‐12                       SS8_SWAP(3)
+</pre>
+</body>
+</html>

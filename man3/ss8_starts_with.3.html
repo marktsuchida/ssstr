@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>ss8_starts_with(3) &mdash; Ssstr Manual</title>
+</head>
+<body>
+<pre>
+SS8_STARTS_WITH(3)               <a href="../man7/ssstr.7.html">Ssstr Manual</a>               SS8_STARTS_WITH(3)
+
+
+
+<b>NAME</b>
+       ss8_starts_with,      ss8_starts_with_cstr,      ss8_starts_with_bytes,
+       ss8_starts_with_ch,         ss8_ends_with,          ss8_ends_with_cstr,
+       ss8_ends_with_bytes,  ss8_ends_with_ch  − check if an ssstr byte string
+       has a prefix or suffix
+
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
+
+       <b>bool ss8_starts_with(ss8str const *</b><i>str</i><b>, ss8str const *</b><i>prefix</i><b>);</b>
+       <b>bool ss8_starts_with_cstr(ss8str const *</b><i>str</i><b>, char const *</b><i>prefix</i><b>);</b>
+       <b>bool ss8_starts_with_bytes(ss8str const *</b><i>str</i><b>,</b>
+                                <b>char const *</b><i>prefix</i><b>, size_t</b> <i>prefixlen</i><b>);</b>
+       <b>bool ss8_starts_with_ch(ss8str const *</b><i>str</i><b>, char</b> <i>ch</i><b>);</b>
+
+       <b>bool ss8_ends_with(ss8str const *</b><i>str</i><b>, ss8str const *</b><i>suffix</i><b>);</b>
+       <b>bool ss8_ends_with_cstr(ss8str const *</b><i>str</i><b>, char const *</b><i>suffix</i><b>);</b>
+       <b>bool ss8_ends_with_bytes(ss8str const *</b><i>str</i><b>, char const *</b><i>suffix</i><b>,</b>
+                                <b>size_t</b> <i>suffixlen</i><b>);</b>
+       <b>bool ss8_ends_with_ch(ss8str const *</b><i>str</i><b>, char</b> <i>ch</i><b>);</b>
+
+<b>DESCRIPTION</b>
+       <b>ss8_starts_with</b>() tests whether the <b>ss8str</b> at <i>str</i> contains  the  prefix
+       equal  to  the <b>ss8str</b> at <i>prefix</i>.  Behavior is undefined unless both <i>str</i>
+       and <i>prefix</i> point to valid <b>ss8str</b> objects.
+
+       <b>ss8_starts_with_cstr</b>() tests whether the <b>ss8str</b>  at  <i>str</i>  contains  the
+       prefix  equal  to  the null‐terminated byte string <i>prefix</i>.  Behavior is
+       undefined unless <i>str</i> points to a valid <b>ss8str</b> object and  <i>prefix</i>  is  a
+       null‐terminated byte string.
+
+       <b>ss8_starts_with_bytes</b>()  tests  whether  the <b>ss8str</b> at <i>str</i> contains the
+       prefix equal to the byte string of length <i>prefixlen</i> located at  <i>prefix</i>.
+       Behavior  is  undefined  unless <i>str</i> points to a valid <b>ss8str</b> object and
+       <i>prefix</i> points to an array of at least <i>prefixlen</i> bytes.
+
+       <b>ss8_starts_with_ch</b>() tests whether the first byte of the <b>ss8str</b> at  <i>str</i>
+       is  equal  to  <i>ch</i>.   Behavior is undefined unless <i>str</i> points to a valid
+       <b>ss8str</b> object.
+
+       <b>ss8_ends_with</b>(),   <b>ss8_ends_with_cstr</b>(),   <b>ss8_ends_with_bytes</b>(),   and
+       <b>ss8_ends_with_ch</b>()  are  like  the  corresponding functions with <b>starts</b>
+       instead of <b>ends</b> in the name, except that they test whether  the  string
+       contains the given suffix, rather than prefix.
+
+<b>RETURN VALUE</b>
+       All  8 functions return <b>true</b> if the prefix or suffix matches; otherwise
+       they return <b>false</b>.
+
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_contains.3.html"><b>ss8_contains</b>(3)</a>, <a href="../man3/ss8_equals.3.html"><b>ss8_equals</b>(3)</a>, <a href="../man3/ss8_find.3.html"><b>ss8_find</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+
+
+
+SSSTR                             2022‐06‐12                SS8_STARTS_WITH(3)
+</pre>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>ss8_capacity(3) &mdash; Ssstr Manual</title>
+</head>
+<body>
+<pre>
+SS8_CAPACITY(3)                  <a href="../man7/ssstr.7.html">Ssstr Manual</a>                  SS8_CAPACITY(3)
+
+
+
+<b>NAME</b>
+       ss8_capacity,  ss8_reserve, ss8_shrink_to_fit − query and modify buffer
+       capacity of ssstr byte strings
+
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
+
+       <b>size_t  ss8_capacity(ss8str const *</b><i>str</i><b>);</b>
+       <b>ss8str *ss8_reserve(ss8str *</b><i>str</i><b>, size_t</b> <i>capacity</i><b>);</b>
+       <b>ss8str *ss8_shrink_to_fit(ss8str *</b><i>str</i><b>);</b>
+
+<b>DESCRIPTION</b>
+       <b>ss8_capacity</b>() queries the <b>ss8str</b> at <i>str</i> for its capacity, which is the
+       maximum  length of the byte string that it can hold without the need to
+       allocate additional (or any) dynamic storage.
+
+       <b>ss8_reserve</b>() ensures that the <b>ss8str</b> at <i>str</i> has  at  least  the  given
+       <i>capacity</i> by enlarging its buffer if necessary.  The length and contents
+       of the string do not change.  <b>ss8_reserve</b>() never lessens the capacity.
+
+       Reserving  capacity  ahead  of time can improve efficiency when a large
+       number of insertions, concatenations, or replacements are about  to  be
+       performed and the final length of the string is known, either precisely
+       or approximately.
+
+       Reserved capacity is not available  length;  writing  to  <b>ss8_cstr(</b><i>str</i><b>)</b>
+       beyond   the   length  of  <b>*</b><i>str</i>  results  in  undefined  behavior.  See
+       <a href="../man3/ss8_set_len.3.html"><b>ss8_set_len</b>(3)</a> for ways to change the available length.
+
+       <b>ss8_shrink_to_fit</b>() reallocates the internal buffer of  the  <b>ss8str</b>  at
+       <i>str</i> so that it is the minimum size required to hold its contents.
+
+       Shrinking  to fit may improve memory usage if an <b>ss8str</b> is shortened by
+       a large factor and then retained for a long duration.
+
+       Behavior of these 3 functions is undefined unless <i>str</i> points to a valid
+       <b>ss8str</b> object.
+
+<b>RETURN VALUE</b>
+       <b>ss8_capacity</b>()  returns  the maximum length of the byte string that the
+       <b>ss8str</b> pointed to by <i>str</i> can hold without allocating additional dynamic
+       storage.
+
+       <b>ss8_reserve</b>() and <b>ss8_shrink_to_fit</b>() return <i>str</i>.
+
+<b>NOTES</b>
+       The  capacity  of  an <b>ss8str</b> is never zero but has a platform‐dependent
+       fixed minimum.  Therefore, the capacity after performing
+
+           <b>ss8_shrink_to_fit(ss8_clear(</b><i>str</i><b>));</b>
+
+       is guaranteed to be greater than zero.  This also means that the capac‐
+       ity   does   not   necessarily   match   the   length   after   calling
+       <b>ss8_shrink_to_fit</b>().
+
+       In general, <b>ss8str</b> functions that assign (copy) a string  reserve  just
+       the capacity needed for the destination string.  Functions that insert,
+       append, or replace a substring heuristically grow the  capacity  in  an
+       attempt  to  minimize reallocation.  When a function shortens a string,
+       or does not require more than its current capacity, it does  not  alter
+       its  capacity.  Only a call to <b>ss8_shrink_to_fit</b>() decreases the capac‐
+       ity of an <b>ss8str</b>.
+
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_set_len.3.html"><b>ss8_grow_len</b>(3)</a>, <a href="../man3/ss8_len.3.html"><b>ss8_len</b>(3)</a>, <a href="../man3/ss8_set_len.3.html"><b>ss8_set_len</b>(3)</a>, <a href="../man3/ss8_set_len.3.html"><b>ss8_set_len_to_cstrlen</b>(3)</a>,
+       <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+
+
+
+SSSTR                             2022‐06‐12                   SS8_CAPACITY(3)
+</pre>
+</body>
+</html>

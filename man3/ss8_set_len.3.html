@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>ss8_set_len(3) &mdash; Ssstr Manual</title>
+</head>
+<body>
+<pre>
+SS8_SET_LEN(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>                   SS8_SET_LEN(3)
+
+
+
+<b>NAME</b>
+       ss8_set_len, ss8_grow_len, ss8_set_len_to_cstrlen − set length of ssstr
+       byte string
+
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
+
+       <b>void ss8_set_len(ss8str *</b><i>str</i><b>, size_t</b> <i>newlen</i><b>);</b>
+       <b>size_t ss8_grow_len(ss8str *</b><i>str</i><b>, size_t</b> <i>maxlen</i><b>,</b>
+                           <b>size_t</b> <i>maxdelta</i><b>);</b>
+       <b>void ss8_set_len_to_cstrlen(ss8str *</b><i>str</i><b>);</b>
+
+<b>DESCRIPTION</b>
+       <b>ss8_set_len</b>() forcefully sets the  length  of  the  <b>ss8str</b>  at  <i>str</i>  to
+       <i>newlen</i>.  If <i>newlen</i> is less than the current length, the string is trun‐
+       cated.  If <i>newlen</i> is greater than the current length, the  new  portion
+       of  the string is filled with indeterminate bytes, except that the byte
+       after the former last byte is guaranteed to contain a null byte.
+
+       If the capacity of the <b>ss8str</b> is not sufficient to hold the new length,
+       it  is  increased to match the new length; otherwise, no memory alloca‐
+       tion or deallocation is performed.
+
+       <b>ss8_grow_len</b>() is like <b>ss8_set_len</b>(), but automatically chooses  a  new
+       length that is greater than the current length by a constant factor, or
+       equal to the current capacity, whichever is larger.  Because the capac‐
+       ity is never zero, an appropriate length greater than zero is chosen if
+       the current length is zero.
+
+       The amount by which the lengh is increased is limited to no  more  than
+       <i>maxdelta</i>,  and  the  final  length  is  limited to no more than <i>maxlen</i>.
+       These two parameters can be set to  <b>SIZE_MAX</b>  to  request  the  maximum
+       allowed limits.
+
+       If  the  current  length  exceeds <i>maxlen</i>, no change is made (the caller
+       should avoid this case in typical usage).
+
+       <b>ss8_set_len_to_cstrlen</b>() truncates the <b>ss8str</b> at <i>str</i> to its length when
+       viewed as a null‐terminated byte string.  That is,
+
+           <b>ss8_set_len_to_cstrlen(</b><i>str</i><b>);</b>
+
+       is equivalent to
+
+           <b>ss8_set_len(</b><i>str</i><b>, strlen(ss8_const_cstr(</b><i>str</i><b>));</b>
+
+       No memory allocation or deallocation is performed.
+
+       These  functions  are  intended for the purpose of using an <b>ss8str</b> as a
+       destination when calling functions that fill a  caller‐provided  buffer
+       with  a string.  <b>ss8_grow_len</b>() is useful when it is necessary to retry
+       such a function call with successively larger buffers.
+
+<b>RETURN VALUE</b>
+       <b>ss8_grow_len</b>() returns the amount (in bytes) by which the length of <i>str</i>
+       was  increased.   A  zero return value indicates that the length of <i>str</i>
+       was already greater than or equal to <i>maxlen</i>, or that <i>maxdelta</i>  was  set
+       to zero.
+
+<b>EXAMPLES</b>
+       To read at most 1024 bytes from the file <i>fp</i>:
+
+           #include &lt;ss8str.h&gt;
+           #include &lt;stdio.h&gt;
+
+           ss8str bytes;
+           ss8_init(&amp;bytes);
+
+           ss8_set_len(&amp;bytes, 1024);
+           size_t nread = fread(ss8_cstr(&amp;bytes),
+                                ss8_len(&amp;bytes), 1, fp);
+           ss8_set_len(&amp;bytes, nread);
+
+           // ...
+
+           ss8_destroy(&amp;bytes);
+
+       To format the current local time:
+
+           #include &lt;ss8str.h&gt;
+           #include &lt;stdint.h&gt;
+           #include &lt;time.h&gt;
+
+           time_t now = time(NULL);
+           ss8str timestr;
+           ss8_init(&amp;timestr);
+
+           for (;;) {
+               ss8_grow_len(&amp;timestr, SIZE_MAX, SIZE_MAX);
+
+               // strftime() only returns zero (given "%c") if the buffer is
+               // too small to fit the result.
+               size_t n = strftime(ss8_cstr(&amp;timestr), ss8_len(&amp;timestr) + 1,
+                                   "%c", localtime(&amp;now));
+               if (n &gt; 0) {
+                   ss8_set_len(&amp;timestr, n);
+                   break;
+               }
+           }
+
+           // ...
+
+           ss8_destroy(&amp;timestr);
+
+       To read a whole line from the file <i>fp</i>:
+
+           #include &lt;ss8str.h&gt;
+           #include &lt;limits.h&gt;
+           #include &lt;stdint.h&gt;
+           #include &lt;stdio.h&gt;
+
+           ss8str line;
+           ss8_init(&amp;line);
+
+           size_t nread = 0;
+           do {
+               // fgets() takes an int count; limit buffer growth accordingly
+               int growth = (int)ss8_grow_len(&amp;line, SIZE_MAX, INT_MAX ‐ 1);
+               if (growth == 0) {        // Reached limit
+                   ss8_clear(&amp;line);
+                   break;
+               }
+
+               if (!fgets(ss8_cstr_suffix(&amp;line, nread), growth + 1, fp)) {
+                   ss8_clear(&amp;line);
+                   break;
+               }
+
+               ss8_set_len_to_cstrlen(&amp;line);
+               nread = ss8_len(&amp;line);
+           } while (!ss8_ends_with_ch(&amp;line, ’\n’));
+
+           // ...
+
+           ss8_destroy(&amp;line);
+
+       The  last  example is inteded for text input that does not contain null
+       bytes.  If null bytes do occur, the read line  will  be  silently  cor‐
+       rupted but the program will not crash or leak memory.  Other edge cases
+       occur if the line is longer than  <b>SIZE_MAX  ‐  1</b>  bytes  or  the  input
+       reaches end‐of‐file before a newline.
+
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_cstr.3.html"><b>ss8_cstr</b>(3)</a>, <a href="../man3/ss8_len.3.html"><b>ss8_len</b>(3)</a>, <a href="../man3/ss8_capacity.3.html"><b>ss8_reserve</b>(3)</a>, <a href="../man3/ss8_capacity.3.html"><b>ss8_shrink_to_fit</b>(3)</a>, <a href="../man3/ss8_copy_substr.3.html"><b>ss8_sub‐</a>
+       <a href="../man3/ss8_copy_substr.3.html">str_inplace</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+
+
+
+SSSTR                             2022‐06‐12                    SS8_SET_LEN(3)
+</pre>
+</body>
+</html>

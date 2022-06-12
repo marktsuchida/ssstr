@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>ss8_insert(3) &mdash; Ssstr Manual</title>
+</head>
+<body>
+<pre>
+SS8_INSERT(3)                    <a href="../man7/ssstr.7.html">Ssstr Manual</a>                    SS8_INSERT(3)
+
+
+
+<b>NAME</b>
+       ss8_insert,     ss8_insert_cstr,    ss8_insert_bytes,    ss8_insert_ch,
+       ss8_insert_ch_n − insert a string or characters at a given position  of
+       an ssstr byte string
+
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
+
+       <b>ss8str *ss8_insert(ss8str *restrict</b> <i>dest</i><b>, size_t</b> <i>pos</i><b>,</b>
+                          <b>ss8str const *restrict</b> <i>src</i><b>);</b>
+       <b>ss8str *ss8_insert_cstr(ss8str *restrict</b> <i>dest</i><b>, size_t</b> <i>pos</i><b>,</b>
+                          <b>char const *restrict</b> <i>src</i><b>);</b>
+       <b>ss8str *ss8_insert_bytes(ss8str *restrict</b> <i>dest</i><b>, size_t</b> <i>pos</i><b>,</b>
+                          <b>char const *restrict</b> <i>src</i><b>, size_t</b> <i>srclen</i><b>);</b>
+       <b>ss8str *ss8_insert_ch(ss8str *</b><i>dest</i><b>, size_t</b> <i>pos</i><b>, char</b> <i>ch</i><b>);</b>
+       <b>ss8str *ss8_insert_ch_n(ss8str *</b><i>dest</i><b>, size_t</b> <i>pos</i><b>, char</b> <i>ch</i><b>,</b>
+                          <b>size_t</b> <i>count</i><b>);</b>
+
+<b>DESCRIPTION</b>
+       <b>ss8_insert</b>()  inserts  the  <b>ss8str</b>  at  <i>src</i> at byte position <i>pos</i> of the
+       <b>ss8str</b> at <i>dest</i>.  Behavior is undefined unless <i>dest</i>  and  <i>src</i>  point  to
+       valid  and distinct <b>ss8str</b> objects and <i>pos</i> is less than or equal to the
+       length of the destination string.
+
+       <b>ss8_insert_cstr</b>() inserts the null‐terminated byte string <i>src</i>  at  byte
+       position  <i>pos</i> of the <b>ss8str</b> at <i>dest</i>.  Behavior is undefined unless <i>dest</i>
+       points to a valid <b>ss8str</b> object, <i>pos</i> is  less  than  or  equal  to  the
+       length  of  the  destination  string, and <i>src</i> is a null‐terminated byte
+       string that is not part of the internal buffer of <i>dest</i>.
+
+       <b>ss8_insert_bytes</b>() inserts the byte string of length <i>srclen</i> located  at
+       <i>src</i>  at byte position <i>pos</i> of the <b>ss8str</b> at <i>dest</i>.  Behavior is undefined
+       unless <i>dest</i> points to a valid <b>ss8str</b> object, <i>pos</i> is less than or  equal
+       to  the length of the destination string, and <i>src</i> points to an array of
+       at least <i>srclen</i> bytes that is not part of the internal buffer of  <i>dest</i>.
+
+       <b>ss8_insert_ch</b>()  inserts the single byte <i>ch</i> at byte position <i>pos</i> of the
+       <b>ss8str</b> at <i>dest</i>.  Behavior is undefined unless <i>dest</i> points  to  a  valid
+       <b>ss8str</b> object and <i>pos</i> is less than or equal to the length of the desti‐
+       nation string.
+
+       <b>ss8_insert_ch_n</b>() inserts <i>count</i> copies of the byte <i>ch</i> at byte  position
+       <i>pos</i> of the <b>ss8str</b> at <i>dest</i>.  Behavior is undefined unless <i>dest</i> points to
+       a valid <b>ss8str</b> object and <i>pos</i> is less than or equal to  the  length  of
+       the destination string.
+
+<b>RETURN VALUE</b>
+       All 5 functions return <i>dest</i>.
+
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_cat.3.html"><b>ss8_cat</b>(3)</a>, <a href="../man3/ss8_erase.3.html"><b>ss8_erase</b>(3)</a>, <a href="../man3/ss8_replace.3.html"><b>ss8_replace</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+
+
+
+SSSTR                             2022‐06‐12                     SS8_INSERT(3)
+</pre>
+</body>
+</html>

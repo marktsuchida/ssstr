@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>ss8_clear(3) &mdash; Ssstr Manual</title>
+</head>
+<body>
+<pre>
+SS8_CLEAR(3)                     <a href="../man7/ssstr.7.html">Ssstr Manual</a>                     SS8_CLEAR(3)
+
+
+
+<b>NAME</b>
+       ss8_clear − clear an ssstr byte string
+
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
+
+       <b>ss8str *ss8_clear(ss8str *</b><i>str</i><b>);</b>
+
+<b>DESCRIPTION</b>
+       <b>ss8_clear</b>() sets the <b>ss8str</b> pointed to by <i>str</i> to the empty string.
+
+       Behavior is undefined unless <i>str</i> points to a valid <b>ss8str</b> object.
+
+       No memory allocation or deallocation is performed.
+
+<b>RETURN VALUE</b>
+       <b>ss8_clear</b>() returns <i>str</i>.
+
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_init.3.html"><b>ss8_destroy</b>(3)</a>, <a href="../man3/ss8_erase.3.html"><b>ss8_erase</b>(3)</a>, <a href="../man3/ss8_len.3.html"><b>ss8_is_empty</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+
+
+
+SSSTR                             2022‐06‐12                      SS8_CLEAR(3)
+</pre>
+</body>
+</html>

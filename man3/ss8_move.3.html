@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>ss8_move(3) &mdash; Ssstr Manual</title>
+</head>
+<body>
+<pre>
+SS8_MOVE(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>                      SS8_MOVE(3)
+
+
+
+<b>NAME</b>
+       ss8_move, ss8_move_destroy − move one ssstr byte string to another
+
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
+
+       <b>ss8str *ss8_move(ss8str *restrict</b> <i>dest</i><b>, ss8str *restrict</b> <i>src</i><b>);</b>
+       <b>ss8str *ss8_move_destroy(ss8str *restrict</b> <i>dest</i><b>,</b>
+                                <b>ss8str *restrict</b> <i>src</i><b>);</b>
+
+<b>DESCRIPTION</b>
+       <b>ss8_move</b>() takes the value of the <b>ss8str</b> object at <i>src</i> and places it in
+       the <b>ss8str</b> object at <i>dest</i>.  After the move, the <b>ss8str</b>  object  at  <i>src</i>
+       remains valid but its value becomes indeterminate.
+
+       <b>ss8_move_destroy</b>() is like <b>ss8_move</b>(), except that the <b>ss8str</b> object at
+       <i>src</i> becomes invalid (destroyed) after the move; that is,
+
+           <b>ss8_move_destroy(</b><i>dest</i><b>,</b> <i>src</i><b>);</b>
+
+       is equivalent to
+
+           <b>ss8_move(</b><i>dest</i><b>,</b> <i>src</i><b>); ss8_destroy(</b><i>src</i><b>);</b>
+
+       For both functions, behavior is undefined unless <i>dest</i> and <i>src</i> point  to
+       valid and distinct <b>ss8str</b> objects.
+
+       No memory allocation is performed, but deallocation may be performed.
+
+<b>RETURN VALUE</b>
+       <b>ss8_move</b>() and <b>ss8_move_destroy</b>() return <i>dest</i>.
+
+<b>NOTES</b>
+       Care  should  be taken not to use the value of the <b>ss8str</b> object at <i>src</i>
+       after the move.  It must still be destroyed in the case of  <b>ss8_move</b>().
+
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_copy.3.html"><b>ss8_copy</b>(3)</a>, <a href="../man3/ss8_init.3.html"><b>ss8_destroy</b>(3)</a>, <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move</b>(3)</a>, <a href="../man3/ss8_swap.3.html"><b>ss8_swap</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+
+
+
+SSSTR                             2022‐06‐12                       SS8_MOVE(3)
+</pre>
+</body>
+</html>

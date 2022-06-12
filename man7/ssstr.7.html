@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>ssstr(7) &mdash; Ssstr Manual</title>
+</head>
+<body>
+<pre>
+SSSTR(7)                         <a href="../man7/ssstr.7.html">Ssstr Manual</a>                         SSSTR(7)
+
+
+
+<b>NAME</b>
+       ssstr, ss8str − short‐string‐optimized byte string routines
+
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
+
+<b>DESCRIPTION</b>
+       <b>ssstr</b>  is  a header‐only library for representing and manipulating byte
+       strings.
+
+   <b>String representation</b>
+       Strings are represented by the opaque type <b>ss8str</b>,  which  is  suitable
+       for  use  as  a regular automatic (stack) variable, or as a member of a
+       larger data structure.  (It is 32 bytes  on  64‐bit  platforms  and  16
+       bytes on 32‐bit platforms.)
+
+       When  the  string is small, it is stored directly in the <b>ss8str</b> object;
+       otherwise, dynamic (heap) storage is allocated to store the string.
+
+       The <b>ss8str</b> stores the length of the  string  explicitly,  allowing  the
+       handling  of  strings  that  contain embedded null bytes in addition to
+       more efficient operations.
+
+       Objects of type <b>ss8str</b> must be initialized  before  use  and  destroyed
+       after use, exactly once each.  See <a href="../man3/ss8_init.3.html"><b>ss8_init</b>(3)</a> and <a href="../man3/ss8_init.3.html"><b>ss8_destroy</b>(3)</a>.
+
+<b>FUNCTIONS</b>
+   <b>Initialization and cleanup</b>
+       <a href="../man3/ss8_init.3.html"><b>ss8_init</b>(3)</a>,             <a href="../man3/ss8_init_copy.3.html"><b>ss8_init_copy</b>(3)</a>,            <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move</b>(3)</a>,
+       <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move_destroy</b>(3)</a>, <a href="../man3/ss8_init.3.html"><b>ss8_destroy</b>(3)</a>, and variants of <b>ss8_init_copy</b>
+       with <b>_cstr</b>, <b>_bytes</b>, <b>_ch</b>, or <b>_ch_n</b>
+
+   <b>Basic string operations</b>
+       <a href="../man3/ss8_clear.3.html"><b>ss8_clear</b>(3)</a>, <a href="../man3/ss8_len.3.html"><b>ss8_is_empty</b>(3)</a>, <a href="../man3/ss8_len.3.html"><b>ss8_len</b>(3)</a>
+
+   <b>Copying and assigning strings</b>
+       <a href="../man3/ss8_copy.3.html"><b>ss8_copy</b>(3)</a>,  <a href="../man3/ss8_init_copy.3.html"><b>ss8_init_copy</b>(3)</a>,  and their variants with <b>_cstr</b>, <b>_bytes</b>,
+       <b>_ch</b>, or <b>_ch_n</b>
+
+   <b>Moving strings</b>
+       <a href="../man3/ss8_move.3.html"><b>ss8_move</b>(3)</a>,           <a href="../man3/ss8_move.3.html"><b>ss8_move_destroy</b>(3)</a>,           <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move</b>(3)</a>,
+       <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move_destroy</b>(3)</a>, <a href="../man3/ss8_swap.3.html"><b>ss8_swap</b>(3)</a>
+
+   <b>Passing ss8str to C string functions</b>
+       <a href="../man3/ss8_cstr.3.html"><b>ss8_const_cstr</b>(3)</a>, <a href="../man3/ss8_cstr.3.html"><b>ss8_const_cstr_suffix</b>(3)</a>
+
+   <b>Using ss8str as the destination for functions producing C strings</b>
+       <a href="../man3/ss8_cstr.3.html"><b>ss8_cstr</b>(3)</a>,             <a href="../man3/ss8_cstr.3.html"><b>ss8_cstr_suffix</b>(3)</a>,            <a href="../man3/ss8_set_len.3.html"><b>ss8_set_len</b>(3)</a>,
+       <a href="../man3/ss8_set_len.3.html"><b>ss8_set_len_to_cstrlen</b>(3)</a>, <a href="../man3/ss8_set_len.3.html"><b>ss8_grow_len</b>(3)</a>
+
+   <b>Converting from standard C strings and byte buffers</b>
+       <a href="../man3/ss8_copy.3.html"><b>ss8_copy_cstr</b>(3)</a>,       <a href="../man3/ss8_copy.3.html"><b>ss8_copy_bytes</b>(3)</a>,       <a href="../man3/ss8_init_copy.3.html"><b>ss8_init_copy_cstr</b>(3)</a>,
+       <a href="../man3/ss8_init_copy.3.html"><b>ss8_init_copy_bytes</b>(3)</a>
+
+   <b>Converting to standard C strings and byte buffers</b>
+       <a href="../man3/ss8_copy_to_cstr.3.html"><b>ss8_copy_to_cstr</b>(3)</a>, <a href="../man3/ss8_copy_to_cstr.3.html"><b>ss8_copy_to_bytes</b>(3)</a>
+
+   <b>Accessing single bytes in strings</b>
+       <a href="../man3/ss8_at.3.html"><b>ss8_at</b>(3)</a>,  <a href="../man3/ss8_at.3.html"><b>ss8_front</b>(3)</a>, <a href="../man3/ss8_at.3.html"><b>ss8_back</b>(3)</a>, <a href="../man3/ss8_at.3.html"><b>ss8_set_at</b>(3)</a>, <a href="../man3/ss8_at.3.html"><b>ss8_set_front</b>(3)</a>,
+       <a href="../man3/ss8_at.3.html"><b>ss8_set_back</b>(3)</a>
+
+   <b>Concatenating strings</b>
+       <a href="../man3/ss8_cat.3.html"><b>ss8_cat</b>(3)</a> and its variants with <b>_cstr</b>, <b>_bytes</b>, <b>_ch</b>, or <b>_ch_n</b>
+
+   <b>Managing buffer capacity</b>
+       <a href="../man3/ss8_capacity.3.html"><b>ss8_capacity</b>(3)</a>, <a href="../man3/ss8_capacity.3.html"><b>ss8_reserve</b>(3)</a>, <a href="../man3/ss8_capacity.3.html"><b>ss8_shrink_to_fit</b>(3)</a>
+
+   <b>Getting substrings</b>
+       <a href="../man3/ss8_copy_substr.3.html"><b>ss8_copy_substr</b>(3)</a>, <a href="../man3/ss8_copy_substr.3.html"><b>ss8_substr_inplace</b>(3)</a>
+
+   <b>Inserting, replacing, and erasing substrings</b>
+       <a href="../man3/ss8_insert.3.html"><b>ss8_insert</b>(3)</a>, <a href="../man3/ss8_replace.3.html"><b>ss8_replace</b>(3)</a>, and their variants with  <b>_cstr</b>,  <b>_bytes</b>,
+       <b>_ch</b>, or <b>_ch_n</b>; <a href="../man3/ss8_erase.3.html"><b>ss8_erase</b>(3)</a>
+
+   <b>Comparing strings</b>
+       <a href="../man3/ss8_cmp.3.html"><b>ss8_cmp</b>(3)</a>,    <a href="../man3/ss8_equals.3.html"><b>ss8_equals</b>(3)</a>,    <a href="../man3/ss8_contains.3.html"><b>ss8_contains</b>(3)</a>,   <a href="../man3/ss8_starts_with.3.html"><b>ss8_starts_with</b>(3)</a>,
+       <a href="../man3/ss8_starts_with.3.html"><b>ss8_ends_with</b>(3)</a>, and their variants with <b>_cstr</b>, <b>_bytes</b>, or <b>_ch</b>
+
+   <b>Searching for strings</b>
+       <a href="../man3/ss8_find.3.html"><b>ss8_find</b>(3)</a>, <a href="../man3/ss8_find.3.html"><b>ss8_rfind</b>(3)</a>, and their variants with <b>_cstr</b>, <b>_bytes</b>,  <b>_ch</b>,
+       or <b>_not_ch</b>
+
+   <b>Searching for characters</b>
+       <a href="../man3/ss8_find_first_of.3.html"><b>ss8_find_first_of</b>(3)</a>,   <a href="../man3/ss8_find_first_of.3.html"><b>ss8_find_first_not_of</b>(3)</a>,  <a href="../man3/ss8_find_first_of.3.html"><b>ss8_find_last_of</b>(3)</a>,
+       <a href="../man3/ss8_find_first_of.3.html"><b>ss8_find_last_not_of</b>(3)</a>, and their variants with <b>_cstr</b> or <b>_bytes</b>
+
+   <b>Trimming certain characters from the ends</b>
+       <a href="../man3/ss8_strip.3.html"><b>ss8_strip</b>(3)</a>, <a href="../man3/ss8_strip.3.html"><b>ss8_lstrip</b>(3)</a>, <a href="../man3/ss8_strip.3.html"><b>ss8_rstrip</b>(3)</a>,  and  their  variants  with
+       <b>_cstr</b>, <b>_bytes</b>, or <b>_ch</b>
+
+   <b>Formatting strings</b>
+       <a href="../man3/ss8_sprintf.3.html"><b>ss8_sprintf</b>(3)</a>,  <a href="../man3/ss8_sprintf.3.html"><b>ss8_cat_sprintf</b>(3)</a>, and their variants with <b>_snprintf</b>,
+       <b>_vsprintf</b>, or <b>_vsnprintf</b>
+
+<b>SEE ALSO</b>
+       <a href="https://www.man7.org/linux/man-pages/man3/bstring.3.html"><b>bstring</b>(3)</a>, <a href="https://www.man7.org/linux/man-pages/man3/string.3.html"><b>string</b>(3)</a>
+
+
+
+SSSTR                             2022‐06‐12                          SSSTR(7)
+</pre>
+</body>
+</html>

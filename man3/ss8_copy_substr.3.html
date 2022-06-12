@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>ss8_copy_substr(3) &mdash; Ssstr Manual</title>
+</head>
+<body>
+<pre>
+SS8_COPY_SUBSTR(3)               <a href="../man7/ssstr.7.html">Ssstr Manual</a>               SS8_COPY_SUBSTR(3)
+
+
+
+<b>NAME</b>
+       ss8_copy_substr,  ss8_substr_inplace  −  get  the substring of an ssstr
+       byte string
+
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
+
+       <b>ss8str *ss8_copy_substr(ss8str *restrict</b> <i>dest</i><b>,</b>
+                               <b>ss8str const *restrict</b> <i>src</i><b>,</b>
+                               <b>size_t</b> <i>start</i><b>, size_t</b> <i>len</i><b>);</b>
+       <b>ss8str *ss8_substr_inplace(ss8str *</b><i>str</i><b>, size_t</b> <i>start</i><b>,</b>
+                                  <b>size_t</b> <i>len</i><b>);</b>
+
+<b>DESCRIPTION</b>
+       <b>ss8_copy_substr</b>() copies a substring of the <b>ss8str</b> at <i>src</i>, starting  at
+       byte  position <i>start</i> and having length up to <i>len</i> (limited by the length
+       of the source string) to the <b>ss8str</b> at  <i>dest</i>.   Behavior  is  undefined
+       unless  <i>dest</i>  and  <i>src</i>  point  to valid and distinct <b>ss8str</b> objects and
+       <i>start</i> is less than or equal to the length of the <b>ss8str</b> at <i>src</i>.
+
+       <b>ss8_substr_inplace</b>() sets the <b>ss8str</b> at <i>str</i> to its own substring start‐
+       ing  at  byte  position <i>start</i> and having length up to <i>len</i>.  Behavior is
+       undefined unless <i>str</i> points to a valid <b>ss8str</b> object and <i>start</i> is  less
+       than or equal to the length of the <b>ss8str</b> at <i>str</i>.
+
+       For  either  function, if <i>start</i> <b>+</b> <i>len</i> is greater than the length of the
+       source string, the substring starting at position <i>start</i>  and  extending
+       to the end of the string is taken.
+
+<b>RETURN VALUE</b>
+       <b>ss8_copy_substr</b>() returns <i>dest</i>.
+
+       <b>ss8_substr_inplace</b>() returns <i>str</i>.
+
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_copy.3.html"><b>ss8_copy</b>(3)</a>, <a href="../man3/ss8_erase.3.html"><b>ss8_erase</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+
+
+
+SSSTR                             2022‐06‐12                SS8_COPY_SUBSTR(3)
+</pre>
+</body>
+</html>

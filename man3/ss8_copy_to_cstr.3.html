@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>ss8_copy_to_cstr(3) &mdash; Ssstr Manual</title>
+</head>
+<body>
+<pre>
+SS8_COPY_TO_CSTR(3)              <a href="../man7/ssstr.7.html">Ssstr Manual</a>              SS8_COPY_TO_CSTR(3)
+
+
+
+<b>NAME</b>
+       ss8_copy_to_cstr,  ss8_copy_to_bytes  −  copy an ssstr byte string to a
+       buffer
+
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
+
+       <b>bool ss8_copy_to_cstr(ss8str const *restrict</b> <i>str</i><b>,</b>
+                             <b>char *restrict</b> <i>buf</i><b>, size_t</b> <i>bufsize</i><b>);</b>
+       <b>bool ss8_copy_to_bytes(ss8str const *restrict</b> <i>str</i><b>,</b>
+                             <b>char *restrict</b> <i>buf</i><b>, size_t</b> <i>bufsize</i><b>);</b>
+
+<b>DESCRIPTION</b>
+       <b>ss8_copy_to_cstr</b>() and <b>ss8_copy_to_bytes</b>() copy  the  contents  of  the
+       <b>ss8str</b>  at  <i>str</i>  to the buffer located at <i>buf</i>.  <b>ss8_copy_to_cstr</b>() then
+       appends a null byte.
+
+       At most <i>bufsize</i> bytes are written; if <i>bufsize</i> is not sufficient to hold
+       the  string  (and  null  terminator for <b>ss8_copy_to_cstr</b>()), the copied
+       string is truncated at <i>bufsize</i> <b>‐ 1</b> bytes  (for  <b>ss8_copy_to_cstr</b>())  or
+       <i>bufsize</i> bytes (for <b>ss8_copy_to_bytes</b>()).
+
+       <b>ss8_copy_to_cstr</b>()  always  places  a null terminator at the end of the
+       copied string unless <i>bufsize</i> is zero.
+
+       Behavior is undefined unless <i>str</i> is a valid <b>ss8str</b> object and <i>buf</i> is  a
+       buffer  of  at  least  <i>bufsize</i>  bytes  that is not part of the internal
+       buffer of <i>str</i>.
+
+<b>RETURN VALUE</b>
+       <b>ss8_copy_to_cstr</b>() and <b>ss8_copy_to_bytes</b>() return <b>true</b>  if  <i>bufsize</i>  is
+       sufficiently  large  to  copy the whole of the <b>ss8str</b> at <i>str</i> (including
+       the null terminator in the  case  of  <b>ss8_copy_to_cstr</b>()).   Otherwise,
+       they return <b>false</b>.
+
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_copy.3.html"><b>ss8_copy_bytes</b>(3)</a>, <a href="../man3/ss8_copy.3.html"><b>ss8_copy_cstr</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+
+
+
+SSSTR                             2022‐06‐12               SS8_COPY_TO_CSTR(3)
+</pre>
+</body>
+</html>

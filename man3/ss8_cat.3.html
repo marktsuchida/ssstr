@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>ss8_cat(3) &mdash; Ssstr Manual</title>
+</head>
+<body>
+<pre>
+SS8_CAT(3)                       <a href="../man7/ssstr.7.html">Ssstr Manual</a>                       SS8_CAT(3)
+
+
+
+<b>NAME</b>
+       ss8_cat,  ss8_cat_cstr,  ss8_cat_bytes, ss8_cat_ch, ss8_cat_ch_n − con‐
+       catenate a string or characters to an ssstr byte string
+
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
+
+       <b>ss8str *ss8_cat(ss8str *restrict</b> <i>dest</i><b>,</b>
+                       <b>ss8str const *restrict</b> <i>src</i><b>);</b>
+       <b>ss8str *ss8_cat_cstr(ss8str *restrict</b> <i>dest</i><b>,</b>
+                       <b>char const *restrict</b> <i>src</i><b>);</b>
+       <b>ss8str *ss8_cat_bytes(ss8str *restrict</b> <i>dest</i><b>,</b>
+                       <b>char const *restrict</b> <i>src</i><b>, size_t</b> <i>srclen</i><b>);</b>
+       <b>ss8str *ss8_cat_ch(ss8str *</b><i>dest</i><b>, char</b> <i>ch</i><b>);</b>
+       <b>ss8str *ss8_cat_ch_n(ss8str *</b><i>dest</i><b>, char</b> <i>ch</i><b>, size_t</b> <i>count</i><b>);</b>
+
+<b>DESCRIPTION</b>
+       <b>ss8_cat</b>() appends the <b>ss8str</b> at <i>src</i> to the end of the <b>ss8str</b>  at  <i>dest</i>.
+       Behavior is undefined unless <i>dest</i> and <i>src</i> point to a valid and distinct
+       <b>ss8str</b> objects.
+
+       <b>ss8_cat_cstr</b>() appends the null‐terminated byte string <i>src</i> to  the  end
+       of  the  <b>ss8str</b> at <i>dest</i>.  Behavior is undefined unless <i>dest</i> points to a
+       valid <b>ss8str</b> object and <i>src</i> is a null‐terminated byte  string  that  is
+       not part of the internal buffer of <i>dest</i>.
+
+       <b>ss8_cat_bytes</b>() appends the byte string of length <i>srclen</i> located at <i>src</i>
+       to the end of the <b>ss8str</b> at <i>dest</i>.  Behavior is  undefined  unless  <i>dest</i>
+       points  to a valid <b>ss8str</b> object and <i>src</i> points to an array of at least
+       <i>srclen</i> bytes that is not part of the internal buffer of <i>dest</i>.
+
+       <b>ss8_cat_ch</b>() appends the single byte <i>ch</i> to the end  of  the  <b>ss8str</b>  at
+       <i>dest</i>.   Behavior  is  undefined  unless  <i>dest</i>  points to a valid <b>ss8str</b>
+       object.
+
+       <b>ss8_cat_ch_n</b>() appends <i>count</i> copies of the byte <i>ch</i> to the  end  of  the
+       <b>ss8str</b>  at  <i>dest</i>.   Behavior is undefined unless <i>dest</i> points to a valid
+       <b>ss8str</b> object.
+
+<b>RETURN VALUE</b>
+       All 5 functions return <i>dest</i>.
+
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_copy.3.html"><b>ss8_copy</b>(3)</a>, <a href="../man3/ss8_insert.3.html"><b>ss8_insert</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+
+
+
+SSSTR                             2022‐06‐12                        SS8_CAT(3)
+</pre>
+</body>
+</html>
