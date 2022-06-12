@@ -29,7 +29,8 @@ SPDX-License-Identifier: MIT
   stack), avoiding dynamic storage allocation.
 - Compatible with C99 and later.
 - Unit tested thoroughly.
-- Documented accurately.
+- [Documented](https://marktsuchida.github.io/ssstr/man7/ssstr.7.html)
+  carefully.
 
 ## Non-features
 
@@ -52,6 +53,9 @@ up with partial encoding sequences. Also, string search and comparison will not
 take into account possible Unicode canonical equivalents.
 
 ## Usage
+
+API reference is available as [manual
+pages](https://marktsuchida.github.io/ssstr/man7/ssstr.7.html).
 
 ### String lifecycle
 
