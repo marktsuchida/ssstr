@@ -53,7 +53,7 @@ def read_page(path):
             ), ".so must be followed by one word"
             page["so"] = firstline.split()[1]
             assert (
-                len(lines) == 1
+                len(lines) == i + 1
             ), "file with .so must not have additional lines"
             return page
 
