@@ -5,7 +5,8 @@
 # Generate static HTML pages from man pages
 
 import html
-import os, os.path
+import os
+import os.path
 import re
 import shutil
 import subprocess
@@ -297,7 +298,7 @@ def generate(destdir, groff, manpage_paths):
         destpath = get_dest_for_src(srcpath, destdir)
         try:
             generate_html(destpath, srcpath, groff, link_targets)
-        except:
+        except BaseException:
             print(
                 f"While generating {destpath} from {srcpath}", file=sys.stderr
             )

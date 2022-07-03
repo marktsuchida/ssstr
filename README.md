@@ -54,8 +54,8 @@ take into account possible Unicode canonical equivalents.
 
 ## Usage
 
-API reference is available as [manual
-pages](https://marktsuchida.github.io/ssstr/man7/ssstr.7.html).
+API reference is available as
+[manual pages](https://marktsuchida.github.io/ssstr/man7/ssstr.7.html).
 
 ### String lifecycle
 
@@ -237,8 +237,8 @@ Some (poorly-designed) APIs may not provide a way to determine the result
 length before you pass a large-enough buffer. In this case, you can use
 `ss8_grow_len()` to progressively increase the length of the string being used
 as the destination buffer, calling the API function in a loop until you
-succeed. The `ss8_grow_len()` function is similar to `ss8_set_len()`, but
-will automatically chose a new length.
+succeed. The `ss8_grow_len()` function is similar to `ss8_set_len()`, but will
+automatically chose a new length.
 
 Also depending on the API, you may need to pass either the _maximum string
 length_ (not including any null terminator) or _destination buffer size_
@@ -664,8 +664,8 @@ ninja install  # Install ss8str.h and the manual pages
 ninja htmlman  # Generate the HTML manual pages (requires groff)
 ```
 
-See the [Meson documentation](https://mesonbuild.com/Commands.html) or `meson
---help` for how to set the install location (prefix) and other details.
+See the [Meson documentation](https://mesonbuild.com/Commands.html) or
+`meson --help` for how to set the install location (prefix) and other details.
 
 ### Test coverage
 
@@ -684,8 +684,8 @@ ninja coverage-html
 I try to maintain near-perfect coverage for the functions in `ss8str.h`, with
 the exception of assertions, codepaths leading to panics, compile-time disabled
 code, and (very few) codepaths that cannot be tested without buffers sized near
-`INT_MAX` or larger. But unit tests should strive to test as many edge cases
-as possible, not merely exercise every line of code.
+`INT_MAX` or larger. But unit tests should strive to test as many edge cases as
+possible, not merely exercise every line of code.
 
 ## Customization
 
@@ -702,10 +702,10 @@ size is important.
 
 If the macro `SSSTR_USE_NONSTATIC_INLINE` is defined, **Ssstr** functions will
 be defined as plain `inline`, so that duplicate copies of the functions will
-not be generated. Because of the way [C inline
-functions](https://en.cppreference.com/w/c/language/inline) work, the macro
-`SSSTR_DEFINE_EXTERN_INLINE` must also be defined in one (and only one) of the
-translation units.
+not be generated. Because of the way
+[C inline functions](https://en.cppreference.com/w/c/language/inline) work, the
+macro `SSSTR_DEFINE_EXTERN_INLINE` must also be defined in one (and only one)
+of the translation units.
 
 ### Customizing memory allocation
 
@@ -749,9 +749,9 @@ the likelihood of spotting bugs due to erroneous access to indeterminate data.
 
 ### Customizing error handling
 
-By default, if memory allocation fails or if the size of a result is computed to
-be larger than `size_t` can express, **Ssstr** will print a message to `stderr`
-and call `abort()`.
+By default, if memory allocation fails or if the size of a result is computed
+to be larger than `size_t` can express, **Ssstr** will print a message to
+`stderr` and call `abort()`.
 
 You can customize this behavior by defining the macros
 `SSSTR_OUT_OF_MEMORY(bytes)` and `SSSTR_SIZE_OVERFLOW()`.
@@ -767,8 +767,8 @@ than `SIZE_MAX - 1`.
 It is meant to be safe to call `longjmp()` from inside these 2 macros, but this
 has not been tested.
 
-Note that the string formatting functions `ss8_[cat_][v]s[n]printf()` can
-(at least in theory) encounter additional errors that will lead to a call to
+Note that the string formatting functions `ss8_[cat_][v]s[n]printf()` can (at
+least in theory) encounter additional errors that will lead to a call to
 `abort()`. These include the result of string formatting being greater than or
 equal to `INT_MAX` bytes or `vs[n]printf()` returning a negative number for
 some other reason. Handling of these is not customizable. Programs that want
@@ -783,7 +783,7 @@ An `ss8str` occupies 32 bytes on 64-bit platforms. Depending on the current
 capacity (not including null terminator), one of two layouts is used. Capacity
 is never less than 31.
 
-Small string (capacity = 31; length <= 31):
+Small string (capacity = 31; length \<= 31):
 
 ```text
 +----------------------------------------------------+-----+
@@ -810,8 +810,8 @@ Large string (capacity > 31; any length):
 ```
 
 Dynamically allocated memory at `ptr` stores the null-terminated string.
-Capacity is `bufsize - 1` (for null terminator).
-Byte 31 always contains `0xFF` to distinguish from small strings.
+Capacity is `bufsize - 1` (for null terminator). Byte 31 always contains `0xFF`
+to distinguish from small strings.
 
 On 32-bit platforms, an `ss8str` occupies 16 bytes and the capacity is never
 less than 15.

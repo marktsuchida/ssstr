@@ -50,18 +50,18 @@ def read_page(path):
         if firstline.startswith(".so "):
             assert (
                 len(firstline.split()) == 2
-            ), f".so must be followed by one word"
+            ), ".so must be followed by one word"
             page["so"] = firstline.split()[1]
             assert (
                 len(lines) == 1
-            ), f"file with .so must not have additional lines"
+            ), "file with .so must not have additional lines"
             return page
 
-        assert firstline.startswith(".TH "), f"first line must be .so or .TH"
+        assert firstline.startswith(".TH "), "first line must be .so or .TH"
         items = shlex.split(firstline, posix=False)
         assert (
             len(items) == 6
-        ), f".TH must be followed by 5 possibly-quoted words"
+        ), ".TH must be followed by 5 possibly-quoted words"
         page["header_title"] = items[1]
         page["header_section"] = items[2]
         page["header_date"] = items[3]
@@ -185,9 +185,9 @@ def check_SEE_ALSO(page):
         assert line.startswith(".BR ")
         items.append(line[len(".BR ") :].rstrip())
     assert len(items)
-    assert items[-1].endswith(")"), f"last SEE ALSO item must end with ')'"
+    assert items[-1].endswith(")"), "last SEE ALSO item must end with ')'"
     for item in items[:-1]:
-        assert item.endswith(","), f"non-last SEE ALSO item must end with ','"
+        assert item.endswith(","), "non-last SEE ALSO item must end with ','"
     items = [item.rstrip(",") for item in items]
     item_sect = []
     for item in items:
@@ -202,7 +202,6 @@ def check_SEE_ALSO(page):
             "ssstr",
             "7",
         ), "last item of SEE ALSO must be ssstr(7)"
-        exclude_from_sort = 1
         sorted_item_sect = sorted(
             item_sect[:-1], key=lambda i: (i[1], i[0])
         ) + [item_sect[-1]]
@@ -468,7 +467,7 @@ def check_manpages(paths):
 
         try:
             page = read_page(path)
-        except:
+        except BaseException:
             print(f"While reading {path}:", file=sys.stderr)
             raise
         page["primary"] = primary
@@ -479,7 +478,7 @@ def check_manpages(paths):
             try:
                 check_internally(page)
                 pages[primary] = page
-            except:
+            except BaseException:
                 print(f"While checking {path}:", file=sys.stderr)
                 raise
 
@@ -526,9 +525,9 @@ def read_header(header_path):
 
 
 def check_prototypes(pages, header_prototypes):
-    man_prototypes = set(
+    man_prototypes = {
         proto for page in pages.values() for proto in page["prototypes"]
-    )
+    }
 
     not_in_man = header_prototypes - man_prototypes
     n_not_in_man = len(not_in_man)
@@ -563,7 +562,7 @@ def get_prototype_func_name(prototype):
 
 def check_intro_listing(intro_page, header_prototypes):
     intro_funcs = intro_page["functions"]
-    header_funcs = set(get_prototype_func_name(p) for p in header_prototypes)
+    header_funcs = {get_prototype_func_name(p) for p in header_prototypes}
 
     not_in_intro = header_funcs - intro_funcs
     n_not_in_intro = len(not_in_intro)
@@ -627,10 +626,9 @@ def snippet_checksum(snippet):
 
 
 def check_examples(pages, example_test_paths):
-    test_cksums = dict(
-        (snippet_checksum(s), s)
-        for s in read_test_snippets(example_test_paths)
-    )
+    test_cksums = {
+        snippet_checksum(s): s for s in read_test_snippets(example_test_paths)
+    }
     for page in pages.values():
         if "snippets" not in page:
             continue
@@ -642,7 +640,7 @@ def check_examples(pages, example_test_paths):
                 print(f"Snippet in {title} (normalized):", file=sys.stderr)
                 print(normsnip, file=sys.stderr)
                 print(
-                    f"Most similar snippet(s) in tests (normalized):",
+                    "Most similar snippet(s) in tests (normalized):",
                     file=sys.stderr,
                 )
                 candidates = [
