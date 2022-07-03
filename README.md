@@ -62,12 +62,18 @@ pages](https://marktsuchida.github.io/ssstr/man7/ssstr.7.html).
 Strings are represented by the type `ss8str`. An `ss8str` must be initialized
 before any use by passing its address to `ss8_init()`:
 
-<!-- TEST_SNIPPET -->
+<!--
+%TEST_SNIPPET
+-->
+
 ```c
 ss8str s;
 ss8_init(&s);
 ```
-<!-- SNIPPET_EPILOGUE ss8_destroy(&s); -->
+
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&s);
+-->
 
 Note that directly assgning to, or initializing, an already initialized
 `ss8str` results in undefined behavior.
@@ -78,9 +84,12 @@ it is part of a larger data structure.
 After use, an `ss8str` must be destroyed in order to release any dynamically
 allocated memory it may have used:
 
-<!-- TEST_SNIPPET -->
-<!-- SNIPPET_PROLOGUE ss8str s; -->
-<!-- SNIPPET_PROLOGUE ss8_init(&s); -->
+<!--
+%TEST_SNIPPET
+%SNIPPET_PROLOGUE ss8str s;
+%SNIPPET_PROLOGUE ss8_init(&s);
+-->
+
 ```c
 ss8_destroy(&s);
 ```
@@ -95,7 +104,10 @@ behavior.
 Instead of `ss8_init()`, you can use one of the other "init" functions to set
 the string upon creation:
 
-<!-- TEST_SNIPPET -->
+<!--
+%TEST_SNIPPET
+-->
+
 ```c
 ss8str greeting, another, bytes012, comma, fortran_indent;
 ss8_init_copy_cstr(&greeting, "Hello");
@@ -118,7 +130,10 @@ ss8_destroy(&fortran_indent);
 There is a set of similar functions to set the contents of an existing (already
 initialized) `ss8str`, overwriting whatever it contained:
 
-<!-- TEST_SNIPPET -->
+<!--
+%TEST_SNIPPET
+-->
+
 ```c
 ss8str s, t;
 ss8_init(&s);
@@ -139,7 +154,10 @@ ss8_destroy(&t);
 
 ### Accessing contents
 
-<!-- TEST_SNIPPET -->
+<!--
+%TEST_SNIPPET
+-->
+
 ```c
 ss8str example;
 ss8_init_copy_cstr(&example, "Hello");
@@ -159,11 +177,14 @@ char last = ss8_back(&example);             // 'o'
 
 ss8_destroy(&example);
 ```
-<!-- SNIPPET_EPILOGUE (void)len; -->
-<!-- SNIPPET_EPILOGUE (void)e; -->
-<!-- SNIPPET_EPILOGUE (void)ch; -->
-<!-- SNIPPET_EPILOGUE (void)first; -->
-<!-- SNIPPET_EPILOGUE (void)last; -->
+
+<!--
+%SNIPPET_EPILOGUE (void)len;
+%SNIPPET_EPILOGUE (void)e;
+%SNIPPET_EPILOGUE (void)ch;
+%SNIPPET_EPILOGUE (void)first;
+%SNIPPET_EPILOGUE (void)last;
+-->
 
 Note that the result of `ss8_len(&s)` and `strlen(ss8_const_cstr(&s))` would
 differ if the string contained embedded null bytes.
@@ -174,7 +195,10 @@ not it contains embedded null bytes.
 
 ### Mutating characters
 
-<!-- TEST_SNIPPET -->
+<!--
+%TEST_SNIPPET
+-->
+
 ```c
 ss8str s;
 ss8_init_copy_cstr(&s, "ABCDE");
@@ -235,7 +259,10 @@ The standard library function `strftime()` returns the number of bytes written
 determine the necessary buffer size beforehand. It is therefore most correct to
 call it with successively increasing buffer sizes:
 
-<!-- TEST_SNIPPET -->
+<!--
+%TEST_SNIPPET
+-->
+
 ```c
 // UTC time when Earth was closest to the Sun in 2022.
 struct tm perihelion = {
@@ -260,7 +287,10 @@ printf("%s\n", ss8_const_cstr(&datetime));
 
 ss8_destroy(&datetime);
 ```
-<!-- SNIPPET_EPILOGUE TEST_ASSERT_EQUAL_size_t(23, len); -->
+
+<!--
+%SNIPPET_EPILOGUE TEST_ASSERT_EQUAL_size_t(23, len);
+-->
 
 This example might be slightly superfluous because the format string used here
 results in a fixed 23-byte result, but it is meant as a demonstration for this
@@ -274,7 +304,10 @@ allocation.
 Conversely, you may have an `ss8str` and wish to write an API function for
 regular C string users. This is even easier:
 
-<!-- TEST_SNIPPET COMPILE_ONLY FILE_SCOPE -->
+<!--
+%TEST_SNIPPET COMPILE_ONLY FILE_SCOPE
+-->
+
 ```c
 // Returns length that would have been written given sufficient bufsize.
 // Can call with buf == NULL to determine required size.
@@ -297,10 +330,13 @@ There is also the variant `ss8_copy_to_bytes()`, which does the same thing as
 
 ### Concatenating and assembling strings
 
-<!-- TEST_SNIPPET COMPILE_ONLY -->
-<!-- SNIPPET_PROLOGUE ss8str dest, src; -->
-<!-- SNIPPET_PROLOGUE char *cstr = 0, *buf = 0; -->
-<!-- SNIPPET_PROLOGUE size_t len = 0, count = 0; -->
+<!--
+%TEST_SNIPPET COMPILE_ONLY
+%SNIPPET_PROLOGUE ss8str dest, src;
+%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE size_t len = 0, count = 0;
+-->
+
 ```c
 ss8_cat(&dest, &src);
 ss8_cat_cstr(&dest, cstr);
@@ -320,7 +356,10 @@ frequent reallocations.
 However, if you know the exact or approximate final length of the string, it is
 even more efficient to allocate the required capacity upfront:
 
-<!-- TEST_SNIPPET -->
+<!--
+%TEST_SNIPPET
+-->
+
 ```c
 ss8str s;
 ss8_init(&s);
@@ -358,7 +397,10 @@ Most of the functions that take an `ss8str *` as the first argument and modify
 the string also return the first argument. This can be used to chain multiple
 function calls (although it becomes nearly unreadable beyond 2 or 3 calls).
 
-<!-- TEST_SNIPPET -->
+<!--
+%TEST_SNIPPET
+-->
+
 ```c
 char const *heading = "error: ", *message = strerror(ERANGE);
 ss8str log_line;
@@ -374,8 +416,11 @@ linked list element). If you want to set that string to one that you have in a
 local variable, but no longer need the local copy, you can do a swap to avoid
 making a copy of the whole string:
 
-<!-- TEST_SNIPPET COMPILE_ONLY -->
-<!-- SNIPPET_PROLOGUE ss8str s1, s2; -->
+<!--
+%TEST_SNIPPET COMPILE_ONLY
+%SNIPPET_PROLOGUE ss8str s1, s2;
+-->
+
 ```c
 // Swaps the contents of the two strings s1 and s2:
 ss8_swap(&s1, &s2);
@@ -389,8 +434,11 @@ with an initialized one.
 When the operation is asymmetric, i.e., you want to move the value of `s2` into
 `s1`, but do not care what `s2` holds afterwards, you can use `ss8_move()`:
 
-<!-- TEST_SNIPPET COMPILE_ONLY -->
-<!-- SNIPPET_PROLOGUE ss8str s1, s2, s3, s4; -->
+<!--
+%TEST_SNIPPET COMPILE_ONLY
+%SNIPPET_PROLOGUE ss8str s1, s2, s3, s4;
+-->
+
 ```c
 ss8_move(&s1, &s2);  // Moves value of s2 into s1
 // s2 remains valid (must be destroyed later), but its value is now
@@ -404,9 +452,12 @@ There is also `ss8_init_move()` and `ss8_init_move_destroy()`.
 
 ### Getting substrings
 
-<!-- TEST_SNIPPET COMPILE_ONLY -->
-<!-- SNIPPET_PROLOGUE ss8str dest, src, s; -->
-<!-- SNIPPET_PROLOGUE size_t start = 0, len = 0; -->
+<!--
+%TEST_SNIPPET COMPILE_ONLY
+%SNIPPET_PROLOGUE ss8str dest, src, s;
+%SNIPPET_PROLOGUE size_t start = 0, len = 0;
+-->
+
 ```c
 ss8_copy_substr(&dest, &src, start, len);
 ss8_substr_inplace(&s, start, len);
@@ -414,10 +465,13 @@ ss8_substr_inplace(&s, start, len);
 
 ### Inserting, erasing, and replacing
 
-<!-- TEST_SNIPPET COMPILE_ONLY -->
-<!-- SNIPPET_PROLOGUE ss8str dest, src; -->
-<!-- SNIPPET_PROLOGUE char *cstr = 0, *buf = 0; -->
-<!-- SNIPPET_PROLOGUE size_t pos = 0, len = 0, buflen = 0, count = 0; -->
+<!--
+%TEST_SNIPPET COMPILE_ONLY
+%SNIPPET_PROLOGUE ss8str dest, src;
+%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE size_t pos = 0, len = 0, buflen = 0, count = 0;
+-->
+
 ```c
 // Insert the given string or char(s) at the given position
 ss8_insert(&dest, pos, &src);
@@ -439,10 +493,13 @@ ss8_replace_ch_n(&dest, pos, len, 'c', count);
 
 ### Comparing strings
 
-<!-- TEST_SNIPPET COMPILE_ONLY -->
-<!-- SNIPPET_PROLOGUE ss8str lhs, rhs, s, prefix, suffix, infix; -->
-<!-- SNIPPET_PROLOGUE char *cstr = 0, *buf = 0; -->
-<!-- SNIPPET_PROLOGUE size_t len = 0; -->
+<!--
+%TEST_SNIPPET COMPILE_ONLY
+%SNIPPET_PROLOGUE ss8str lhs, rhs, s, prefix, suffix, infix;
+%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE size_t len = 0;
+-->
+
 ```c
 // Return <0, ==0, or >0, as with strcmp() or memcmp():
 ss8_cmp(&lhs, &rhs);
@@ -477,10 +534,13 @@ ss8_contains_ch(&s, 'c');
 
 ### Searching strings
 
-<!-- TEST_SNIPPET COMPILE_ONLY -->
-<!-- SNIPPET_PROLOGUE ss8str haystack, needle, needles; -->
-<!-- SNIPPET_PROLOGUE char *cstr = 0, *buf = 0; -->
-<!-- SNIPPET_PROLOGUE size_t start = 0, len = 0; -->
+<!--
+%TEST_SNIPPET COMPILE_ONLY
+%SNIPPET_PROLOGUE ss8str haystack, needle, needles;
+%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE size_t start = 0, len = 0;
+-->
+
 ```c
 // Search forward from start; return position, or SIZE_MAX if not found:
 ss8_find(&haystack, start, &needle);
@@ -519,10 +579,13 @@ ss8_find_last_not_of_bytes(&haystack, start, buf, len);
 
 ### Stripping characters off the ends
 
-<!-- TEST_SNIPPET COMPILE_ONLY -->
-<!-- SNIPPET_PROLOGUE ss8str s, chars; -->
-<!-- SNIPPET_PROLOGUE char *cstr = 0, *buf = 0; -->
-<!-- SNIPPET_PROLOGUE size_t len = 0; -->
+<!--
+%TEST_SNIPPET COMPILE_ONLY
+%SNIPPET_PROLOGUE ss8str s, chars;
+%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE size_t len = 0;
+-->
+
 ```c
 // Remove any chars in 'chars' from either end of s:
 ss8_strip(&s, &chars);
@@ -569,7 +632,10 @@ In particular, any `"%s"` format specifier requires a corresponding standard
 null-terminated string, so you need to use `ss8_const_cstr()` if printing an
 `ss8str`:
 
-<!-- TEST_SNIPPET -->
+<!--
+%TEST_SNIPPET
+-->
+
 ```c
 ss8str warning, dest;
 ss8_init_copy_cstr(&warning, "I'm not a C string");

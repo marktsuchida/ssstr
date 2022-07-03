@@ -7,17 +7,23 @@
 
 # Syntax for snippets in README.md:
 #
-# <!-- TEST_SNIPPET [args] -->
-# <!-- SNIPPET_PROLOGUE [Extra C code] -->
-# <!-- SNIPPET_PROLOGUE [Extra C code] -->
+# <!--
+# %TEST_SNIPPET [args]
+# %SNIPPET_PROLOGUE [Extra C code]
+# %SNIPPET_PROLOGUE [Extra C code]
+# -->
+#
 # ```c
 # [Example C code]
 # [Example C code]
 # ```
-# <!-- SNIPPET_EPILOGUE [Extra C code] -->
-# <!-- SNIPPET_EPILOGUE [Extra C code] -->
 #
-# Where args (space-separated) can include the following:
+# <!--
+# %SNIPPET_EPILOGUE [Extra C code]
+# %SNIPPET_EPILOGUE [Extra C code]
+# -->
+#
+# Where 'args' (space-separated) can include the following:
 # - COMPILE_ONLY -- do not execute the snippet, only check that it compiles
 # - FILE_SCOPE -- do not wrap in a function
 
@@ -26,44 +32,91 @@ import re
 import sys
 
 
+def parse_snippet_lines(lines):
+    it = enumerate(lines)
+    i = -1
+    try:
+        while True:
+            i, line = next(it)
+            if line.startswith("%TEST_SNIPPET"):
+                words = line.split()
+                yield i, "snippet", (words[1:] if len(words) > 1 else [])
+            elif line.startswith("%SNIPPET_PROLOGUE"):
+                yield i, "prologue", line.split(None, 1)[1]
+            elif line.startswith("%SNIPPET_EPILOGUE"):
+                yield i, "epilogue", line.split(None, 1)[1]
+            elif line.rstrip() == "```c":
+                start = i
+                lines = []
+                while True:
+                    i, line = next(it)
+                    if line.rstrip() == "```":
+                        break
+                    lines.append(line)
+                yield start, "code", lines
+    except StopIteration:
+        yield i, "eof", ()
+
+
+def assemble_snippets(parser):
+    i, kind, content = next(parser)
+    while True:
+        if kind == "snippet":
+            start = i
+            lines = []
+            compile_only = "COMPILE_ONLY" in content
+            file_scope = "FILE_SCOPE" in content
+            for flag in content:
+                assert flag in ("COMPILE_ONLY", "FILE_SCOPE")
+            while True:
+                i, kind, content = next(parser)
+                if kind == "prologue":
+                    lines.append(content)
+                else:
+                    break
+            assert kind == "code"
+            lines.extend(content)
+            while True:
+                i, kind, content = next(parser)
+                if kind == "epilogue":
+                    lines.append(content)
+                else:
+                    break
+            yield start, compile_only, file_scope, lines
+            continue
+        elif kind == "code":  # Code fence that is not a snippet
+            i, kind, content = next(parser)
+            continue
+        elif kind == "eof":
+            return
+        else:
+            lineno = i + 1
+            print(
+                f"Expected snippet or end of file; found {kind} at line {lineno}",
+                file=sys.stderr,
+            )
+            assert False
+
+
 def write_snippet_tests(readme_path, test_source_path):
     with open(readme_path) as infile:
         lines = infile.readlines()
 
     funcs = []
     tests = []
-    for i, line in enumerate(lines):
-        if line.startswith("<!-- TEST_SNIPPET "):
-            lineno = i + 1
-            words = line.split()
-            assert words[-1] == "-->"
-            args = words[2:-1]
-            prologue = []
-            j = i + 1
-            while lines[j].startswith("<!-- SNIPPET_PROLOGUE "):
-                prologue.append(" ".join(lines[j].split()[2:-1]) + "\n")
-                j += 1
-            assert lines[j].rstrip() == "```c"
-            snippet = []
-            k = j + 1
-            while lines[k].rstrip() != "```":
-                snippet.append(lines[k])
-                k += 1
-            epilogue = []
-            l = k + 1
-            while lines[l].startswith("<!-- SNIPPET_EPILOGUE "):
-                epilogue.append(" ".join(lines[l].split()[2:-1]) + "\n")
-                l += 1
-            snippet = prologue + snippet + epilogue
-            func = f"snippet_at_line_{lineno}"
-            if "FILE_SCOPE" not in args:
-                snippet.insert(0, f"void {func}(void) {{\n")
-                snippet.append("}\n")
-            else:
-                snippet.insert(0, f"// Snippet at line {lineno}")
-            if "COMPILE_ONLY" not in args:
-                tests.append(func)
-            funcs.append("".join(snippet))
+    for i, compile_only, file_scope, lines in assemble_snippets(
+        parse_snippet_lines(lines)
+    ):
+        lineno = i + 1
+        func = f"snippet_at_line_{lineno}"
+        if file_scope:
+            lines.insert(0, f"// Snippet at line {lineno}\n")
+        else:
+            lines.insert(0, f"void {func}(void) {{\n")
+            lines.append("}\n")
+        funcs.append("".join(lines))
+        if not compile_only:
+            tests.append(func)
 
     with open(test_source_path, "w") as outfile:
         outfile.write(
