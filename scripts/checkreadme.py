@@ -1,5 +1,5 @@
 # This file is part of the Ssstr string library.
-# Copyright 2022, Board of Regents of the University of Wisconsin System
+# Copyright 2022 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
 # Check that README.md mentions every function, and extract example snippets

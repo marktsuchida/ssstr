@@ -2,7 +2,7 @@
  * ss8str.h, version 0.1.0-dev
  *
  * This file is part of the Ssstr string library.
- * Copyright 2022, Board of Regents of the University of Wisconsin System
+ * Copyright 2022 Board of Regents of the University of Wisconsin System
  * SPDX-License-Identifier: MIT
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
