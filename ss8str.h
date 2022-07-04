@@ -422,15 +422,15 @@ SSSTR_INLINE ss8str *ss8_snprintf(ss8str *SSSTR_RESTRICT dest, size_t maxlen,
 
 enum { ss8iNtErNaL_shortbufsiz = sizeof(ss8str) };
 enum { ss8iNtErNaL_shortcap = ss8iNtErNaL_shortbufsiz - 1 };
-enum { ss8iNtErNaL_longmode = -1 };
+#define ss8iNtErNaL_longmode ((char)-1)
 
 SSSTR_INLINE void ss8iNtErNaL_extra_assert_invariants(ss8str const *str);
 SSSTR_INLINE_DEF void ss8iNtErNaL_extra_assert_invariants(ss8str const *str) {
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
     if (lastbyte != ss8iNtErNaL_longmode) {
         SSSTR_EXTRA_ASSERT_MSG("short string invariant",
-                               lastbyte >= 0 &&
-                                   lastbyte < ss8iNtErNaL_shortbufsiz);
+                               ((unsigned char)lastbyte) <
+                                   ss8iNtErNaL_shortbufsiz);
         SSSTR_EXTRA_ASSERT_MSG(
             "short string invariant",
             str->iNtErNaL_S[ss8iNtErNaL_shortcap - lastbyte] == '\0');
@@ -470,7 +470,7 @@ SSSTR_INLINE_DEF void ss8_destroy(ss8str *str) {
     ss8iNtErNaL_extra_assert_invariants(str);
 
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
-    if (lastbyte == -1) {
+    if (lastbyte == ss8iNtErNaL_longmode) {
         SSSTR_ASSERT_MSG("not a double-free", str->iNtErNaL_L.ptr != NULL);
         SSSTR_FREE(str->iNtErNaL_L.ptr);
     }
@@ -583,8 +583,9 @@ SSSTR_INLINE_DEF ss8str *ss8_set_back(ss8str *str, char ch) {
 
 // Only call this when an allocation is required. This 'impl' function is made
 // separate so that it is more likely that the initial check will be inlined.
-SSSTR_INLINE void ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap);
-SSSTR_INLINE_DEF void ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap) {
+// Returns pointer to string buffer.
+SSSTR_INLINE char *ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap);
+SSSTR_INLINE_DEF char *ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap) {
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
     if (lastbyte != ss8iNtErNaL_longmode) {
         char *p = SSSTR_CHARP_MALLOC(cap + 1);
@@ -620,19 +621,26 @@ SSSTR_INLINE_DEF void ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap) {
         str->iNtErNaL_L.bufsiz = cap + 1;
         str->iNtErNaL_L.ptr = p;
     }
+    return str->iNtErNaL_L.ptr;
 }
 
-SSSTR_INLINE_DEF ss8str *ss8_reserve(ss8str *str, size_t capacity) {
+SSSTR_INLINE char *ss8iNtErNaL_reserve(ss8str *str, size_t capacity);
+SSSTR_INLINE_DEF char *ss8iNtErNaL_reserve(ss8str *str, size_t capacity) {
     SSSTR_EXTRA_ASSERT(str != NULL);
     ss8iNtErNaL_extra_assert_invariants(str);
     if (capacity >= ss8iNtErNaL_bufsize(str))
-        ss8iNtErNaL_reserve_impl(str, capacity);
+        return ss8iNtErNaL_reserve_impl(str, capacity);
+    return ss8_cstr(str);
+}
+
+SSSTR_INLINE_DEF ss8str *ss8_reserve(ss8str *str, size_t capacity) {
+    ss8iNtErNaL_reserve(str, capacity);
     return str;
 }
 
 SSSTR_INLINE_DEF void ss8_set_len(ss8str *str, size_t newlen) {
-    ss8_reserve(str, newlen);
-    ss8_cstr(str)[newlen] = '\0';
+    char *buf = ss8iNtErNaL_reserve(str, newlen);
+    buf[newlen] = '\0';
 #ifdef SSSTR_EXTRA_DEBUG
     // Fill any uninitialized portion with a recognizable character.
     size_t oldlen = ss8_len(str);
@@ -857,7 +865,8 @@ SSSTR_INLINE_DEF bool ss8_copy_to_bytes(ss8str const *SSSTR_RESTRICT str,
         did_fit = false;
     }
 
-    if (copylen > 0)
+    // Redundant check for bufsize to avoid -Wnonnull from some builds of GCC.
+    if (copylen > 0 && bufsize > 0)
         memcpy(buf, ss8_const_cstr(str), copylen);
     return did_fit;
 }
@@ -878,7 +887,8 @@ SSSTR_INLINE_DEF bool ss8_copy_to_cstr(ss8str const *SSSTR_RESTRICT str,
 
     // We could use strncpy(), but the principle of least surprises probably
     // means that we should copy any part after an internal '\0' as well.
-    if (copylen_plus1 > 1)
+    // Redundant check for bufsize to avoid -Wnonnull from some builds of GCC.
+    if (copylen_plus1 > 1 && bufsize > 0)
         memcpy(buf, ss8_const_cstr(str), copylen_plus1 - 1);
     if (copylen_plus1 > 0)
         buf[copylen_plus1 - 1] = '\0';
@@ -1229,6 +1239,8 @@ SSSTR_INLINE_DEF bool ss8_equals_bytes(ss8str const *lhs, char const *rhs,
     size_t llen = ss8_len(lhs);
     if (llen != rhslen)
         return false;
+    if (rhslen == 0) // This check needed to avoid GCC -Wnonnull
+        return true;
     return memcmp(ss8_const_cstr(lhs), rhs, llen) == 0;
 }
 
@@ -1316,9 +1328,9 @@ SSSTR_INLINE_DEF size_t ss8_rfind_bytes(ss8str const *haystack, size_t start,
     char const *rbegin = h + start;
     if (rbegin >= end)
         rbegin = end - 1;
-    char const *rend = h - 1;
+    // Avoid 'rend = h - 1' because GCC -Warray-bounds will flag it.
 
-    for (char const *p = rbegin; p > rend; --p) {
+    for (char const *p = rbegin; p >= h; --p) {
         // Pay the price of a function call only when first byte matches.
         if (*p != needle[0])
             continue;

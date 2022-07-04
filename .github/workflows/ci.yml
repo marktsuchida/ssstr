@@ -1,0 +1,94 @@
+# This file is part of the Ssstr string library.
+# Copyright 2022 Board of Regents of the University of Wisconsin System
+# SPDX-License-Identifier: MIT
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - uses: pre-commit/action@v3.0.0
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu
+          - macos
+          - windows
+        compiler:
+          - gcc
+          - clang
+          - clang-cl
+          - msvc
+        exclude:
+          - os: ubuntu
+            compiler: msvc
+          - os: ubuntu
+            compiler: clang-cl
+          - os: macos
+            compiler: msvc
+          - os: macos
+            compiler: clang-cl
+          - os: windows
+            compiler: clang
+        include:
+          - os: ubuntu
+            runner: ubuntu-latest
+          - os: macos
+            runner: macos-latest
+          - os: windows
+            runner: windows-latest
+          - compiler: gcc
+            cc: gcc
+            cxx: g++
+          - compiler: clang
+            cc: clang
+            cxx: clang++
+          - compiler: clang-cl
+            cc: clang-cl
+            cxx: clang-cl
+          - compiler: msvc
+            cc: cl
+            cxx: cl
+          - os: macos
+            compiler: gcc
+            # macOS has gcc/g++ pointing to clang/clang++
+            cc: gcc-11
+            cxx: g++-11
+    name: test-${{ matrix.os }}-${{ matrix.compiler }}
+    runs-on: ${{ matrix.runner }}
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install tools
+        run: |
+          python -m pip install --upgrade pip meson ninja
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Build and test (debug)
+        run: |
+          meson setup build-debug --buildtype debug
+          meson dist -C build-debug
+      - name: Build and test (release)
+        run: |
+          meson setup build-release --buildtype release
+          meson dist -C build-release

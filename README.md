@@ -279,7 +279,7 @@ size_t len = 0;
 while (!len) {
     ss8_grow_len(&datetime, SIZE_MAX, SIZE_MAX);
     len = strftime(ss8_cstr(&datetime), ss8_len(&datetime) + 1,
-                   "%F %T UTC", &perihelion);
+                   "%Y-%m-%d %H:%M:%S UTC", &perihelion);
 }
 ss8_set_len(&datetime, len);
 
@@ -331,9 +331,11 @@ There is also the variant `ss8_copy_to_bytes()`, which does the same thing as
 ### Concatenating and assembling strings
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str dest, src;
-%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE ss8_init(&dest);
+%SNIPPET_PROLOGUE ss8_init(&src);
+%SNIPPET_PROLOGUE char const *cstr = "", *buf = "";
 %SNIPPET_PROLOGUE size_t len = 0, count = 0;
 -->
 
@@ -344,6 +346,11 @@ ss8_cat_bytes(&dest, buf, len);
 ss8_cat_ch(&dest, 'c');
 ss8_cat_ch_n(&dest, 'c', count);
 ```
+
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&dest);
+%SNIPPET_EPILOGUE ss8_destroy(&src);
+-->
 
 #### Reserving space
 
@@ -417,14 +424,21 @@ local variable, but no longer need the local copy, you can do a swap to avoid
 making a copy of the whole string:
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str s1, s2;
+%SNIPPET_PROLOGUE ss8_init(&s1);
+%SNIPPET_PROLOGUE ss8_init(&s2);
 -->
 
 ```c
 // Swaps the contents of the two strings s1 and s2:
 ss8_swap(&s1, &s2);
 ```
+
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&s1);
+%SNIPPET_EPILOGUE ss8_destroy(&s2);
+-->
 
 For `ss8_swap()`, the two strings must not be the same `ss8str` object, or else
 undefined behavior will result. Also, the two `ss8str` objects must be valid
@@ -435,8 +449,12 @@ When the operation is asymmetric, i.e., you want to move the value of `s2` into
 `s1`, but do not care what `s2` holds afterwards, you can use `ss8_move()`:
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str s1, s2, s3, s4;
+%SNIPPET_PROLOGUE ss8_init(&s1);
+%SNIPPET_PROLOGUE ss8_init(&s2);
+%SNIPPET_PROLOGUE ss8_init(&s3);
+%SNIPPET_PROLOGUE ss8_init(&s4);
 -->
 
 ```c
@@ -448,13 +466,22 @@ ss8_move_destroy(&s3, &s4);  // Moves value of s4 into s3
 // s4 is destroyed and must be initialized before reuse
 ```
 
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&s1);
+%SNIPPET_EPILOGUE ss8_destroy(&s2);
+%SNIPPET_EPILOGUE ss8_destroy(&s3);
+-->
+
 There is also `ss8_init_move()` and `ss8_init_move_destroy()`.
 
 ### Getting substrings
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str dest, src, s;
+%SNIPPET_PROLOGUE ss8_init(&dest);
+%SNIPPET_PROLOGUE ss8_init(&src);
+%SNIPPET_PROLOGUE ss8_init(&s);
 %SNIPPET_PROLOGUE size_t start = 0, len = 0;
 -->
 
@@ -463,12 +490,20 @@ ss8_copy_substr(&dest, &src, start, len);
 ss8_substr_inplace(&s, start, len);
 ```
 
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&dest);
+%SNIPPET_EPILOGUE ss8_destroy(&src);
+%SNIPPET_EPILOGUE ss8_destroy(&s);
+-->
+
 ### Inserting, erasing, and replacing
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str dest, src;
-%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE ss8_init(&dest);
+%SNIPPET_PROLOGUE ss8_init(&src);
+%SNIPPET_PROLOGUE char const *cstr = "", *buf = "";
 %SNIPPET_PROLOGUE size_t pos = 0, len = 0, buflen = 0, count = 0;
 -->
 
@@ -491,12 +526,23 @@ ss8_replace_ch(&dest, pos, len, 'c');
 ss8_replace_ch_n(&dest, pos, len, 'c', count);
 ```
 
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&dest);
+%SNIPPET_EPILOGUE ss8_destroy(&src);
+-->
+
 ### Comparing strings
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str lhs, rhs, s, prefix, suffix, infix;
-%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE ss8_init(&lhs);
+%SNIPPET_PROLOGUE ss8_init(&rhs);
+%SNIPPET_PROLOGUE ss8_init(&s);
+%SNIPPET_PROLOGUE ss8_init(&prefix);
+%SNIPPET_PROLOGUE ss8_init(&suffix);
+%SNIPPET_PROLOGUE ss8_init(&infix);
+%SNIPPET_PROLOGUE char const *cstr = "", *buf = "";
 %SNIPPET_PROLOGUE size_t len = 0;
 -->
 
@@ -532,12 +578,24 @@ ss8_contains_bytes(&s, buf, len);
 ss8_contains_ch(&s, 'c');
 ```
 
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&lhs);
+%SNIPPET_EPILOGUE ss8_destroy(&rhs);
+%SNIPPET_EPILOGUE ss8_destroy(&s);
+%SNIPPET_EPILOGUE ss8_destroy(&prefix);
+%SNIPPET_EPILOGUE ss8_destroy(&suffix);
+%SNIPPET_EPILOGUE ss8_destroy(&infix);
+-->
+
 ### Searching strings
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str haystack, needle, needles;
-%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE ss8_init(&haystack);
+%SNIPPET_PROLOGUE ss8_init(&needle);
+%SNIPPET_PROLOGUE ss8_init(&needles);
+%SNIPPET_PROLOGUE char *cstr = "", *buf = "";
 %SNIPPET_PROLOGUE size_t start = 0, len = 0;
 -->
 
@@ -577,12 +635,20 @@ ss8_find_last_not_of_cstr(&haystack, start, cstr);
 ss8_find_last_not_of_bytes(&haystack, start, buf, len);
 ```
 
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&haystack);
+%SNIPPET_EPILOGUE ss8_destroy(&needle);
+%SNIPPET_EPILOGUE ss8_destroy(&needles);
+-->
+
 ### Stripping characters off the ends
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str s, chars;
-%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE ss8_init(&s);
+%SNIPPET_PROLOGUE ss8_init(&chars);
+%SNIPPET_PROLOGUE char *cstr = "", *buf = "";
 %SNIPPET_PROLOGUE size_t len = 0;
 -->
 
@@ -605,6 +671,11 @@ ss8_rstrip_cstr(&s, cstr);
 ss8_rstrip_bytes(&s, buf, len);
 ss8_rstrip_ch(&s, 'c');
 ```
+
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&s);
+%SNIPPET_EPILOGUE ss8_destroy(&chars);
+-->
 
 ### Formatting strings
 
