@@ -424,7 +424,7 @@ local variable, but no longer need the local copy, you can do a swap to avoid
 making a copy of the whole string:
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str s1, s2;
 %SNIPPET_PROLOGUE ss8_init(&s1);
 %SNIPPET_PROLOGUE ss8_init(&s2);
@@ -449,7 +449,7 @@ When the operation is asymmetric, i.e., you want to move the value of `s2` into
 `s1`, but do not care what `s2` holds afterwards, you can use `ss8_move()`:
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str s1, s2, s3, s4;
 %SNIPPET_PROLOGUE ss8_init(&s1);
 %SNIPPET_PROLOGUE ss8_init(&s2);
@@ -477,7 +477,7 @@ There is also `ss8_init_move()` and `ss8_init_move_destroy()`.
 ### Getting substrings
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str dest, src, s;
 %SNIPPET_PROLOGUE ss8_init(&dest);
 %SNIPPET_PROLOGUE ss8_init(&src);
