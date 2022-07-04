@@ -1,0 +1,50 @@
+# This file is part of the Ssstr string library.
+# Copyright 2022 Board of Regents of the University of Wisconsin System
+# SPDX-License-Identifier: MIT
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - uses: pre-commit/action@v3.0.0
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    name: test-${{ matrix.runner }}
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install tools
+        run: |
+          python -m pip install --upgrade pip meson ninja
+      - name: Build and test (debug)
+        run: |
+          meson setup build-debug --buildtype debug
+          meson dist -C build-debug
+      - name: Build and test (release)
+        run: |
+          meson setup build-release --buildtype release
+          meson dist -C build-release
