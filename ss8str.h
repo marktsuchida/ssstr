@@ -429,8 +429,8 @@ SSSTR_INLINE_DEF void ss8iNtErNaL_extra_assert_invariants(ss8str const *str) {
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
     if (lastbyte != ss8iNtErNaL_longmode) {
         SSSTR_EXTRA_ASSERT_MSG("short string invariant",
-                               lastbyte >= 0 &&
-                                   lastbyte < ss8iNtErNaL_shortbufsiz);
+                               ((unsigned char)lastbyte) <
+                                   ss8iNtErNaL_shortbufsiz);
         SSSTR_EXTRA_ASSERT_MSG(
             "short string invariant",
             str->iNtErNaL_S[ss8iNtErNaL_shortcap - lastbyte] == '\0');
