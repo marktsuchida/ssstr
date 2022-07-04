@@ -422,7 +422,7 @@ SSSTR_INLINE ss8str *ss8_snprintf(ss8str *SSSTR_RESTRICT dest, size_t maxlen,
 
 enum { ss8iNtErNaL_shortbufsiz = sizeof(ss8str) };
 enum { ss8iNtErNaL_shortcap = ss8iNtErNaL_shortbufsiz - 1 };
-enum { ss8iNtErNaL_longmode = -1 };
+#define ss8iNtErNaL_longmode ((char)-1)
 
 SSSTR_INLINE void ss8iNtErNaL_extra_assert_invariants(ss8str const *str);
 SSSTR_INLINE_DEF void ss8iNtErNaL_extra_assert_invariants(ss8str const *str) {
@@ -470,7 +470,7 @@ SSSTR_INLINE_DEF void ss8_destroy(ss8str *str) {
     ss8iNtErNaL_extra_assert_invariants(str);
 
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
-    if (lastbyte == -1) {
+    if (lastbyte == ss8iNtErNaL_longmode) {
         SSSTR_ASSERT_MSG("not a double-free", str->iNtErNaL_L.ptr != NULL);
         SSSTR_FREE(str->iNtErNaL_L.ptr);
     }
