@@ -279,7 +279,7 @@ size_t len = 0;
 while (!len) {
     ss8_grow_len(&datetime, SIZE_MAX, SIZE_MAX);
     len = strftime(ss8_cstr(&datetime), ss8_len(&datetime) + 1,
-                   "%F %T UTC", &perihelion);
+                   "%Y-%m-%d %H:%M:%S UTC", &perihelion);
 }
 ss8_set_len(&datetime, len);
 
