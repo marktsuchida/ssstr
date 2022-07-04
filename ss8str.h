@@ -1318,9 +1318,9 @@ SSSTR_INLINE_DEF size_t ss8_rfind_bytes(ss8str const *haystack, size_t start,
     char const *rbegin = h + start;
     if (rbegin >= end)
         rbegin = end - 1;
-    char const *rend = h - 1;
+    // Avoid 'rend = h - 1' because GCC -Warray-bounds will flag it.
 
-    for (char const *p = rbegin; p > rend; --p) {
+    for (char const *p = rbegin; p >= h; --p) {
         // Pay the price of a function call only when first byte matches.
         if (*p != needle[0])
             continue;
