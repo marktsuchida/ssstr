@@ -52,9 +52,25 @@ def get_external_link_targets():
     }
 
 
+def write_redirect(link, target):
+    redirect = f"""
+<!DOCTYPE html>
+<html>
+  <link rel="canonical" href="{target}">
+  <meta http-equiv="refresh" content="0; url={target}">
+</html>
+"""
+    with open(link, "w") as f:
+        f.write(redirect.lstrip())
+
+
 def generate_redirect(dest, src, link_targets):
     with open(src) as f:
-        words = f.readline().split()
+        while True:
+            line = f.readline()
+            if not line.startswith('.\\"'):
+                break
+        words = line.split()
         assert words[0] == ".so"
         realpage = words[1]
 
@@ -63,21 +79,7 @@ def generate_redirect(dest, src, link_targets):
     key = f"{name}({section})"
     target = link_targets[key]
 
-    html = f"""<!DOCTYPE html>
-<html lang="en-US">
-  <meta charset="utf-8">
-  <title>Redirecting&hellip;</title>
-  <link rel="canonical" href="{target}">
-  <script>location="{target}"</script>
-  <meta http-equiv="refresh" content="0; url={target}">
-  <meta name="robots" content="noindex">
-  <h1>Redirecting&hellip;</h1>
-  <a href="{target}">Click here if you are not redirected.</a>
-</html>
-"""
-
-    with open(dest, "w") as outfile:
-        outfile.write(html)
+    write_redirect(dest, target)
 
 
 def read_overprint_char(text, pos, end):
@@ -269,8 +271,11 @@ def add_html_header_footer(src, text):
 
 def generate_html(dest, src, groff, link_targets):
     with open(src) as f:
-        firstline = f.readline()
-        if firstline.startswith(".so "):
+        while True:
+            line = f.readline()
+            if not line.startswith('.\\"'):
+                break
+        if line.startswith(".so "):
             return generate_redirect(dest, src, link_targets)
 
     # On macOS groff seems to use overprint whether we like it or not, so let's
@@ -308,17 +313,7 @@ def generate(destdir, groff, manpage_paths):
             )
             raise
 
-    main_page = "man7/ssstr.7.html"
-    redirect = f"""
-<!DOCTYPE html>
-<html>
-  <link rel="canonical" href="{main_page}">
-  <meta http-equiv="refresh" content="0; url={main_page}">
-</html>
-"""
-
-    with open(os.path.join(destdir, "index.html"), "w") as f:
-        f.write(redirect.lstrip())
+    write_redirect(os.path.join(destdir, "index.html"), "man7/ssstr.7.html")
 
 
 def usage():
