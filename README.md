@@ -426,12 +426,19 @@ making a copy of the whole string:
 <!--
 %TEST_SNIPPET COMPILE_ONLY
 %SNIPPET_PROLOGUE ss8str s1, s2;
+%SNIPPET_PROLOGUE ss8_init(&s1);
+%SNIPPET_PROLOGUE ss8_init(&s2);
 -->
 
 ```c
 // Swaps the contents of the two strings s1 and s2:
 ss8_swap(&s1, &s2);
 ```
+
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&s1);
+%SNIPPET_EPILOGUE ss8_destroy(&s2);
+-->
 
 For `ss8_swap()`, the two strings must not be the same `ss8str` object, or else
 undefined behavior will result. Also, the two `ss8str` objects must be valid
@@ -444,6 +451,10 @@ When the operation is asymmetric, i.e., you want to move the value of `s2` into
 <!--
 %TEST_SNIPPET COMPILE_ONLY
 %SNIPPET_PROLOGUE ss8str s1, s2, s3, s4;
+%SNIPPET_PROLOGUE ss8_init(&s1);
+%SNIPPET_PROLOGUE ss8_init(&s2);
+%SNIPPET_PROLOGUE ss8_init(&s3);
+%SNIPPET_PROLOGUE ss8_init(&s4);
 -->
 
 ```c
@@ -454,6 +465,12 @@ ss8_move(&s1, &s2);  // Moves value of s2 into s1
 ss8_move_destroy(&s3, &s4);  // Moves value of s4 into s3
 // s4 is destroyed and must be initialized before reuse
 ```
+
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&s1);
+%SNIPPET_EPILOGUE ss8_destroy(&s2);
+%SNIPPET_EPILOGUE ss8_destroy(&s3);
+-->
 
 There is also `ss8_init_move()` and `ss8_init_move_destroy()`.
 
