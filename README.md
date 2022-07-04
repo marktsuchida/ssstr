@@ -331,11 +331,11 @@ There is also the variant `ss8_copy_to_bytes()`, which does the same thing as
 ### Concatenating and assembling strings
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str dest, src;
 %SNIPPET_PROLOGUE ss8_init(&dest);
 %SNIPPET_PROLOGUE ss8_init(&src);
-%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE char const *cstr = "", *buf = "";
 %SNIPPET_PROLOGUE size_t len = 0, count = 0;
 -->
 
@@ -499,11 +499,11 @@ ss8_substr_inplace(&s, start, len);
 ### Inserting, erasing, and replacing
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str dest, src;
 %SNIPPET_PROLOGUE ss8_init(&dest);
 %SNIPPET_PROLOGUE ss8_init(&src);
-%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE char const *cstr = "", *buf = "";
 %SNIPPET_PROLOGUE size_t pos = 0, len = 0, buflen = 0, count = 0;
 -->
 
@@ -534,7 +534,7 @@ ss8_replace_ch_n(&dest, pos, len, 'c', count);
 ### Comparing strings
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str lhs, rhs, s, prefix, suffix, infix;
 %SNIPPET_PROLOGUE ss8_init(&lhs);
 %SNIPPET_PROLOGUE ss8_init(&rhs);
@@ -542,7 +542,7 @@ ss8_replace_ch_n(&dest, pos, len, 'c', count);
 %SNIPPET_PROLOGUE ss8_init(&prefix);
 %SNIPPET_PROLOGUE ss8_init(&suffix);
 %SNIPPET_PROLOGUE ss8_init(&infix);
-%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE char const *cstr = "", *buf = "";
 %SNIPPET_PROLOGUE size_t len = 0;
 -->
 
@@ -590,12 +590,12 @@ ss8_contains_ch(&s, 'c');
 ### Searching strings
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str haystack, needle, needles;
 %SNIPPET_PROLOGUE ss8_init(&haystack);
 %SNIPPET_PROLOGUE ss8_init(&needle);
 %SNIPPET_PROLOGUE ss8_init(&needles);
-%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE char *cstr = "", *buf = "";
 %SNIPPET_PROLOGUE size_t start = 0, len = 0;
 -->
 
@@ -644,11 +644,11 @@ ss8_find_last_not_of_bytes(&haystack, start, buf, len);
 ### Stripping characters off the ends
 
 <!--
-%TEST_SNIPPET COMPILE_ONLY
+%TEST_SNIPPET
 %SNIPPET_PROLOGUE ss8str s, chars;
 %SNIPPET_PROLOGUE ss8_init(&s);
 %SNIPPET_PROLOGUE ss8_init(&chars);
-%SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
+%SNIPPET_PROLOGUE char *cstr = "", *buf = "";
 %SNIPPET_PROLOGUE size_t len = 0;
 -->
 
