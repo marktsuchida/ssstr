@@ -308,6 +308,18 @@ def generate(destdir, groff, manpage_paths):
             )
             raise
 
+    main_page = "man7/ssstr.7.html"
+    redirect = f"""
+<!DOCTYPE html>
+<html>
+  <link rel="canonical" href="{main_page}">
+  <meta http-equiv="refresh" content="0; url={main_page}">
+</html>
+"""
+
+    with open(os.path.join(destdir, "index.html"), "w") as f:
+        f.write(redirect.lstrip())
+
 
 def usage():
     print(
