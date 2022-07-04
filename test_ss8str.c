@@ -1134,15 +1134,15 @@ void test_add_sizes(void) {
     TEST_ASSERT_EQUAL_INT(0, size_overflow_count);
 
     size_overflow_count = 0;
-    r = ss8iNtErNaL_add_sizes(SIZE_MAX, 1);
+    ss8iNtErNaL_add_sizes(SIZE_MAX, 1);
     TEST_ASSERT_EQUAL_INT(1, size_overflow_count);
 
     size_overflow_count = 0;
-    r = ss8iNtErNaL_add_sizes(1, SIZE_MAX);
+    ss8iNtErNaL_add_sizes(1, SIZE_MAX);
     TEST_ASSERT_EQUAL_INT(1, size_overflow_count);
 
     size_overflow_count = 0;
-    r = ss8iNtErNaL_add_sizes(SIZE_MAX, SIZE_MAX);
+    ss8iNtErNaL_add_sizes(SIZE_MAX, SIZE_MAX);
     TEST_ASSERT_EQUAL_INT(1, size_overflow_count);
 }
 
