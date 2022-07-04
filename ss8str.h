@@ -857,7 +857,8 @@ SSSTR_INLINE_DEF bool ss8_copy_to_bytes(ss8str const *SSSTR_RESTRICT str,
         did_fit = false;
     }
 
-    if (copylen > 0)
+    // Redundant check for bufsize to avoid -Wnonnull from some builds of GCC.
+    if (copylen > 0 && bufsize > 0)
         memcpy(buf, ss8_const_cstr(str), copylen);
     return did_fit;
 }
@@ -878,7 +879,8 @@ SSSTR_INLINE_DEF bool ss8_copy_to_cstr(ss8str const *SSSTR_RESTRICT str,
 
     // We could use strncpy(), but the principle of least surprises probably
     // means that we should copy any part after an internal '\0' as well.
-    if (copylen_plus1 > 1)
+    // Redundant check for bufsize to avoid -Wnonnull from some builds of GCC.
+    if (copylen_plus1 > 1 && bufsize > 0)
         memcpy(buf, ss8_const_cstr(str), copylen_plus1 - 1);
     if (copylen_plus1 > 0)
         buf[copylen_plus1 - 1] = '\0';
