@@ -31,7 +31,11 @@ def get_link_targets(manpage_paths):
         name, section = name.split(".")
         if dir.startswith("link"):
             with open(path) as f:
-                words = f.readline().split()
+                while True:
+                    line = f.readline()
+                    if not line.startswith(r".\""):
+                        break
+                words = line.split()
                 assert len(words) == 2 and words[0] == ".so"
                 target = words[1]
                 path = os.path.join(parent, target)
