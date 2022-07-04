@@ -333,6 +333,8 @@ There is also the variant `ss8_copy_to_bytes()`, which does the same thing as
 <!--
 %TEST_SNIPPET COMPILE_ONLY
 %SNIPPET_PROLOGUE ss8str dest, src;
+%SNIPPET_PROLOGUE ss8_init(&dest);
+%SNIPPET_PROLOGUE ss8_init(&src);
 %SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
 %SNIPPET_PROLOGUE size_t len = 0, count = 0;
 -->
@@ -344,6 +346,11 @@ ss8_cat_bytes(&dest, buf, len);
 ss8_cat_ch(&dest, 'c');
 ss8_cat_ch_n(&dest, 'c', count);
 ```
+
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&dest);
+%SNIPPET_EPILOGUE ss8_destroy(&src);
+-->
 
 #### Reserving space
 
@@ -455,6 +462,9 @@ There is also `ss8_init_move()` and `ss8_init_move_destroy()`.
 <!--
 %TEST_SNIPPET COMPILE_ONLY
 %SNIPPET_PROLOGUE ss8str dest, src, s;
+%SNIPPET_PROLOGUE ss8_init(&dest);
+%SNIPPET_PROLOGUE ss8_init(&src);
+%SNIPPET_PROLOGUE ss8_init(&s);
 %SNIPPET_PROLOGUE size_t start = 0, len = 0;
 -->
 
@@ -463,11 +473,19 @@ ss8_copy_substr(&dest, &src, start, len);
 ss8_substr_inplace(&s, start, len);
 ```
 
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&dest);
+%SNIPPET_EPILOGUE ss8_destroy(&src);
+%SNIPPET_EPILOGUE ss8_destroy(&s);
+-->
+
 ### Inserting, erasing, and replacing
 
 <!--
 %TEST_SNIPPET COMPILE_ONLY
 %SNIPPET_PROLOGUE ss8str dest, src;
+%SNIPPET_PROLOGUE ss8_init(&dest);
+%SNIPPET_PROLOGUE ss8_init(&src);
 %SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
 %SNIPPET_PROLOGUE size_t pos = 0, len = 0, buflen = 0, count = 0;
 -->
@@ -491,11 +509,22 @@ ss8_replace_ch(&dest, pos, len, 'c');
 ss8_replace_ch_n(&dest, pos, len, 'c', count);
 ```
 
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&dest);
+%SNIPPET_EPILOGUE ss8_destroy(&src);
+-->
+
 ### Comparing strings
 
 <!--
 %TEST_SNIPPET COMPILE_ONLY
 %SNIPPET_PROLOGUE ss8str lhs, rhs, s, prefix, suffix, infix;
+%SNIPPET_PROLOGUE ss8_init(&lhs);
+%SNIPPET_PROLOGUE ss8_init(&rhs);
+%SNIPPET_PROLOGUE ss8_init(&s);
+%SNIPPET_PROLOGUE ss8_init(&prefix);
+%SNIPPET_PROLOGUE ss8_init(&suffix);
+%SNIPPET_PROLOGUE ss8_init(&infix);
 %SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
 %SNIPPET_PROLOGUE size_t len = 0;
 -->
@@ -532,11 +561,23 @@ ss8_contains_bytes(&s, buf, len);
 ss8_contains_ch(&s, 'c');
 ```
 
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&lhs);
+%SNIPPET_EPILOGUE ss8_destroy(&rhs);
+%SNIPPET_EPILOGUE ss8_destroy(&s);
+%SNIPPET_EPILOGUE ss8_destroy(&prefix);
+%SNIPPET_EPILOGUE ss8_destroy(&suffix);
+%SNIPPET_EPILOGUE ss8_destroy(&infix);
+-->
+
 ### Searching strings
 
 <!--
 %TEST_SNIPPET COMPILE_ONLY
 %SNIPPET_PROLOGUE ss8str haystack, needle, needles;
+%SNIPPET_PROLOGUE ss8_init(&haystack);
+%SNIPPET_PROLOGUE ss8_init(&needle);
+%SNIPPET_PROLOGUE ss8_init(&needles);
 %SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
 %SNIPPET_PROLOGUE size_t start = 0, len = 0;
 -->
@@ -577,11 +618,19 @@ ss8_find_last_not_of_cstr(&haystack, start, cstr);
 ss8_find_last_not_of_bytes(&haystack, start, buf, len);
 ```
 
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&haystack);
+%SNIPPET_EPILOGUE ss8_destroy(&needle);
+%SNIPPET_EPILOGUE ss8_destroy(&needles);
+-->
+
 ### Stripping characters off the ends
 
 <!--
 %TEST_SNIPPET COMPILE_ONLY
 %SNIPPET_PROLOGUE ss8str s, chars;
+%SNIPPET_PROLOGUE ss8_init(&s);
+%SNIPPET_PROLOGUE ss8_init(&chars);
 %SNIPPET_PROLOGUE char *cstr = 0, *buf = 0;
 %SNIPPET_PROLOGUE size_t len = 0;
 -->
@@ -605,6 +654,11 @@ ss8_rstrip_cstr(&s, cstr);
 ss8_rstrip_bytes(&s, buf, len);
 ss8_rstrip_ch(&s, 'c');
 ```
+
+<!--
+%SNIPPET_EPILOGUE ss8_destroy(&s);
+%SNIPPET_EPILOGUE ss8_destroy(&chars);
+-->
 
 ### Formatting strings
 
