@@ -583,8 +583,9 @@ SSSTR_INLINE_DEF ss8str *ss8_set_back(ss8str *str, char ch) {
 
 // Only call this when an allocation is required. This 'impl' function is made
 // separate so that it is more likely that the initial check will be inlined.
-SSSTR_INLINE void ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap);
-SSSTR_INLINE_DEF void ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap) {
+// Returns pointer to string buffer.
+SSSTR_INLINE char *ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap);
+SSSTR_INLINE_DEF char *ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap) {
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
     if (lastbyte != ss8iNtErNaL_longmode) {
         char *p = SSSTR_CHARP_MALLOC(cap + 1);
@@ -620,19 +621,26 @@ SSSTR_INLINE_DEF void ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap) {
         str->iNtErNaL_L.bufsiz = cap + 1;
         str->iNtErNaL_L.ptr = p;
     }
+    return str->iNtErNaL_L.ptr;
 }
 
-SSSTR_INLINE_DEF ss8str *ss8_reserve(ss8str *str, size_t capacity) {
+SSSTR_INLINE char *ss8iNtErNaL_reserve(ss8str *str, size_t capacity);
+SSSTR_INLINE_DEF char *ss8iNtErNaL_reserve(ss8str *str, size_t capacity) {
     SSSTR_EXTRA_ASSERT(str != NULL);
     ss8iNtErNaL_extra_assert_invariants(str);
     if (capacity >= ss8iNtErNaL_bufsize(str))
-        ss8iNtErNaL_reserve_impl(str, capacity);
+        return ss8iNtErNaL_reserve_impl(str, capacity);
+    return ss8_cstr(str);
+}
+
+SSSTR_INLINE_DEF ss8str *ss8_reserve(ss8str *str, size_t capacity) {
+    ss8iNtErNaL_reserve(str, capacity);
     return str;
 }
 
 SSSTR_INLINE_DEF void ss8_set_len(ss8str *str, size_t newlen) {
-    ss8_reserve(str, newlen);
-    ss8_cstr(str)[newlen] = '\0';
+    char *buf = ss8iNtErNaL_reserve(str, newlen);
+    buf[newlen] = '\0';
 #ifdef SSSTR_EXTRA_DEBUG
     // Fill any uninitialized portion with a recognizable character.
     size_t oldlen = ss8_len(str);
