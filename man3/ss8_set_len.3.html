@@ -11,7 +11,7 @@ SS8_SET_LEN(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 <b>NAME</b>
-       ss8_set_len, ss8_grow_len, ss8_set_len_to_cstrlen − set length of ssstr
+       ss8_set_len, ss8_grow_len, ss8_set_len_to_cstrlen - set length of ssstr
        byte string
 
 <b>SYNOPSIS</b>
@@ -41,14 +41,14 @@ SS8_SET_LEN(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
        The amount by which the lengh is increased is limited to no  more  than
        <i>maxdelta</i>,  and  the  final  length  is  limited to no more than <i>maxlen</i>.
-       These two parameters can be set to  <b>SIZE_MAX</b>  to  request  the  maximum
-       allowed limits.
+       These two parameters can be set to <b>SIZE_MAX</b> to request the maximum  al‐
+       lowed limits.
 
        If  the  current  length  exceeds <i>maxlen</i>, no change is made (the caller
        should avoid this case in typical usage).
 
        <b>ss8_set_len_to_cstrlen</b>() truncates the <b>ss8str</b> at <i>str</i> to its length when
-       viewed as a null‐terminated byte string.  That is,
+       viewed as a null-terminated byte string.  That is,
 
            <b>ss8_set_len_to_cstrlen(</b><i>str</i><b>);</b>
 
@@ -59,7 +59,7 @@ SS8_SET_LEN(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        No memory allocation or deallocation is performed.
 
        These  functions  are  intended for the purpose of using an <b>ss8str</b> as a
-       destination when calling functions that fill a  caller‐provided  buffer
+       destination when calling functions that fill a  caller-provided  buffer
        with  a string.  <b>ss8_grow_len</b>() is useful when it is necessary to retry
        such a function call with successively larger buffers.
 
@@ -127,7 +127,7 @@ SS8_SET_LEN(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
            size_t nread = 0;
            do {
                // fgets() takes an int count; limit buffer growth accordingly
-               int growth = (int)ss8_grow_len(&amp;line, SIZE_MAX, INT_MAX ‐ 1);
+               int growth = (int)ss8_grow_len(&amp;line, SIZE_MAX, INT_MAX - 1);
                if (growth == 0) {        // Reached limit
                    ss8_clear(&amp;line);
                    break;
@@ -140,7 +140,7 @@ SS8_SET_LEN(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
                ss8_set_len_to_cstrlen(&amp;line);
                nread = ss8_len(&amp;line);
-           } while (!ss8_ends_with_ch(&amp;line, ’\n’));
+           } while (!ss8_ends_with_ch(&amp;line, '\n'));
 
            // ...
 
@@ -149,8 +149,8 @@ SS8_SET_LEN(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        The  last  example is inteded for text input that does not contain null
        bytes.  If null bytes do occur, the read line  will  be  silently  cor‐
        rupted but the program will not crash or leak memory.  Other edge cases
-       occur if the line is longer than  <b>SIZE_MAX  ‐  1</b>  bytes  or  the  input
-       reaches end‐of‐file before a newline.
+       occur if the line is longer than  <b>SIZE_MAX  -  1</b>  bytes  or  the  input
+       reaches end-of-file before a newline.
 
 <b>SEE ALSO</b>
        <a href="../man3/ss8_cstr.3.html"><b>ss8_cstr</b>(3)</a>, <a href="../man3/ss8_len.3.html"><b>ss8_len</b>(3)</a>, <a href="../man3/ss8_capacity.3.html"><b>ss8_reserve</b>(3)</a>, <a href="../man3/ss8_capacity.3.html"><b>ss8_shrink_to_fit</b>(3)</a>, <a href="../man3/ss8_copy_substr.3.html"><b>ss8_sub‐</a>
@@ -158,7 +158,7 @@ SS8_SET_LEN(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 
-SSSTR                             2022‐06‐12                    SS8_SET_LEN(3)
+SSSTR                             2022-06-12                    SS8_SET_LEN(3)
 </pre>
 </body>
 </html>

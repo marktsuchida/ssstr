@@ -11,7 +11,7 @@ SS8_INIT(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 <b>NAME</b>
-       ss8_init, ss8_destroy − initialize and destroy ssstr byte strings
+       ss8_init, ss8_destroy - initialize and destroy ssstr byte strings
 
 <b>SYNOPSIS</b>
        <b>#include &lt;ss8str.h&gt;</b>
@@ -22,24 +22,23 @@ SS8_INIT(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        <b>static ss8str</b> <i>s</i> <b>= SS8_STATIC_INITIALIZER;</b>
 
 <b>DESCRIPTION</b>
-       <b>ss8_init</b>()  initializes  the  <b>ss8str</b>  object  that  <i>str</i> points to.  The
-       object becomes valid and its value is set to the empty string.  No mem‐
-       ory  allocation  is performed.  Behavior is undefined unless <i>str</i> points
-       to an invalid (that is, uninitialized or previously  destroyed)  <b>ss8str</b>
-       object.
+       <b>ss8_init</b>()  initializes  the <b>ss8str</b> object that <i>str</i> points to.  The ob‐
+       ject becomes valid and its value is set to the empty string.  No memory
+       allocation is performed.  Behavior is undefined unless <i>str</i> points to an
+       invalid (that is, uninitialized or previously destroyed) <b>ss8str</b> object.
 
        For global or static variables, <b>SS8_STATIC_INITIALIZER</b> can be used as a
        static initialization value instead of calling <b>ss8_init</b>().  Note that a
-       zero‐initialized <b>ss8str</b> object is not valid.
+       zero-initialized <b>ss8str</b> object is not valid.
 
-       All  valid  <b>ss8str</b>  objects  must be destroyed by calling <b>ss8_destroy</b>()
-       after last use; otherwise dynamically allocated memory may be leaked.
+       All valid <b>ss8str</b> objects must be destroyed by calling <b>ss8_destroy</b>() af‐
+       ter last use; otherwise dynamically allocated memory may be leaked.
 
        <b>ss8_destroy</b>() destroys the <b>ss8str</b> object that <i>str</i> points to, deallocat‐
-       ing  any  associated dynamic storage.  Behavior is undefined unless <i>str</i>
+       ing any associated dynamic storage.  Behavior is undefined  unless  <i>str</i>
        points to a valid <b>ss8str</b> object.
 
-       A destroyed <b>ss8str</b> object is invalid and must be re‐initialized  before
+       A  destroyed <b>ss8str</b> object is invalid and must be re-initialized before
        reuse.
 
 <b>RETURN VALUE</b>
@@ -47,15 +46,15 @@ SS8_INIT(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 <b>NOTES</b>
        <b>SS8_STATIC_INITIALIZER</b> works also for initializing local or dynamically
-       allocated variables.  However, it can result  in  less  efficient  code
-       being generated when compared to calling <b>ss8_init</b>().
+       allocated variables.  However, it can result in less efficient code be‐
+       ing generated when compared to calling <b>ss8_init</b>().
 
 <b>SEE ALSO</b>
        <a href="../man3/ss8_clear.3.html"><b>ss8_clear</b>(3)</a>, <a href="../man3/ss8_init_copy.3.html"><b>ss8_init_copy</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
 
 
 
-SSSTR                             2022‐06‐12                       SS8_INIT(3)
+SSSTR                             2022-06-12                       SS8_INIT(3)
 </pre>
 </body>
 </html>

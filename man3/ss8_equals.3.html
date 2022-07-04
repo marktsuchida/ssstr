@@ -11,7 +11,7 @@ SS8_EQUALS(3)                    <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 <b>NAME</b>
-       ss8_equals,  ss8_equals_cstr,  ss8_equals_bytes, ss8_equals_ch − deter‐
+       ss8_equals,  ss8_equals_cstr,  ss8_equals_bytes, ss8_equals_ch - deter‐
        mine if an ssstr byte string is equal to a string or character
 
 <b>SYNOPSIS</b>
@@ -28,9 +28,9 @@ SS8_EQUALS(3)                    <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        <i>rhs</i>.   Behavior  is  undefined  unless  <i>lhs</i> and <i>rhs</i> both point to valid
        <b>ss8str</b> objects.
 
-       <b>ss8_equals_cstr</b>() tests whether the <b>ss8str</b> at <i>lhs</i> is equal to the null‐
+       <b>ss8_equals_cstr</b>() tests whether the <b>ss8str</b> at <i>lhs</i> is equal to the null-
        terminated byte string <i>rhs</i>.  Behavior is undefined unless <i>lhs</i> points to
-       a valid <b>ss8str</b> object and <i>rhs</i> is a null‐terminated byte string.
+       a valid <b>ss8str</b> object and <i>rhs</i> is a null-terminated byte string.
 
        <b>ss8_equals_bytes</b>() tests whether the <b>ss8str</b> at <i>lhs</i> is equal to the byte
        string with length <i>rhslen</i> located at <i>rhs</i>.  Behavior is undefined unless
@@ -42,16 +42,16 @@ SS8_EQUALS(3)                    <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        <i>lhs</i> points to a valid <b>ss8str</b> object.
 
        Two  byte  strings  are considered equal when they have the same length
-       and are byte‐wise equal.
+       and are byte-wise equal.
 
 <b>RETURN VALUE</b>
-       All 4 functions return <b>true</b> if <i>lhs</i> is  equal  to  <i>rhs</i>;  otherwise  they
-       return <b>false</b>.
+       All 4 functions return <b>true</b> if <i>lhs</i> is equal to <i>rhs</i>; otherwise they  re‐
+       turn <b>false</b>.
 
 <b>NOTES</b>
        The equality comparison performed by these functions does not take into
        account the possibility of different byte  sequences  representing  the
-       same  character.  If the strings are UTF‐8‐encoded, canonically‐equiva‐
+       same  character.  If the strings are UTF-8-encoded, canonically-equiva‐
        lent strings may not be considered equal by these functions unless  the
        strings are normalized ahead of time.
 
@@ -61,7 +61,7 @@ SS8_EQUALS(3)                    <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 
-SSSTR                             2022‐06‐12                     SS8_EQUALS(3)
+SSSTR                             2022-06-12                     SS8_EQUALS(3)
 </pre>
 </body>
 </html>

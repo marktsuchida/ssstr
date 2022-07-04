@@ -12,7 +12,7 @@ SS8_INIT_COPY(3)                 <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 <b>NAME</b>
        ss8_init_copy,         ss8_init_copy_cstr,         ss8_init_copy_bytes,
-       ss8_init_copy_ch, ss8_init_copy_ch_n − initialize an ssstr byte  string
+       ss8_init_copy_ch, ss8_init_copy_ch_n - initialize an ssstr byte  string
        from a string or characters
 
 <b>SYNOPSIS</b>
@@ -30,24 +30,24 @@ SS8_INIT_COPY(3)                 <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 <b>DESCRIPTION</b>
        <b>ss8_init_copy</b>()  initializes  the <b>ss8str</b> object that <i>str</i> points to, and
-       sets its value to a copy of the value of  the  <b>ss8str</b>  object  at  <i>src</i>.
-       Behavior  is undefined unless <i>str</i> points to an invalid (that is, unini‐
+       sets its value to a copy of the value of the <b>ss8str</b> object at <i>src</i>.  Be‐
+       havior  is  undefined  unless <i>str</i> points to an invalid (that is, unini‐
        tialized or previously freed) <b>ss8str</b> object and <i>src</i> points to  a  valid
        <b>ss8str</b> object.
 
        <b>ss8_init_copy_cstr</b>()  initializes the <b>ss8str</b> object at <i>str</i> and sets its
-       value to a copy of the null‐terminated byte string  <i>src</i>.   Behavior  is
+       value to a copy of the null-terminated byte string  <i>src</i>.   Behavior  is
        undefined  unless  <i>str</i>  points to an invalid <b>ss8str</b> object and <i>src</i> is a
-       null‐terminated byte string.
+       null-terminated byte string.
 
        <b>ss8_init_copy_bytes</b>() initializes the <b>ss8str</b> object at <i>str</i> and sets its
-       value  to  a  copy  of  the  byte  string of length <i>len</i> located at <i>src</i>.
-       Behavior is undefined unless <i>str</i> points to an invalid <b>ss8str</b> object and
+       value  to  a copy of the byte string of length <i>len</i> located at <i>src</i>.  Be‐
+       havior is undefined unless <i>str</i> points to an invalid <b>ss8str</b>  object  and
        <i>src</i> points to an array of at least <i>len</i> bytes.
 
        <b>ss8_init_copy_ch</b>()  initializes  the  <b>ss8str</b> object at <i>str</i> and sets its
-       value to the string consisting of the  single  byte  <i>ch</i>.   Behavior  is
-       undefined unless <i>str</i> points to an invalid <b>ss8str</b> object.
+       value to the string consisting of the single byte <i>ch</i>.  Behavior is  un‐
+       defined unless <i>str</i> points to an invalid <b>ss8str</b> object.
 
        <b>ss8_init_copy_ch_n</b>()  initializes the <b>ss8str</b> object at <i>str</i> and sets its
        value to the string consisting of <i>count</i> copies of the byte <i>ch</i>.   Behav‐
@@ -61,7 +61,7 @@ SS8_INIT_COPY(3)                 <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 
-SSSTR                             2022‐06‐12                  SS8_INIT_COPY(3)
+SSSTR                             2022-06-12                  SS8_INIT_COPY(3)
 </pre>
 </body>
 </html>

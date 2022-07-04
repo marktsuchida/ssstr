@@ -12,7 +12,7 @@ SS8_REPLACE(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 <b>NAME</b>
        ss8_replace,   ss8_replace_cstr,   ss8_replace_bytes,   ss8_replace_ch,
-       ss8_replace_ch_n − replace a portion of an ssstr  byte  string  with  a
+       ss8_replace_ch_n - replace a portion of an ssstr  byte  string  with  a
        string or characters
 
 <b>SYNOPSIS</b>
@@ -33,16 +33,16 @@ SS8_REPLACE(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 <b>DESCRIPTION</b>
        <b>ss8_replace</b>()  replaces the substring of the <b>ss8str</b> at <i>dest</i> starting at
        byte position <i>start</i> and having length up to <i>len</i> (limited by the  length
-       of  the  destination  string)  with  the contents of the <b>ss8str</b> at <i>src</i>.
-       Behavior is undefined unless <i>dest</i> and <i>src</i> point to valid  and  distinct
+       of the destination string) with the contents of the <b>ss8str</b> at <i>src</i>.  Be‐
+       havior is undefined unless <i>dest</i> and <i>src</i> point  to  valid  and  distinct
        <b>ss8str</b>  objects and <i>pos</i> is less than or equal to the length of the des‐
        tination string.
 
        <b>ss8_replace_cstr</b>() replaces the substring of the <b>ss8str</b> at <i>dest</i>  start‐
-       ing  at  byte position <i>start</i> and having length up to <i>len</i> with the null‐
+       ing  at  byte position <i>start</i> and having length up to <i>len</i> with the null-
        terminated byte string <i>src</i>.  Behavior is undefined unless  <i>dest</i>  points
        to  a  valid  <b>ss8str</b> object, <i>pos</i> is less than or equal to the length of
-       the destination string, and <i>src</i> is a null‐terminated byte  string  that
+       the destination string, and <i>src</i> is a null-terminated byte  string  that
        is not part of the internal buffer of <i>dest</i>.
 
        <b>ss8_replace_bytes</b>() replaces the substring of the <b>ss8str</b> at <i>dest</i> start‐
@@ -55,12 +55,12 @@ SS8_REPLACE(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        <b>ss8_replace_ch</b>() replaces the substring of the <b>ss8str</b> at <i>dest</i>  starting
        at byte position <i>start</i> and having length up to <i>len</i> with the single byte
        <i>ch</i>.  Behavior is undefined unless <i>dest</i> points to a valid <b>ss8str</b>  object
-       and  <i>pos</i> is less than or equal to the length of the destination string.
+       and <i>pos</i> is less than or equal to the length of the destination string.
 
-       <b>ss8_replace_ch_n</b>() replaces the substring of the <b>ss8str</b> at <i>dest</i>  start‐
-       ing  at  byte  position  <i>start</i>  and  having length up to <i>len</i> with <i>count</i>
-       copies of the byte <i>ch</i>.  Behavior is undefined unless <i>dest</i> points  to  a
-       valid  <b>ss8str</b> object and <i>pos</i> is less than or equal to the length of the
+       <b>ss8_replace_ch_n</b>()  replaces the substring of the <b>ss8str</b> at <i>dest</i> start‐
+       ing at byte position <i>start</i> and having  length  up  to  <i>len</i>  with  <i>count</i>
+       copies  of  the byte <i>ch</i>.  Behavior is undefined unless <i>dest</i> points to a
+       valid <b>ss8str</b> object and <i>pos</i> is less than or equal to the length of  the
        destination string.
 
 <b>RETURN VALUE</b>
@@ -71,7 +71,7 @@ SS8_REPLACE(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 
-SSSTR                             2022‐06‐12                    SS8_REPLACE(3)
+SSSTR                             2022-06-12                    SS8_REPLACE(3)
 </pre>
 </body>
 </html>

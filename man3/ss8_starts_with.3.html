@@ -13,7 +13,7 @@ SS8_STARTS_WITH(3)               <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 <b>NAME</b>
        ss8_starts_with,      ss8_starts_with_cstr,      ss8_starts_with_bytes,
        ss8_starts_with_ch,         ss8_ends_with,          ss8_ends_with_cstr,
-       ss8_ends_with_bytes,  ss8_ends_with_ch  − check if an ssstr byte string
+       ss8_ends_with_bytes,  ss8_ends_with_ch  - check if an ssstr byte string
        has a prefix or suffix
 
 <b>SYNOPSIS</b>
@@ -37,9 +37,9 @@ SS8_STARTS_WITH(3)               <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        and <i>prefix</i> point to valid <b>ss8str</b> objects.
 
        <b>ss8_starts_with_cstr</b>() tests whether the <b>ss8str</b>  at  <i>str</i>  contains  the
-       prefix  equal  to  the null‐terminated byte string <i>prefix</i>.  Behavior is
+       prefix  equal  to  the null-terminated byte string <i>prefix</i>.  Behavior is
        undefined unless <i>str</i> points to a valid <b>ss8str</b> object and  <i>prefix</i>  is  a
-       null‐terminated byte string.
+       null-terminated byte string.
 
        <b>ss8_starts_with_bytes</b>()  tests  whether  the <b>ss8str</b> at <i>str</i> contains the
        prefix equal to the byte string of length <i>prefixlen</i> located at  <i>prefix</i>.
@@ -51,8 +51,8 @@ SS8_STARTS_WITH(3)               <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        <b>ss8str</b> object.
 
        <b>ss8_ends_with</b>(),   <b>ss8_ends_with_cstr</b>(),   <b>ss8_ends_with_bytes</b>(),   and
-       <b>ss8_ends_with_ch</b>()  are  like  the  corresponding functions with <b>starts</b>
-       instead of <b>ends</b> in the name, except that they test whether  the  string
+       <b>ss8_ends_with_ch</b>() are like the corresponding functions with <b>starts</b> in‐
+       stead of <b>ends</b> in the name, except that they  test  whether  the  string
        contains the given suffix, rather than prefix.
 
 <b>RETURN VALUE</b>
@@ -64,7 +64,7 @@ SS8_STARTS_WITH(3)               <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 
-SSSTR                             2022‐06‐12                SS8_STARTS_WITH(3)
+SSSTR                             2022-06-12                SS8_STARTS_WITH(3)
 </pre>
 </body>
 </html>

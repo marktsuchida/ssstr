@@ -15,7 +15,7 @@ SS8_FIND_FIRST_OF(3)             <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        ss8_find_first_not_of,                      ss8_find_first_not_of_cstr,
        ss8_find_first_not_of_bytes,  ss8_find_last_of,  ss8_find_last_of_cstr,
        ss8_find_last_of_bytes,                           ss8_find_last_not_of,
-       ss8_find_last_not_of_cstr,  ss8_find_last_not_of_bytes  −  find  in  an
+       ss8_find_last_not_of_cstr,  ss8_find_last_not_of_bytes  -  find  in  an
        ssstr byte string occurrence of a character in or not in a set
 
 <b>SYNOPSIS</b>
@@ -61,10 +61,10 @@ SS8_FIND_FIRST_OF(3)             <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        or equal to the length of the haystack string.
 
        <b>ss8_find_first_of_cstr</b>() is  like  <b>ss8_find_first_of</b>()  but  finds  the
-       first occurrence of any of the bytes that appear in the null‐terminated
+       first occurrence of any of the bytes that appear in the null-terminated
        byte string <i>needles</i>.  Behavior is undefined unless <i>haystack</i> points to a
        valid  <b>ss8str</b>  object, <i>start</i> is less than or equal to the length of the
-       haystack string, and <i>needles</i> is a null‐terminated byte string.
+       haystack string, and <i>needles</i> is a null-terminated byte string.
 
        <b>ss8_find_first_of_bytes</b>() is like  <b>ss8_find_first_of</b>()  but  finds  the
        first  occurrence of any of the bytes that appear in the byte string of
@@ -80,8 +80,8 @@ SS8_FIND_FIRST_OF(3)             <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
        <b>ss8_find_last_of</b>(),            <b>ss8_find_last_of_cstr</b>(),             and
        <b>ss8_find_last_of_bytes</b>()  are  like  the  corresponding  functions with
-       <b>first</b> instead of <b>last</b> in the name,  except  that  they  find  the  last
-       occurrence of a byte that appears in <i>needles</i>.
+       <b>first</b> instead of <b>last</b> in the name, except that they find the  last  oc‐
+       currence of a byte that appears in <i>needles</i>.
 
        <b>ss8_find_last_not_of</b>(),         <b>ss8_find_last_not_of_cstr</b>(),        and
        <b>ss8_find_last_not_of_bytes</b>() are like the corresponding functions with‐
@@ -98,7 +98,7 @@ SS8_FIND_FIRST_OF(3)             <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 
-SSSTR                             2022‐06‐12              SS8_FIND_FIRST_OF(3)
+SSSTR                             2022-06-12              SS8_FIND_FIRST_OF(3)
 </pre>
 </body>
 </html>

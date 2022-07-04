@@ -11,7 +11,7 @@ SS8_LEN(3)                       <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 <b>NAME</b>
-       ss8_len, ss8_is_empty − query length of ssstr byte string
+       ss8_len, ss8_is_empty - query length of ssstr byte string
 
 <b>SYNOPSIS</b>
        <b>#include &lt;ss8str.h&gt;</b>
@@ -29,14 +29,14 @@ SS8_LEN(3)                       <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        <b>ss8str</b> object.
 
        The length of an <b>ss8str</b> is stored explicitly and is not affected by the
-       byte string it contains.  Specifically, if  the  byte  string  contains
-       embedded  null  bytes,  its length will differ from what <b>strlen</b>() would
-       return when called on the equivalent string.
+       byte string it contains.  Specifically, if the byte string contains em‐
+       bedded  null bytes, its length will differ from what <b>strlen</b>() would re‐
+       turn when called on the equivalent string.
 
 <b>RETURN VALUE</b>
-       <b>ss8_len</b>() returns the length, in bytes,  of  the  string  at  <i>str</i>,  not
-       including  the  null  terminator  that would be part of the string when
-       viewed as a null‐terminated byte string.  Any embedded  null  bytes  in
+       <b>ss8_len</b>() returns the length, in bytes, of the string at <i>str</i>,  not  in‐
+       cluding  the  null  terminator  that  would  be part of the string when
+       viewed as a null-terminated byte string.  Any embedded  null  bytes  in
        the string do not affect the length.
 
        <b>ss8_is_empty</b>() returns <b>true</b> when <i>str</i> has a length of zero; otherwise it
@@ -47,7 +47,7 @@ SS8_LEN(3)                       <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 
-SSSTR                             2022‐06‐12                        SS8_LEN(3)
+SSSTR                             2022-06-12                        SS8_LEN(3)
 </pre>
 </body>
 </html>

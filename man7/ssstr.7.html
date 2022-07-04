@@ -11,20 +11,20 @@ SSSTR(7)                         <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 <b>NAME</b>
-       ssstr, ss8str − short‐string‐optimized byte string routines
+       ssstr, ss8str - short-string-optimized byte string routines
 
 <b>SYNOPSIS</b>
        <b>#include &lt;ss8str.h&gt;</b>
 
 <b>DESCRIPTION</b>
-       <b>ssstr</b>  is  a header‐only library for representing and manipulating byte
+       <b>ssstr</b>  is  a header-only library for representing and manipulating byte
        strings.
 
    <b>String representation</b>
        Strings are represented by the opaque type <b>ss8str</b>,  which  is  suitable
        for  use  as  a regular automatic (stack) variable, or as a member of a
-       larger data structure.  (It is 32 bytes  on  64‐bit  platforms  and  16
-       bytes on 32‐bit platforms.)
+       larger data structure.  (It is 32 bytes  on  64-bit  platforms  and  16
+       bytes on 32-bit platforms.)
 
        When  the  string is small, it is stored directly in the <b>ss8str</b> object;
        otherwise, dynamic (heap) storage is allocated to store the string.
@@ -33,14 +33,14 @@ SSSTR(7)                         <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        handling  of  strings  that  contain embedded null bytes in addition to
        more efficient operations.
 
-       Objects of type <b>ss8str</b> must be initialized  before  use  and  destroyed
-       after use, exactly once each.  See <a href="../man3/ss8_init.3.html"><b>ss8_init</b>(3)</a> and <a href="../man3/ss8_init.3.html"><b>ss8_destroy</b>(3)</a>.
+       Objects of type <b>ss8str</b> must be initialized before use and destroyed af‐
+       ter use, exactly once each.  See <a href="../man3/ss8_init.3.html"><b>ss8_init</b>(3)</a> and <a href="../man3/ss8_init.3.html"><b>ss8_destroy</b>(3)</a>.
 
 <b>FUNCTIONS</b>
    <b>Initialization and cleanup</b>
-       <a href="../man3/ss8_init.3.html"><b>ss8_init</b>(3)</a>,             <a href="../man3/ss8_init_copy.3.html"><b>ss8_init_copy</b>(3)</a>,            <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move</b>(3)</a>,
-       <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move_destroy</b>(3)</a>, <a href="../man3/ss8_init.3.html"><b>ss8_destroy</b>(3)</a>, and variants of <b>ss8_init_copy</b>
-       with <b>_cstr</b>, <b>_bytes</b>, <b>_ch</b>, or <b>_ch_n</b>
+       <a href="../man3/ss8_init.3.html"><b>ss8_init</b>(3)</a>,   <a href="../man3/ss8_init_copy.3.html"><b>ss8_init_copy</b>(3)</a>,   <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move</b>(3)</a>,  <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move_de‐</a>
+       <a href="../man3/ss8_init_move.3.html">stroy</b>(3)</a>, <a href="../man3/ss8_init.3.html"><b>ss8_destroy</b>(3)</a>, and variants  of  <b>ss8_init_copy</b>  with  <b>_cstr</b>,
+       <b>_bytes</b>, <b>_ch</b>, or <b>_ch_n</b>
 
    <b>Basic string operations</b>
        <a href="../man3/ss8_clear.3.html"><b>ss8_clear</b>(3)</a>, <a href="../man3/ss8_len.3.html"><b>ss8_is_empty</b>(3)</a>, <a href="../man3/ss8_len.3.html"><b>ss8_len</b>(3)</a>
@@ -50,8 +50,8 @@ SSSTR(7)                         <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        <b>_ch</b>, or <b>_ch_n</b>
 
    <b>Moving strings</b>
-       <a href="../man3/ss8_move.3.html"><b>ss8_move</b>(3)</a>,           <a href="../man3/ss8_move.3.html"><b>ss8_move_destroy</b>(3)</a>,           <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move</b>(3)</a>,
-       <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move_destroy</b>(3)</a>, <a href="../man3/ss8_swap.3.html"><b>ss8_swap</b>(3)</a>
+       <a href="../man3/ss8_move.3.html"><b>ss8_move</b>(3)</a>, <a href="../man3/ss8_move.3.html"><b>ss8_move_destroy</b>(3)</a>,  <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move</b>(3)</a>,  <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move_de‐</a>
+       <a href="../man3/ss8_init_move.3.html">stroy</b>(3)</a>, <a href="../man3/ss8_swap.3.html"><b>ss8_swap</b>(3)</a>
 
    <b>Passing ss8str to C string functions</b>
        <a href="../man3/ss8_cstr.3.html"><b>ss8_const_cstr</b>(3)</a>, <a href="../man3/ss8_cstr.3.html"><b>ss8_const_cstr_suffix</b>(3)</a>
@@ -109,7 +109,7 @@ SSSTR(7)                         <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 
-SSSTR                             2022‐06‐12                          SSSTR(7)
+SSSTR                             2022-06-12                          SSSTR(7)
 </pre>
 </body>
 </html>

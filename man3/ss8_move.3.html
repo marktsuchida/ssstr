@@ -11,7 +11,7 @@ SS8_MOVE(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 <b>NAME</b>
-       ss8_move, ss8_move_destroy − move one ssstr byte string to another
+       ss8_move, ss8_move_destroy - move one ssstr byte string to another
 
 <b>SYNOPSIS</b>
        <b>#include &lt;ss8str.h&gt;</b>
@@ -32,7 +32,8 @@ SS8_MOVE(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
        is equivalent to
 
-           <b>ss8_move(</b><i>dest</i><b>,</b> <i>src</i><b>); ss8_destroy(</b><i>src</i><b>);</b>
+           <b>ss8_move(</b><i>dest</i><b>,</b> <i>src</i><b>);</b>
+           <b>ss8_destroy(</b><i>src</i><b>);</b>
 
        For both functions, behavior is undefined unless <i>dest</i> and <i>src</i> point  to
        valid and distinct <b>ss8str</b> objects.
@@ -44,14 +45,14 @@ SS8_MOVE(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 <b>NOTES</b>
        Care  should  be taken not to use the value of the <b>ss8str</b> object at <i>src</i>
-       after the move.  It must still be destroyed in the case of  <b>ss8_move</b>().
+       after the move.  It must still be destroyed in the case of <b>ss8_move</b>().
 
 <b>SEE ALSO</b>
        <a href="../man3/ss8_copy.3.html"><b>ss8_copy</b>(3)</a>, <a href="../man3/ss8_init.3.html"><b>ss8_destroy</b>(3)</a>, <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move</b>(3)</a>, <a href="../man3/ss8_swap.3.html"><b>ss8_swap</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
 
 
 
-SSSTR                             2022‐06‐12                       SS8_MOVE(3)
+SSSTR                             2022-06-12                       SS8_MOVE(3)
 </pre>
 </body>
 </html>

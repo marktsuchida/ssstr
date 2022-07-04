@@ -11,7 +11,7 @@ SS8_INIT_MOVE(3)                 <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 <b>NAME</b>
-       ss8_init_move,  ss8_init_move_destroy − initialize an ssstr byte string
+       ss8_init_move,  ss8_init_move_destroy - initialize an ssstr byte string
        by moving the value of another byte string
 
 <b>SYNOPSIS</b>
@@ -34,10 +34,11 @@ SS8_INIT_MOVE(3)                 <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
        is equivalent to
 
-           <b>ss8_init_move(</b><i>str</i><b>,</b> <i>src</i><b>); ss8_destroy(</b><i>src</i><b>);</b>
+           <b>ss8_init_move(</b><i>str</i><b>,</b> <i>src</i><b>);</b>
+           <b>ss8_destroy(</b><i>src</i><b>);</b>
 
-       For  both  functions,  behavior  is  undefined  unless <i>str</i> points to an
-       invalid <b>ss8str</b> object, <i>src</i> points to a valid <b>ss8str</b> object, and <i>str</i> and
+       For  both  functions, behavior is undefined unless <i>str</i> points to an in‐
+       valid <b>ss8str</b> object, <i>src</i> points to a valid <b>ss8str</b> object, and  <i>str</i>  and
        <i>src</i> point to distinct objects.
 
        No memory allocation or deallocation is performed.
@@ -56,7 +57,7 @@ SS8_INIT_MOVE(3)                 <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 
-SSSTR                             2022‐06‐12                  SS8_INIT_MOVE(3)
+SSSTR                             2022-06-12                  SS8_INIT_MOVE(3)
 </pre>
 </body>
 </html>

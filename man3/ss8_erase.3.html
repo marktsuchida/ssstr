@@ -11,7 +11,7 @@ SS8_ERASE(3)                     <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 <b>NAME</b>
-       ss8_erase − erase a portion of an ssstr byte string
+       ss8_erase - erase a portion of an ssstr byte string
 
 <b>SYNOPSIS</b>
        <b>#include &lt;ss8str.h&gt;</b>
@@ -21,8 +21,8 @@ SS8_ERASE(3)                     <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 <b>DESCRIPTION</b>
        <b>ss8_erase</b>() removes the substring of the <b>ss8str</b> at <i>str</i> starting at byte
        position <i>pos</i> and having length up to <i>len</i> (limited by the length of  the
-       string).   Behavior  is  undefined  unless <i>str</i> points to a valid <b>ss8str</b>
-       object and <i>pos</i> is less than or equal to the length of the string.
+       string).  Behavior is undefined unless <i>str</i> points to a valid <b>ss8str</b> ob‐
+       ject and <i>pos</i> is less than or equal to the length of the string.
 
        The string is shortened by the number of bytes removed.  Any portion of
        the  original  string located after the removed substring is shifted to
@@ -36,7 +36,7 @@ SS8_ERASE(3)                     <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 
-SSSTR                             2022‐06‐12                      SS8_ERASE(3)
+SSSTR                             2022-06-12                      SS8_ERASE(3)
 </pre>
 </body>
 </html>

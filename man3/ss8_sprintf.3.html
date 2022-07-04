@@ -12,7 +12,7 @@ SS8_SPRINTF(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 <b>NAME</b>
        ss8_sprintf,     ss8_snprintf,    ss8_cat_sprintf,    ss8_cat_snprintf,
-       ss8_vsprintf, ss8_vsnprintf, ss8_cat_vsprintf, ss8_cat_vsnprintf − for‐
+       ss8_vsprintf, ss8_vsnprintf, ss8_cat_vsprintf, ss8_cat_vsnprintf - for‐
        mat an ssstr byte string
 
 <b>SYNOPSIS</b>
@@ -46,10 +46,10 @@ SS8_SPRINTF(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        String formatting is performed by internally calling <a href="https://www.man7.org/linux/man-pages/man3/vsnprintf.3.html"><b>vsnprintf</b>(3)</a>.
 
        Behavior  is undefined unless <i>dest</i> points to a valid <b>ss8str</b> object, <i>fmt</i>
-       is a null‐terminated string, the variable arguments  follow  the  rules
+       is a null-terminated string, the variable arguments  follow  the  rules
        specified  by  <a href="https://www.man7.org/linux/man-pages/man3/snprintf.3.html"><b>sprintf</b>(3)</a>, the contents of <i>fmt</i> and any (wide) string or
-       character arguments  are  valid  under  the  string  encoding  used  by
-       <a href="https://www.man7.org/linux/man-pages/man3/vsnprintf.3.html"><b>vsnprintf</b>(3)</a>,  and the length of the resulting formatted string is less
+       character arguments are valid under the string  encoding  used  by  <a href="https://www.man7.org/linux/man-pages/man3/vsnprintf.3.html"><b>vs‐</a>
+       <a href="https://www.man7.org/linux/man-pages/man3/vsnprintf.3.html">nprintf</b>(3)</a>,  and  the  length of the resulting formatted string is less
        than <b>INT_MAX</b>.
 
        <b>ss8_snprintf</b>() is like <b>ss8_sprintf</b>(), except that the resulting  string
@@ -60,23 +60,23 @@ SS8_SPRINTF(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        <b>ss8_cat_sprintf</b>()  and  <b>ss8_cat_snprintf</b>()  are  like <b>ss8_sprintf</b>() and
        <b>ss8_snprintf</b>(), respectively, except that  rather  than  replacing  the
        string  in  <i>dest</i>,  they append the formatted string to the end of <i>dest</i>.
-       The length limit (<i>maxlen</i> or, implicitly for correctness, <b>INT_MAX  ‐  1</b>)
+       The length limit (<i>maxlen</i> or, implicitly for correctness, <b>INT_MAX  -  1</b>)
        applies  to  the  result of formatting, not the whole string after con‐
        catenation.
 
-       <b>ss8_vsprintf</b>(),      <b>ss8_vsnprintf</b>(),      <b>ss8_cat_vsprintf</b>(),      and
-       <b>ss8_cat_vsnprintf</b>()  are like the corresponding functions without the <b>v</b>
-       in the name, except that they take a <b>va_list</b> <i>args</i> instead of the  vari‐
-       able arguments.
+       <b>ss8_vsprintf</b>(), <b>ss8_vsnprintf</b>(),  <b>ss8_cat_vsprintf</b>(),  and  <b>ss8_cat_vs‐</b>
+       <b>nprintf</b>()  are  like  the  corresponding functions without the <b>v</b> in the
+       name, except that they take a <b>va_list</b> <i>args</i> instead of the variable  ar‐
+       guments.
 
 <b>RETURN VALUE</b>
        All 8 functions return <i>dest</i>.
 
 <b>BUGS</b>
        Calling  these  functions  with any combination of arguments that could
-       produce a string longer than <b>INT_MAX  ‐  1</b>  will  result  in  undefined
-       behavior,   regardless  of  the  value  of  <i>maxlen</i>.   This  is  due  to
-       <a href="https://www.man7.org/linux/man-pages/man3/vsnprintf.3.html"><b>vsnprintf</b>(3)</a> returning an <b>int</b> containing the formatted length.
+       produce a string longer than <b>INT_MAX - 1</b> will result in  undefined  be‐
+       havior, regardless of the value of <i>maxlen</i>.  This is due to <a href="https://www.man7.org/linux/man-pages/man3/vsnprintf.3.html"><b>vsnprintf</b>(3)</a>
+       returning an <b>int</b> containing the formatted length.
 
        Callers should avoid passing strings of unbound length for the <b>%s</b>  con‐
        version specifier, and use great care if dynamically generating <i>fmt</i>.
@@ -86,7 +86,7 @@ SS8_SPRINTF(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 
-SSSTR                             2022‐06‐12                    SS8_SPRINTF(3)
+SSSTR                             2022-06-12                    SS8_SPRINTF(3)
 </pre>
 </body>
 </html>
