@@ -1229,6 +1229,8 @@ SSSTR_INLINE_DEF bool ss8_equals_bytes(ss8str const *lhs, char const *rhs,
     size_t llen = ss8_len(lhs);
     if (llen != rhslen)
         return false;
+    if (rhslen == 0) // This check needed to avoid GCC -Wnonnull
+        return true;
     return memcmp(ss8_const_cstr(lhs), rhs, llen) == 0;
 }
 
