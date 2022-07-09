@@ -92,6 +92,17 @@ jobs:
         run: |
           meson setup build-release --buildtype release
           meson dist -C build-release
+      - name: Sanitize
+        if: matrix.os == 'ubuntu' && matrix.compiler == 'clang'
+        run: |
+          meson setup sanitize --buildtype debug -Db_lundef=false
+          cd sanitize
+          meson configure -Db_sanitize=address,undefined
+          meson test
+          meson configure -Db_sanitize=memory
+          meson test
+          meson configure -Db_sanitize=leak
+          meson test
 
   docs:
     needs:
