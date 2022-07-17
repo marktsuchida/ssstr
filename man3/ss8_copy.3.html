@@ -33,20 +33,21 @@ SS8_COPY(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
        <b>ss8_copy_cstr</b>() copies the  null-terminated  byte  string  <i>src</i>  to  the
        <b>ss8str</b>  object  at <i>dest</i>.  Behavior is undefined unless <i>dest</i> points to a
-       valid <b>ss8str</b> object and <i>src</i> is a null-terminated byte  string  that  is
-       not part of the internal buffer of <i>dest</i>.
+       valid <b>ss8str</b> object and <i>src</i> is a null-terminated byte string that  does
+       not overlap with the internal buffer of <i>dest</i>.
 
        <b>ss8_copy_bytes</b>() copies the byte string of length <i>srclen</i> located at <i>src</i>
        to the <b>ss8str</b> object at <i>dest</i>.  Behavior is undefined unless <i>dest</i> points
        to  a valid <b>ss8str</b> object and <i>src</i> is not NULL and points to an array of
-       at least <i>srclen</i> bytes that is not part of the internal buffer of <i>dest</i>.
+       at least <i>srclen</i> bytes that does not overlap with the internal buffer of
+       <i>dest</i>.
 
-       <b>ss8_copy_ch</b>() assigns the string consisting of the single  byte  <i>ch</i>  to
+       <b>ss8_copy_ch</b>()  assigns  the  string consisting of the single byte <i>ch</i> to
        the <b>ss8str</b> object at <i>dest</i>.  Behavior is undefined unless <i>dest</i> points to
        a valid <b>ss8str</b> object.
 
-       <b>ss8_copy_ch_n</b>() assigns the string consisting of <i>count</i>  copies  of  the
-       byte  <i>ch</i>  to  the  <b>ss8str</b> object at <i>dest</i>.  Behavior is undefined unless
+       <b>ss8_copy_ch_n</b>()  assigns  the  string consisting of <i>count</i> copies of the
+       byte <i>ch</i> to the <b>ss8str</b> object at <i>dest</i>.   Behavior  is  undefined  unless
        <i>dest</i> points to a valid <b>ss8str</b> object.
 
 <b>RETURN VALUE</b>
@@ -54,7 +55,7 @@ SS8_COPY(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 <b>SEE ALSO</b>
        <a href="../man3/ss8_cat.3.html"><b>ss8_cat</b>(3)</a>,          <a href="../man3/ss8_copy_substr.3.html"><b>ss8_copy_substr</b>(3)</a>,          <a href="../man3/ss8_copy_to_cstr.3.html"><b>ss8_copy_to_bytes</b>(3)</a>,
-       <a href="../man3/ss8_copy_to_cstr.3.html"><b>ss8_copy_to_cstr</b>(3)</a>,    <a href="../man3/ss8_init_copy.3.html"><b>ss8_init_copy</b>(3)</a>,   <a href="../man3/ss8_move.3.html"><b>ss8_move</b>(3)</a>,   <a href="../man3/ss8_swap.3.html"><b>ss8_swap</b>(3)</a>,
+       <a href="../man3/ss8_copy_to_cstr.3.html"><b>ss8_copy_to_cstr</b>(3)</a>,   <a href="../man3/ss8_init_copy.3.html"><b>ss8_init_copy</b>(3)</a>,   <a href="../man3/ss8_move.3.html"><b>ss8_move</b>(3)</a>,    <a href="../man3/ss8_swap.3.html"><b>ss8_swap</b>(3)</a>,
        <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
 
 

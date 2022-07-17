@@ -38,14 +38,14 @@ SS8_INSERT(3)                    <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        position  <i>pos</i> of the <b>ss8str</b> at <i>dest</i>.  Behavior is undefined unless <i>dest</i>
        points to a valid <b>ss8str</b> object, <i>pos</i> is  less  than  or  equal  to  the
        length  of  the  destination  string, and <i>src</i> is a null-terminated byte
-       string that is not part of the internal buffer of <i>dest</i>.
+       string that does not overlap with the internal buffer of <i>dest</i>.
 
        <b>ss8_insert_bytes</b>() inserts the byte string of length <i>srclen</i> located  at
        <i>src</i>  at byte position <i>pos</i> of the <b>ss8str</b> at <i>dest</i>.  Behavior is undefined
        unless <i>dest</i> points to a valid <b>ss8str</b> object, <i>pos</i> is less than or  equal
        to the length of the destination string, and <i>src</i> is not NULL and points
-       to an array of at least <i>srclen</i> bytes that is not part of  the  internal
-       buffer of <i>dest</i>.
+       to an array of at least <i>srclen</i> bytes that does not overlap with the in‐
+       ternal buffer of <i>dest</i>.
 
        <b>ss8_insert_ch</b>()  inserts the single byte <i>ch</i> at byte position <i>pos</i> of the
        <b>ss8str</b> at <i>dest</i>.  Behavior is undefined unless <i>dest</i> points  to  a  valid

@@ -29,8 +29,8 @@ SS8_COPY_TO_CSTR(3)              <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        hold the string, the copied string is truncated at <i>bufsize</i> <b>- 1</b> bytes.
 
        Behavior  is  undefined unless <i>str</i> is a valid <b>ss8str</b> object, <i>buf</i> points
-       to a buffer of at least <i>bufsize</i> bytes that is not part of the  internal
-       buffer of <i>str</i>, and <i>bufsize</i> is greater than or equal to 1.
+       to a buffer of at least <i>bufsize</i> bytes that does not  overlap  with  the
+       internal buffer of <i>str</i>, and <i>bufsize</i> is greater than or equal to 1.
 
        <b>ss8_copy_to_bytes</b>()  copies  the  contents  of the <b>ss8str</b> at <i>str</i> to the
        buffer located at <i>buf</i>.  No null terminator is appended.  At  most  <i>buf‐</i>
@@ -38,8 +38,8 @@ SS8_COPY_TO_CSTR(3)              <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        string, the copied string is truncated at <i>bufsize</i> bytes.
 
        Behavior is undefined unless <i>str</i> is  a  valid  <b>ss8str</b>  object  and  <i>buf</i>
-       points  to  a  buffer of at least <i>bufsize</i> bytes that is not part of the
-       internal buffer of <i>str</i>.
+       points to a buffer of at least <i>bufsize</i> bytes that does not overlap with
+       the internal buffer of <i>str</i>.
 
 <b>RETURN VALUE</b>
        <b>ss8_copy_to_cstr</b>() and <b>ss8_copy_to_bytes</b>() return <b>true</b> if the whole  of
