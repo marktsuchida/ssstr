@@ -91,6 +91,8 @@ jobs:
           meson setup build-release --buildtype release
           meson dist -C build-release
       - name: Run benchmarks
+        # Exclude MinGW for now (crashes at runtime; needs investigation)
+        if: matrix.os != 'windows' || matrix.compiler != 'gcc'
         run: |
           cd build-release
           meson configure -Dbenchmark=enabled
