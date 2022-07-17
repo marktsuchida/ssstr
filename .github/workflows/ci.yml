@@ -92,6 +92,19 @@ jobs:
         run: |
           meson setup build-release --buildtype release
           meson dist -C build-release
+      - name: Build with different GCC dialects
+        if: matrix.compiler == 'gcc'
+        run: |
+          meson setup dialects --buildtype debug
+          cd dialects
+          meson configure -Dc_std=c99 -Dcpp_std=c++03
+          meson test
+          meson configure -Dc_std=c17 -Dcpp_std=c++20
+          meson test
+          meson configure -Dc_std=gnu99 -Dcpp_std=gnu++03
+          meson test
+          meson configure -Dc_std=gnu17 -Dcpp_std=gnu++20
+          meson test
       - name: Sanitize
         if: matrix.os == 'ubuntu' && matrix.compiler == 'clang'
         run: |
