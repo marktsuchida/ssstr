@@ -511,7 +511,9 @@ def read_header(header_path):
     end = lines.index("///// END_DOCUMENTED_PROTOTYPES")
     prototypes = []
     for line in lines[begin + 1 : end]:
-        if line.startswith(" "):
+        if line.startswith("#"):
+            pass
+        elif line.startswith(" "):
             prototypes[-1] = " ".join((prototypes[-1], line.lstrip()))
         else:
             prototypes.append(line)
