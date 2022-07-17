@@ -90,6 +90,11 @@ jobs:
         run: |
           meson setup build-release --buildtype release
           meson dist -C build-release
+      - name: Run benchmarks
+        run: |
+          cd build-release
+          meson configure -Dbenchmark=enabled
+          ninja benchmark
       - name: Build with different GCC dialects
         if: matrix.compiler == 'gcc'
         run: |
