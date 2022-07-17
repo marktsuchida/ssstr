@@ -44,7 +44,7 @@ SS8_STARTS_WITH(3)               <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        <b>ss8_starts_with_bytes</b>()  tests  whether  the <b>ss8str</b> at <i>str</i> contains the
        prefix equal to the byte string of length <i>prefixlen</i> located at  <i>prefix</i>.
        Behavior  is  undefined  unless <i>str</i> points to a valid <b>ss8str</b> object and
-       <i>prefix</i> points to an array of at least <i>prefixlen</i> bytes.
+       <i>prefix</i> is not NULL and points to an array of at least <i>prefixlen</i> bytes.
 
        <b>ss8_starts_with_ch</b>() tests whether the first byte of the <b>ss8str</b> at  <i>str</i>
        is  equal  to  <i>ch</i>.   Behavior is undefined unless <i>str</i> points to a valid

@@ -33,8 +33,8 @@ SS8_CMP(3)                       <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
        <b>ss8_cmp_bytes</b>()  compares  the  <b>ss8str</b>  at  <i>lhs</i> with the byte string of
        length <i>rhslen</i> located at <i>rhs</i>.  Behavior is undefined unless <i>lhs</i>  points
-       to  a valid <b>ss8str</b> object and <i>rhs</i> points to an array of at least <i>rhslen</i>
-       bytes.
+       to  a valid <b>ss8str</b> object and <i>rhs</i> is not NULL and points to an array of
+       at least <i>rhslen</i> bytes.
 
        <b>ss8_cmp_ch</b>() compares the <b>ss8str</b> at <i>lhs</i> with the byte string consisting
        of  the  single byte <i>rhs.</i>  Behavior is undefined unless <i>lhs</i> points to a

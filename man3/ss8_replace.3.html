@@ -49,18 +49,19 @@ SS8_REPLACE(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        ing at byte position <i>start</i> and having length up to <i>len</i>  with  the  byte
        string  of  length <i>srclen</i> located at <i>src</i>.  Behavior is undefined unless
        <i>dest</i> points to a valid <b>ss8str</b> object, <i>pos</i> is less than or equal to  the
-       length  of  the  destination  string,  and <i>src</i> points to an array of at
-       least <i>srclen</i> bytes that is not part of the internal buffer of <i>dest</i>.
+       length  of the destination string, and <i>src</i> is not NULL and points to an
+       array of at least <i>srclen</i> bytes that is not part of the internal  buffer
+       of <i>dest</i>.
 
-       <b>ss8_replace_ch</b>() replaces the substring of the <b>ss8str</b> at <i>dest</i>  starting
+       <b>ss8_replace_ch</b>()  replaces the substring of the <b>ss8str</b> at <i>dest</i> starting
        at byte position <i>start</i> and having length up to <i>len</i> with the single byte
-       <i>ch</i>.  Behavior is undefined unless <i>dest</i> points to a valid <b>ss8str</b>  object
+       <i>ch</i>.   Behavior is undefined unless <i>dest</i> points to a valid <b>ss8str</b> object
        and <i>pos</i> is less than or equal to the length of the destination string.
 
-       <b>ss8_replace_ch_n</b>()  replaces the substring of the <b>ss8str</b> at <i>dest</i> start‐
-       ing at byte position <i>start</i> and having  length  up  to  <i>len</i>  with  <i>count</i>
-       copies  of  the byte <i>ch</i>.  Behavior is undefined unless <i>dest</i> points to a
-       valid <b>ss8str</b> object and <i>pos</i> is less than or equal to the length of  the
+       <b>ss8_replace_ch_n</b>() replaces the substring of the <b>ss8str</b> at <i>dest</i>  start‐
+       ing  at  byte  position  <i>start</i>  and  having length up to <i>len</i> with <i>count</i>
+       copies of the byte <i>ch</i>.  Behavior is undefined unless <i>dest</i> points  to  a
+       valid  <b>ss8str</b> object and <i>pos</i> is less than or equal to the length of the
        destination string.
 
 <b>RETURN VALUE</b>

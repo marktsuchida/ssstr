@@ -38,8 +38,8 @@ SS8_COPY(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
        <b>ss8_copy_bytes</b>() copies the byte string of length <i>srclen</i> located at <i>src</i>
        to the <b>ss8str</b> object at <i>dest</i>.  Behavior is undefined unless <i>dest</i> points
-       to  a valid <b>ss8str</b> object and <i>src</i> points to an array of at least <i>srclen</i>
-       bytes that is not part of the internal buffer of <i>dest</i>.
+       to  a valid <b>ss8str</b> object and <i>src</i> is not NULL and points to an array of
+       at least <i>srclen</i> bytes that is not part of the internal buffer of <i>dest</i>.
 
        <b>ss8_copy_ch</b>() assigns the string consisting of the single  byte  <i>ch</i>  to
        the <b>ss8str</b> object at <i>dest</i>.  Behavior is undefined unless <i>dest</i> points to

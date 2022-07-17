@@ -23,27 +23,28 @@ SS8_COPY_TO_CSTR(3)              <a href="../man7/ssstr.7.html">Ssstr Manual</a>
                              <b>char *restrict</b> <i>buf</i><b>, size_t</b> <i>bufsize</i><b>);</b>
 
 <b>DESCRIPTION</b>
-       <b>ss8_copy_to_cstr</b>() and <b>ss8_copy_to_bytes</b>() copy  the  contents  of  the
-       <b>ss8str</b>  at  <i>str</i>  to the buffer located at <i>buf</i>.  <b>ss8_copy_to_cstr</b>() then
-       appends a null byte.
+       <b>ss8_copy_to_cstr</b>() copies the contents of the <b>ss8str</b> at <i>str</i> to the buf‐
+       fer located at <i>buf</i>, and appends a null byte.  At most <i>bufsize</i> bytes are
+       written, including the null terminator; if <i>bufsize</i> is not sufficient to
+       hold the string, the copied string is truncated at <i>bufsize</i> <b>- 1</b> bytes.
 
-       At most <i>bufsize</i> bytes are written; if <i>bufsize</i> is not sufficient to hold
-       the  string  (and  null  terminator for <b>ss8_copy_to_cstr</b>()), the copied
-       string is truncated at <i>bufsize</i> <b>- 1</b> bytes  (for  <b>ss8_copy_to_cstr</b>())  or
-       <i>bufsize</i> bytes (for <b>ss8_copy_to_bytes</b>()).
+       Behavior  is  undefined unless <i>str</i> is a valid <b>ss8str</b> object, <i>buf</i> points
+       to a buffer of at least <i>bufsize</i> bytes that is not part of the  internal
+       buffer of <i>str</i>, and <i>bufsize</i> is greater than or equal to 1.
 
-       <b>ss8_copy_to_cstr</b>()  always  places  a null terminator at the end of the
-       copied string unless <i>bufsize</i> is zero.
+       <b>ss8_copy_to_bytes</b>()  copies  the  contents  of the <b>ss8str</b> at <i>str</i> to the
+       buffer located at <i>buf</i>.  No null terminator is appended.  At  most  <i>buf‐</i>
+       <i>size</i>  bytes  are  written;  if  <i>bufsize</i>  is  not sufficient to hold the
+       string, the copied string is truncated at <i>bufsize</i> bytes.
 
-       Behavior is undefined unless <i>str</i> is a valid <b>ss8str</b> object and <i>buf</i> is  a
-       buffer  of at least <i>bufsize</i> bytes that is not part of the internal buf‐
-       fer of <i>str</i>.
+       Behavior is undefined unless <i>str</i> is  a  valid  <b>ss8str</b>  object  and  <i>buf</i>
+       points  to  a  buffer of at least <i>bufsize</i> bytes that is not part of the
+       internal buffer of <i>str</i>.
 
 <b>RETURN VALUE</b>
-       <b>ss8_copy_to_cstr</b>() and <b>ss8_copy_to_bytes</b>() return <b>true</b>  if  <i>bufsize</i>  is
-       sufficiently  large  to  copy the whole of the <b>ss8str</b> at <i>str</i> (including
-       the null terminator in the  case  of  <b>ss8_copy_to_cstr</b>()).   Otherwise,
-       they return <b>false</b>.
+       <b>ss8_copy_to_cstr</b>() and <b>ss8_copy_to_bytes</b>() return <b>true</b> if the whole  of
+       the string <i>str</i> was copied.  If the string had to be truncated, they re‐
+       turn <b>false</b>.
 
 <b>SEE ALSO</b>
        <a href="../man3/ss8_copy.3.html"><b>ss8_copy_bytes</b>(3)</a>, <a href="../man3/ss8_copy.3.html"><b>ss8_copy_cstr</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
