@@ -100,7 +100,7 @@ ssstr_cpp_include_nonstatic_test = executable('test_cpp_include_nonstatic',
 test('ssstr-cpp-include-nonstatic-test', ssstr_cpp_include_nonstatic_test)
 
 benchmark_dep = dependency('benchmark',  # Google benchmark
-    required: false,
+    required: get_option('benchmark'),
     disabler: true,
 )
 
