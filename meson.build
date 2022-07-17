@@ -8,7 +8,7 @@ project('ssstr', 'c', 'cpp',
     meson_version: '>=0.62.0',
     default_options: [
         'c_std=c99',
-        'cpp_std=c++11',  # Supports c++03 but sprintf functions require 11
+        'cpp_std=c++11',  # Supports c++03 but va_list functions require 11+
         'warning_level=3',
         'werror=true',
     ],
@@ -43,7 +43,7 @@ pkgconfig.generate(
     description: 'Ssstr small-string-optimized string library',
 )
 
-unity_dep = dependency('unity', fallback: ['unity', 'unity_dep'])
+unity_dep = dependency('unity')
 
 test_sources = files(
     'test_ss8str.c',
@@ -99,9 +99,13 @@ ssstr_cpp_include_nonstatic_test = executable('test_cpp_include_nonstatic',
 )
 test('ssstr-cpp-include-nonstatic-test', ssstr_cpp_include_nonstatic_test)
 
-benchmark_dep = dependency('benchmark',  # Google benchmark
+google_benchmark_dep = dependency('benchmark',
     required: get_option('benchmark'),
     disabler: true,
+    fallback: 'google-benchmark',
+    default_options: [
+        'werror=false',
+    ],
 )
 
 bench_sources = files(
@@ -113,7 +117,7 @@ ssstr_bench = executable('bench_ssstr',
         bench_sources,
     ],
     override_options: [
-        'cpp_std=c++11',
+        'cpp_std=c++14',  # Avoid passing /std:c++11 to clang-cl
         'optimization=3',
     ],
     cpp_args: [
@@ -123,7 +127,7 @@ ssstr_bench = executable('bench_ssstr',
         '-DNDEBUG',
     ],
     dependencies: [
-        benchmark_dep,
+        google_benchmark_dep,
     ],
 )
 benchmark('ssstr-bench', ssstr_bench,

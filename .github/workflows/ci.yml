@@ -75,8 +75,6 @@ jobs:
       CXX: ${{ matrix.cxx }}
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: true
       - uses: actions/setup-python@v4
         with:
           python-version: "3.x"
@@ -92,6 +90,13 @@ jobs:
         run: |
           meson setup build-release --buildtype release
           meson dist -C build-release
+      - name: Run benchmarks
+        # Exclude MinGW for now (crashes at runtime; needs investigation)
+        if: matrix.os != 'windows' || matrix.compiler != 'gcc'
+        run: |
+          cd build-release
+          meson configure -Dbenchmark=enabled
+          ninja benchmark
       - name: Build with different GCC dialects
         if: matrix.compiler == 'gcc'
         run: |
