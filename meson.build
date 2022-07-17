@@ -8,7 +8,7 @@ project('ssstr', 'c', 'cpp',
     meson_version: '>=0.62.0',
     default_options: [
         'c_std=c99',
-        'cpp_std=c++11',  # Supports c++03 but sprintf functions require 11
+        'cpp_std=c++11',  # Supports c++03 but va_list functions require 11+
         'warning_level=3',
         'werror=true',
     ],
@@ -117,7 +117,7 @@ ssstr_bench = executable('bench_ssstr',
         bench_sources,
     ],
     override_options: [
-        'cpp_std=c++11',
+        'cpp_std=c++14',  # Avoid passing /std:c++11 to clang-cl
         'optimization=3',
     ],
     cpp_args: [
