@@ -39,7 +39,7 @@ object,
 .I buf
 points to a buffer of at least
 .I bufsize
-bytes that is not part of the internal buffer of
+bytes that does not overlap with the internal buffer of
 .IR str ,
 and
 .I bufsize
@@ -69,7 +69,7 @@ object and
 .I buf
 points to a buffer of at least
 .I bufsize
-bytes that is not part of the internal buffer of
+bytes that does not overlap with the internal buffer of
 .IR str .
 .SH RETURN VALUE
 .BR ss8_copy_to_cstr ()

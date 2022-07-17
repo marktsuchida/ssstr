@@ -50,7 +50,8 @@ points to a valid
 .B ss8str
 object and
 .I src
-is a null-terminated byte string that is not part of the internal buffer of
+is a null-terminated byte string that does not overlap with the internal buffer
+of
 .IR dest .
 .PP
 .BR ss8_copy_bytes ()
@@ -70,7 +71,7 @@ object and
 .I src
 is not NULL and points to an array of at least
 .I srclen
-bytes that is not part of the internal buffer of
+bytes that does not overlap with the internal buffer of
 .IR dest .
 .PP
 .BR ss8_copy_ch ()

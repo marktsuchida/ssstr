@@ -59,7 +59,8 @@ object,
 .I pos
 is less than or equal to the length of the destination string, and
 .I src
-is a null-terminated byte string that is not part of the internal buffer of
+is a null-terminated byte string that does not overlap with the internal buffer
+of
 .IR dest .
 .PP
 .BR ss8_insert_bytes ()
@@ -83,7 +84,7 @@ is less than or equal to the length of the destination string, and
 .I src
 is not NULL and points to an array of at least
 .I srclen
-bytes that is not part of the internal buffer of
+bytes that does not overlap with the internal buffer of
 .IR dest .
 .PP
 .BR ss8_insert_ch ()
