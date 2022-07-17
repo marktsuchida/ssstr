@@ -99,9 +99,13 @@ ssstr_cpp_include_nonstatic_test = executable('test_cpp_include_nonstatic',
 )
 test('ssstr-cpp-include-nonstatic-test', ssstr_cpp_include_nonstatic_test)
 
-benchmark_dep = dependency('benchmark',  # Google benchmark
+google_benchmark_dep = dependency('benchmark',
     required: get_option('benchmark'),
     disabler: true,
+    fallback: 'google-benchmark',
+    default_options: [
+        'werror=false',
+    ],
 )
 
 bench_sources = files(
@@ -123,7 +127,7 @@ ssstr_bench = executable('bench_ssstr',
         '-DNDEBUG',
     ],
     dependencies: [
-        benchmark_dep,
+        google_benchmark_dep,
     ],
 )
 benchmark('ssstr-bench', ssstr_bench,
