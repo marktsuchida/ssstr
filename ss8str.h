@@ -728,6 +728,9 @@ SSSTR_INLINE_DEF ss8str *ss8_clear(ss8str *str) {
     return str;
 }
 
+SSSTR_INLINE void ss8iNtErNaL_extra_assert_no_overlap(ss8str const *str,
+                                                      char const *cstr,
+                                                      size_t len);
 SSSTR_INLINE_DEF void ss8iNtErNaL_extra_assert_no_overlap(ss8str const *str,
                                                           char const *cstr,
                                                           size_t len) {
