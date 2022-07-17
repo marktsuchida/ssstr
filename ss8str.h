@@ -395,6 +395,7 @@ SSSTR_INLINE ss8str *ss8_strip(ss8str *SSSTR_RESTRICT str,
 SSSTR_INLINE ss8str *ss8_lstrip_ch(ss8str *str, char ch);
 SSSTR_INLINE ss8str *ss8_rstrip_ch(ss8str *str, char ch);
 SSSTR_INLINE ss8str *ss8_strip_ch(ss8str *str, char ch);
+#if !defined(__cplusplus) || __cplusplus >= 201103L // C++ >= 11
 SSSTR_INLINE ss8str *ss8_cat_vsprintf(ss8str *SSSTR_RESTRICT dest,
                                       char const *SSSTR_RESTRICT fmt,
                                       va_list args);
@@ -417,6 +418,7 @@ SSSTR_INLINE ss8str *ss8_cat_snprintf(ss8str *SSSTR_RESTRICT dest,
                                       char const *SSSTR_RESTRICT fmt, ...);
 SSSTR_INLINE ss8str *ss8_snprintf(ss8str *SSSTR_RESTRICT dest, size_t maxlen,
                                   char const *SSSTR_RESTRICT fmt, ...);
+#endif // C++ >= 11
 
 ///// END_DOCUMENTED_PROTOTYPES
 
