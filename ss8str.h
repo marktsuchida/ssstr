@@ -761,7 +761,7 @@ SSSTR_INLINE_DEF void ss8iNtErNaL_extra_assert_no_overlap(ss8str const *str,
 SSSTR_INLINE_DEF ss8str *ss8_copy_bytes(ss8str *SSSTR_RESTRICT dest,
                                         char const *SSSTR_RESTRICT src,
                                         size_t srclen) {
-    SSSTR_EXTRA_ASSERT(src != NULL || srclen == 0);
+    SSSTR_EXTRA_ASSERT(src != NULL);
     ss8iNtErNaL_extra_assert_no_overlap(dest, src, srclen);
 
     ss8_reserve(ss8_clear(dest), srclen);
@@ -855,11 +855,10 @@ SSSTR_INLINE_DEF ss8str *ss8_init_copy_ch(ss8str *str, char ch) {
     return ss8_copy_ch(ss8_init(str), ch);
 }
 
-// buf may be NULL if bufsize == 0.
 SSSTR_INLINE_DEF bool ss8_copy_to_bytes(ss8str const *SSSTR_RESTRICT str,
                                         char *SSSTR_RESTRICT buf,
                                         size_t bufsize) {
-    SSSTR_EXTRA_ASSERT(buf != NULL || bufsize == 0);
+    SSSTR_EXTRA_ASSERT(buf != NULL);
     ss8iNtErNaL_extra_assert_no_overlap(str, buf, bufsize);
 
     size_t copylen = ss8_len(str);
@@ -869,33 +868,30 @@ SSSTR_INLINE_DEF bool ss8_copy_to_bytes(ss8str const *SSSTR_RESTRICT str,
         did_fit = false;
     }
 
-    // Redundant check for bufsize to avoid -Wnonnull from some builds of GCC.
-    if (copylen > 0 && bufsize > 0)
-        memcpy(buf, ss8_const_cstr(str), copylen);
+    memcpy(buf, ss8_const_cstr(str), copylen);
     return did_fit;
 }
 
-// buf may be NULL if bufsize == 0.
 SSSTR_INLINE_DEF bool ss8_copy_to_cstr(ss8str const *SSSTR_RESTRICT str,
                                        char *SSSTR_RESTRICT buf,
                                        size_t bufsize) {
-    SSSTR_EXTRA_ASSERT(buf != NULL || bufsize == 0);
+    SSSTR_EXTRA_ASSERT(buf != NULL);
     ss8iNtErNaL_extra_assert_no_overlap(str, buf, bufsize);
+    SSSTR_ASSERT(bufsize >= 1);
+    if (bufsize == 0) // Be "safe" despite the assertion.
+        return false;
 
-    size_t copylen_plus1 = ss8_len(str) + 1;
+    size_t copylen = ss8_len(str);
     bool did_fit = true;
-    if (copylen_plus1 > bufsize) {
-        copylen_plus1 = bufsize;
+    if (copylen >= bufsize) {
+        copylen = bufsize - 1;
         did_fit = false;
     }
 
     // We could use strncpy(), but the principle of least surprise probably
     // means that we should copy any part after an internal '\0' as well.
-    // Redundant check for bufsize to avoid -Wnonnull from some builds of GCC.
-    if (copylen_plus1 > 1 && bufsize > 0)
-        memcpy(buf, ss8_const_cstr(str), copylen_plus1 - 1);
-    if (copylen_plus1 > 0)
-        buf[copylen_plus1 - 1] = '\0';
+    memcpy(buf, ss8_const_cstr(str), copylen);
+    buf[copylen] = '\0';
     return did_fit;
 }
 
@@ -1057,7 +1053,7 @@ SSSTR_INLINE_DEF ss8str *ss8_insert_bytes(ss8str *SSSTR_RESTRICT dest,
                                           size_t pos,
                                           char const *SSSTR_RESTRICT src,
                                           size_t srclen) {
-    SSSTR_EXTRA_ASSERT(src != NULL || srclen == 0);
+    SSSTR_EXTRA_ASSERT(src != NULL);
     ss8iNtErNaL_extra_assert_no_overlap(dest, src, srclen);
 
     size_t destlen = ss8_len(dest);
@@ -1118,7 +1114,7 @@ SSSTR_INLINE_DEF ss8str *ss8_replace_bytes(ss8str *SSSTR_RESTRICT dest,
                                            size_t pos, size_t len,
                                            char const *SSSTR_RESTRICT src,
                                            size_t srclen) {
-    SSSTR_EXTRA_ASSERT(src != NULL || srclen == 0);
+    SSSTR_EXTRA_ASSERT(src != NULL);
     ss8iNtErNaL_extra_assert_no_overlap(dest, src, srclen);
 
     size_t destlen = ss8_len(dest);
@@ -1199,7 +1195,7 @@ SSSTR_INLINE_DEF ss8str *ss8_replace_ch(ss8str *dest, size_t pos, size_t len,
 
 SSSTR_INLINE_DEF int ss8_cmp_bytes(ss8str const *lhs, char const *rhs,
                                    size_t rhslen) {
-    SSSTR_EXTRA_ASSERT(rhs != NULL || rhslen == 0);
+    SSSTR_EXTRA_ASSERT(rhs != NULL);
 
     size_t llen = ss8_len(lhs);
     size_t cmplen = llen;
@@ -1238,13 +1234,11 @@ SSSTR_INLINE_DEF int ss8_cmp_ch(ss8str const *lhs, char rhs) {
 
 SSSTR_INLINE_DEF bool ss8_equals_bytes(ss8str const *lhs, char const *rhs,
                                        size_t rhslen) {
-    SSSTR_EXTRA_ASSERT(rhs != NULL || rhslen == 0);
+    SSSTR_EXTRA_ASSERT(rhs != NULL);
 
     size_t llen = ss8_len(lhs);
     if (llen != rhslen)
         return false;
-    if (rhslen == 0) // This check needed to avoid GCC -Wnonnull
-        return true;
     return memcmp(ss8_const_cstr(lhs), rhs, llen) == 0;
 }
 
@@ -1263,7 +1257,7 @@ SSSTR_INLINE_DEF bool ss8_equals_ch(ss8str const *lhs, char rhs) {
 
 SSSTR_INLINE_DEF size_t ss8_find_bytes(ss8str const *haystack, size_t start,
                                        char const *needle, size_t needlelen) {
-    SSSTR_EXTRA_ASSERT(needle != NULL || needlelen == 0);
+    SSSTR_EXTRA_ASSERT(needle != NULL);
 
     char const *h = ss8_const_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
@@ -1319,7 +1313,7 @@ SSSTR_INLINE_DEF size_t ss8_find_not_ch(ss8str const *haystack, size_t start,
 
 SSSTR_INLINE_DEF size_t ss8_rfind_bytes(ss8str const *haystack, size_t start,
                                         char const *needle, size_t needlelen) {
-    SSSTR_EXTRA_ASSERT(needle != NULL || needlelen == 0);
+    SSSTR_EXTRA_ASSERT(needle != NULL);
 
     char const *h = ss8_const_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
@@ -1398,7 +1392,7 @@ SSSTR_INLINE_DEF size_t ss8_find_first_of_bytes(ss8str const *haystack,
                                                 size_t start,
                                                 char const *needles,
                                                 size_t count) {
-    SSSTR_EXTRA_ASSERT(needles != NULL || count == 0);
+    SSSTR_EXTRA_ASSERT(needles != NULL);
 
     char const *h = ss8_const_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
@@ -1419,7 +1413,7 @@ SSSTR_INLINE_DEF size_t ss8_find_first_not_of_bytes(ss8str const *haystack,
                                                     size_t start,
                                                     char const *needles,
                                                     size_t count) {
-    SSSTR_EXTRA_ASSERT(needles != NULL || count == 0);
+    SSSTR_EXTRA_ASSERT(needles != NULL);
 
     char const *h = ss8_const_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
@@ -1437,7 +1431,7 @@ SSSTR_INLINE_DEF size_t ss8_find_last_of_bytes(ss8str const *haystack,
                                                size_t start,
                                                char const *needles,
                                                size_t count) {
-    SSSTR_EXTRA_ASSERT(needles != NULL || count == 0);
+    SSSTR_EXTRA_ASSERT(needles != NULL);
 
     char const *h = ss8_const_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
@@ -1459,7 +1453,7 @@ SSSTR_INLINE_DEF size_t ss8_find_last_not_of_bytes(ss8str const *haystack,
                                                    size_t start,
                                                    char const *needles,
                                                    size_t count) {
-    SSSTR_EXTRA_ASSERT(needles != NULL || count == 0);
+    SSSTR_EXTRA_ASSERT(needles != NULL);
 
     char const *h = ss8_const_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
@@ -1560,7 +1554,7 @@ SSSTR_INLINE_DEF bool ss8_starts_with_ch(ss8str const *str, char ch) {
 
 SSSTR_INLINE_DEF bool
 ss8_ends_with_bytes(ss8str const *str, char const *suffix, size_t suffixlen) {
-    SSSTR_EXTRA_ASSERT(suffix != NULL || suffixlen == 0);
+    SSSTR_EXTRA_ASSERT(suffix != NULL);
 
     size_t len = ss8_len(str);
     if (len < suffixlen)
