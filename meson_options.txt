@@ -2,4 +2,4 @@
 # Copyright 2022 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-option('benchmark', type: 'feature', value: 'auto')
+option('benchmark', type: 'feature', value: 'disabled')
