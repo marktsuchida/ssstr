@@ -471,7 +471,8 @@ SSSTR_INLINE_DEF void ss8_destroy(ss8str *str) {
 
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
     if (lastbyte == ss8iNtErNaL_longmode) {
-        SSSTR_ASSERT_MSG("not a double-free", str->iNtErNaL_L.ptr != NULL);
+        SSSTR_ASSERT_MSG("must not already be destroyed",
+                         str->iNtErNaL_L.ptr != NULL);
         SSSTR_FREE(str->iNtErNaL_L.ptr);
     }
     ss8iNtErNaL_deinit(str);
@@ -751,7 +752,7 @@ SSSTR_INLINE_DEF void ss8iNtErNaL_extra_assert_no_overlap(ss8str const *str,
     uintptr_t rend = rbegin + len;
     SSSTR_EXTRA_ASSERT(rbegin <= rend);
 
-    SSSTR_EXTRA_ASSERT_MSG("char * does not overlap with ss8str buffer",
+    SSSTR_EXTRA_ASSERT_MSG("char * must not overlap with ss8str buffer",
                            lend <= rbegin || rend <= lbegin);
     (void)lend;
     (void)rend;
@@ -888,7 +889,7 @@ SSSTR_INLINE_DEF bool ss8_copy_to_cstr(ss8str const *SSSTR_RESTRICT str,
         did_fit = false;
     }
 
-    // We could use strncpy(), but the principle of least surprises probably
+    // We could use strncpy(), but the principle of least surprise probably
     // means that we should copy any part after an internal '\0' as well.
     // Redundant check for bufsize to avoid -Wnonnull from some builds of GCC.
     if (copylen_plus1 > 1 && bufsize > 0)
