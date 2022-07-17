@@ -39,7 +39,7 @@ static void StringCreation(benchmark::State &state) {
         ss8_destroy(&s);
     }
 }
-BENCHMARK(StringCreation)->Range(0, 512);
+BENCHMARK(StringCreation)->RangeMultiplier(16)->Range(0, 256);
 
 static void CppStringCreation(benchmark::State &state) {
     for (auto _ : state) {
@@ -48,7 +48,7 @@ static void CppStringCreation(benchmark::State &state) {
         benchmark::ClobberMemory();
     }
 }
-BENCHMARK(CppStringCreation)->Range(0, 512);
+BENCHMARK(CppStringCreation)->RangeMultiplier(16)->Range(0, 256);
 
 static void StringCopy(benchmark::State &state) {
     ss8str x;
@@ -70,7 +70,7 @@ static void StringCopy(benchmark::State &state) {
     ss8_destroy(&s);
     ss8_destroy(&x);
 }
-BENCHMARK(StringCopy)->Ranges({{0, 512}, {0, 1}});
+BENCHMARK(StringCopy)->RangeMultiplier(16)->Ranges({{0, 256}, {0, 1}});
 
 static void CppStringCopy(benchmark::State &state) {
     std::string x(state.range(0), '*');
@@ -88,7 +88,7 @@ static void CppStringCopy(benchmark::State &state) {
         benchmark::ClobberMemory();
     }
 }
-BENCHMARK(CppStringCopy)->Ranges({{0, 512}, {0, 1}});
+BENCHMARK(CppStringCopy)->RangeMultiplier(16)->Ranges({{0, 256}, {0, 1}});
 
 static void StringMove(benchmark::State &state) {
     ss8str x;
@@ -110,7 +110,7 @@ static void StringMove(benchmark::State &state) {
     ss8_destroy(&s);
     ss8_destroy(&x);
 }
-BENCHMARK(StringMove)->Ranges({{0, 512}, {0, 1}});
+BENCHMARK(StringMove)->RangeMultiplier(16)->Ranges({{0, 256}, {0, 1}});
 
 static void CppStringMove(benchmark::State &state) {
     std::string x(state.range(0), '*');
@@ -128,7 +128,7 @@ static void CppStringMove(benchmark::State &state) {
         benchmark::ClobberMemory();
     }
 }
-BENCHMARK(CppStringMove)->Ranges({{0, 512}, {0, 1}});
+BENCHMARK(CppStringMove)->RangeMultiplier(16)->Ranges({{0, 256}, {0, 1}});
 
 static void StringSwap(benchmark::State &state) {
     ss8str x;
@@ -145,7 +145,7 @@ static void StringSwap(benchmark::State &state) {
         ss8_destroy(&s);
     }
 }
-BENCHMARK(StringSwap)->Range(0, 512);
+BENCHMARK(StringSwap)->RangeMultiplier(16)->Range(0, 256);
 
 static void CppStringSwap(benchmark::State &state) {
     std::string x(state.range(0), '*');
@@ -159,6 +159,6 @@ static void CppStringSwap(benchmark::State &state) {
         benchmark::ClobberMemory();
     }
 }
-BENCHMARK(CppStringSwap)->Range(0, 512);
+BENCHMARK(CppStringSwap)->RangeMultiplier(16)->Range(0, 256);
 
 BENCHMARK_MAIN();
