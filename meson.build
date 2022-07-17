@@ -43,7 +43,7 @@ pkgconfig.generate(
     description: 'Ssstr small-string-optimized string library',
 )
 
-unity_dep = dependency('unity', fallback: ['unity', 'unity_dep'])
+unity_dep = dependency('unity')
 
 test_sources = files(
     'test_ss8str.c',
