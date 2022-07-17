@@ -606,7 +606,7 @@ void test_copy_bytes(void) {
 
     // Empty to empty; empty to short mode
     perturb_unused_bytes(&s);
-    TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_bytes(&s, NULL, 0));
+    TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_bytes(&s, "x", 0));
     TEST_ASSERT_EQUAL_size_t(0, ss8_len(&s));
     TEST_ASSERT_EQUAL_STRING("", ss8_const_cstr(&s));
 
@@ -663,7 +663,7 @@ void test_copy_bytes(void) {
     // Long mode -> empty
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_bytes(&s, buf, maxshortlen + 1));
     perturb_unused_bytes(&s);
-    TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_bytes(&s, NULL, 0));
+    TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_bytes(&s, "", 0));
     TEST_ASSERT_EQUAL_size_t(0, ss8_len(&s));
     TEST_ASSERT_EQUAL_STRING("", ss8_const_cstr(&s));
 
@@ -807,11 +807,14 @@ void test_copy_to(void) {
 
     ss8_copy_ch_n(&s, '+', 0);
     perturb_unused_bytes(&s);
-    TEST_ASSERT_TRUE(ss8_copy_to_bytes(&s, NULL, 0));
+    char zerolen[1] = {'x'};
+    TEST_ASSERT_TRUE(ss8_copy_to_bytes(&s, zerolen, 0));
+    TEST_ASSERT_EQUAL_CHAR('x', zerolen[0]);
 
     ss8_copy_ch_n(&s, '+', 1);
     perturb_unused_bytes(&s);
-    TEST_ASSERT_FALSE(ss8_copy_to_bytes(&s, NULL, 0));
+    TEST_ASSERT_FALSE(ss8_copy_to_bytes(&s, zerolen, 0));
+    TEST_ASSERT_EQUAL_CHAR('x', zerolen[0]);
 
     blank_buffer(buf, sizeof(buf));
     TEST_ASSERT_TRUE(ss8_copy_to_bytes(&s, buf, 1));
@@ -820,7 +823,8 @@ void test_copy_to(void) {
 
     ss8_copy_ch_n(&s, '+', 2);
     perturb_unused_bytes(&s);
-    TEST_ASSERT_FALSE(ss8_copy_to_bytes(&s, NULL, 0));
+    TEST_ASSERT_FALSE(ss8_copy_to_bytes(&s, zerolen, 0));
+    TEST_ASSERT_EQUAL_CHAR('x', zerolen[0]);
 
     blank_buffer(buf, sizeof(buf));
     TEST_ASSERT_FALSE(ss8_copy_to_bytes(&s, buf, 1));
@@ -837,7 +841,8 @@ void test_copy_to(void) {
 
     ss8_copy_ch_n(&s, '+', 0);
     perturb_unused_bytes(&s);
-    TEST_ASSERT_FALSE(ss8_copy_to_cstr(&s, NULL, 0));
+    TEST_ASSERT_FALSE(ss8_copy_to_cstr(&s, zerolen, 0));
+    TEST_ASSERT_EQUAL_CHAR('x', zerolen[0]);
 
     blank_buffer(buf, sizeof(buf));
     TEST_ASSERT_TRUE(ss8_copy_to_cstr(&s, buf, 1));
@@ -1615,11 +1620,11 @@ void test_cmp_bytes(void) {
     ss8str s;
     ss8_init(&s);
 
-    TEST_ASSERT_EQUAL_INT(0, ss8_cmp_bytes(&s, NULL, 0));
+    TEST_ASSERT_EQUAL_INT(0, ss8_cmp_bytes(&s, "x", 0));
     TEST_ASSERT_LESS_THAN_INT(0, ss8_cmp_bytes(&s, "\0", 1));
 
     ss8_copy_bytes(&s, "\0", 1);
-    TEST_ASSERT_GREATER_THAN_INT(0, ss8_cmp_bytes(&s, NULL, 0));
+    TEST_ASSERT_GREATER_THAN_INT(0, ss8_cmp_bytes(&s, "x", 0));
     TEST_ASSERT_EQUAL_INT(0, ss8_cmp_bytes(&s, "\0", 1));
     TEST_ASSERT_LESS_THAN_INT(0, ss8_cmp_bytes(&s, "\0\0", 2));
     TEST_ASSERT_LESS_THAN_INT(0, ss8_cmp_bytes(&s, "\1", 1));
@@ -1696,7 +1701,7 @@ void test_cmp_ch(void) {
     ss8_copy_bytes(&s, "\xff", 1);
     TEST_ASSERT_GREATER_THAN_INT(0, ss8_cmp_ch(&s, '\0'));
 
-    ss8_copy_bytes(&s, NULL, 0);
+    ss8_copy_bytes(&s, "", 0);
     TEST_ASSERT_LESS_THAN_INT(0, ss8_cmp_ch(&s, '\1'));
     ss8_copy_bytes(&s, "\0", 1);
     TEST_ASSERT_LESS_THAN_INT(0, ss8_cmp_ch(&s, '\1'));
@@ -1709,7 +1714,7 @@ void test_cmp_ch(void) {
     ss8_copy_bytes(&s, "\xff", 1);
     TEST_ASSERT_GREATER_THAN_INT(0, ss8_cmp_ch(&s, '\1'));
 
-    ss8_copy_bytes(&s, NULL, 0);
+    ss8_copy_bytes(&s, "", 0);
     TEST_ASSERT_LESS_THAN_INT(0, ss8_cmp_ch(&s, '\2'));
     ss8_copy_bytes(&s, "\1", 1);
     TEST_ASSERT_LESS_THAN_INT(0, ss8_cmp_ch(&s, '\2'));
@@ -1720,7 +1725,7 @@ void test_cmp_ch(void) {
     ss8_copy_bytes(&s, "\2\0", 2);
     TEST_ASSERT_GREATER_THAN_INT(0, ss8_cmp_ch(&s, '\2'));
 
-    ss8_copy_bytes(&s, NULL, 0);
+    ss8_copy_bytes(&s, "", 0);
     TEST_ASSERT_LESS_THAN_INT(0, ss8_cmp_ch(&s, '\xfe'));
     ss8_copy_bytes(&s, "\0", 1);
     TEST_ASSERT_LESS_THAN_INT(0, ss8_cmp_ch(&s, '\xfe'));
@@ -1733,7 +1738,7 @@ void test_cmp_ch(void) {
     ss8_copy_bytes(&s, "\xff", 1);
     TEST_ASSERT_GREATER_THAN_INT(0, ss8_cmp_ch(&s, '\xfe'));
 
-    ss8_copy_bytes(&s, NULL, 0);
+    ss8_copy_bytes(&s, "", 0);
     TEST_ASSERT_LESS_THAN_INT(0, ss8_cmp_ch(&s, '\xff'));
     ss8_copy_bytes(&s, "\0", 1);
     TEST_ASSERT_LESS_THAN_INT(0, ss8_cmp_ch(&s, '\xff'));
@@ -1751,16 +1756,16 @@ void test_equals_bytes(void) {
     ss8str s;
     ss8_init(&s);
 
-    TEST_ASSERT_TRUE(ss8_equals_bytes(&s, NULL, 0));
+    TEST_ASSERT_TRUE(ss8_equals_bytes(&s, "x", 0));
     TEST_ASSERT_FALSE(ss8_equals_bytes(&s, "\0", 1));
 
     ss8_copy_ch(&s, '\0');
-    TEST_ASSERT_FALSE(ss8_equals_bytes(&s, NULL, 0));
+    TEST_ASSERT_FALSE(ss8_equals_bytes(&s, "x", 0));
     TEST_ASSERT_TRUE(ss8_equals_bytes(&s, "\0", 1));
     TEST_ASSERT_FALSE(ss8_equals_bytes(&s, "\0\0", 2));
 
     ss8_copy_ch(&s, 'a');
-    TEST_ASSERT_FALSE(ss8_equals_bytes(&s, NULL, 0));
+    TEST_ASSERT_FALSE(ss8_equals_bytes(&s, "x", 0));
     TEST_ASSERT_TRUE(ss8_equals_bytes(&s, "a", 1));
     TEST_ASSERT_FALSE(ss8_equals_bytes(&s, "a\0", 2));
 
@@ -1798,12 +1803,12 @@ void test_find_bytes(void) {
     ss8str s;
     ss8_init(&s);
 
-    TEST_ASSERT_EQUAL_size_t(0, ss8_find_bytes(&s, 0, NULL, 0));
+    TEST_ASSERT_EQUAL_size_t(0, ss8_find_bytes(&s, 0, "x", 0));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_bytes(&s, 0, "a", 1));
 
     ss8_copy_cstr(&s, "a");
-    TEST_ASSERT_EQUAL_size_t(0, ss8_find_bytes(&s, 0, NULL, 0));
-    TEST_ASSERT_EQUAL_size_t(1, ss8_find_bytes(&s, 1, NULL, 0));
+    TEST_ASSERT_EQUAL_size_t(0, ss8_find_bytes(&s, 0, "x", 0));
+    TEST_ASSERT_EQUAL_size_t(1, ss8_find_bytes(&s, 1, "x", 0));
     TEST_ASSERT_EQUAL_size_t(0, ss8_find_bytes(&s, 0, "a", 1));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_bytes(&s, 1, "a", 1));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_bytes(&s, 0, "b", 1));
@@ -1878,12 +1883,12 @@ void test_rfind_bytes(void) {
     ss8str s;
     ss8_init(&s);
 
-    TEST_ASSERT_EQUAL_size_t(0, ss8_rfind_bytes(&s, 0, NULL, 0));
+    TEST_ASSERT_EQUAL_size_t(0, ss8_rfind_bytes(&s, 0, "x", 0));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_rfind_bytes(&s, 0, "a", 1));
 
     ss8_copy_cstr(&s, "a");
-    TEST_ASSERT_EQUAL_size_t(0, ss8_rfind_bytes(&s, 0, NULL, 0));
-    TEST_ASSERT_EQUAL_size_t(1, ss8_rfind_bytes(&s, 1, NULL, 0));
+    TEST_ASSERT_EQUAL_size_t(0, ss8_rfind_bytes(&s, 0, "x", 0));
+    TEST_ASSERT_EQUAL_size_t(1, ss8_rfind_bytes(&s, 1, "x", 0));
     TEST_ASSERT_EQUAL_size_t(0, ss8_rfind_bytes(&s, 0, "a", 1));
     TEST_ASSERT_EQUAL_size_t(0, ss8_rfind_bytes(&s, 1, "a", 1));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_rfind_bytes(&s, 0, "b", 1));
@@ -1958,15 +1963,12 @@ void test_find_first_of(void) {
     ss8str s;
     ss8_init(&s);
 
-    TEST_ASSERT_EQUAL_size_t(SIZE_MAX,
-                             ss8_find_first_of_bytes(&s, 0, NULL, 0));
+    TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_first_of_bytes(&s, 0, "", 0));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_first_of_bytes(&s, 0, "A", 1));
 
     ss8_copy_cstr(&s, "a");
-    TEST_ASSERT_EQUAL_size_t(SIZE_MAX,
-                             ss8_find_first_of_bytes(&s, 0, NULL, 0));
-    TEST_ASSERT_EQUAL_size_t(SIZE_MAX,
-                             ss8_find_first_of_bytes(&s, 1, NULL, 0));
+    TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_first_of_bytes(&s, 0, "", 0));
+    TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_first_of_bytes(&s, 1, "", 0));
     TEST_ASSERT_EQUAL_size_t(0, ss8_find_first_of_bytes(&s, 0, "ab", 2));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX,
                              ss8_find_first_of_bytes(&s, 1, "ab", 2));
@@ -1996,14 +1998,14 @@ void test_find_first_not_of(void) {
     ss8_init(&s);
 
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX,
-                             ss8_find_first_not_of_bytes(&s, 0, NULL, 0));
+                             ss8_find_first_not_of_bytes(&s, 0, "", 0));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX,
                              ss8_find_first_not_of_bytes(&s, 0, "A", 1));
 
     ss8_copy_cstr(&s, "a");
-    TEST_ASSERT_EQUAL_size_t(0, ss8_find_first_not_of_bytes(&s, 0, NULL, 0));
+    TEST_ASSERT_EQUAL_size_t(0, ss8_find_first_not_of_bytes(&s, 0, "", 0));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX,
-                             ss8_find_first_not_of_bytes(&s, 1, NULL, 0));
+                             ss8_find_first_not_of_bytes(&s, 1, "", 0));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX,
                              ss8_find_first_not_of_bytes(&s, 0, "ab", 2));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX,
@@ -2033,12 +2035,12 @@ void test_find_last_of(void) {
     ss8str s;
     ss8_init(&s);
 
-    TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_last_of_bytes(&s, 0, NULL, 0));
+    TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_last_of_bytes(&s, 0, "x", 0));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_last_of_bytes(&s, 0, "A", 1));
 
     ss8_copy_cstr(&s, "a");
-    TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_last_of_bytes(&s, 0, NULL, 0));
-    TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_last_of_bytes(&s, 1, NULL, 0));
+    TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_last_of_bytes(&s, 0, "x", 0));
+    TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_last_of_bytes(&s, 1, "x", 0));
     TEST_ASSERT_EQUAL_size_t(0, ss8_find_last_of_bytes(&s, 0, "ab", 2));
     TEST_ASSERT_EQUAL_size_t(0, ss8_find_last_of_bytes(&s, 1, "ab", 2));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX, ss8_find_last_of_bytes(&s, 0, "AB", 2));
@@ -2065,13 +2067,13 @@ void test_find_last_not_of(void) {
     ss8_init(&s);
 
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX,
-                             ss8_find_last_not_of_bytes(&s, 0, NULL, 0));
+                             ss8_find_last_not_of_bytes(&s, 0, "x", 0));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX,
                              ss8_find_last_not_of_bytes(&s, 0, "A", 1));
 
     ss8_copy_cstr(&s, "a");
-    TEST_ASSERT_EQUAL_size_t(0, ss8_find_last_not_of_bytes(&s, 0, NULL, 0));
-    TEST_ASSERT_EQUAL_size_t(0, ss8_find_last_not_of_bytes(&s, 1, NULL, 0));
+    TEST_ASSERT_EQUAL_size_t(0, ss8_find_last_not_of_bytes(&s, 0, "x", 0));
+    TEST_ASSERT_EQUAL_size_t(0, ss8_find_last_not_of_bytes(&s, 1, "x", 0));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX,
                              ss8_find_last_not_of_bytes(&s, 0, "ab", 2));
     TEST_ASSERT_EQUAL_size_t(SIZE_MAX,
@@ -2100,16 +2102,16 @@ void test_starts_with_bytes(void) {
     ss8str s;
     ss8_init(&s);
 
-    TEST_ASSERT_TRUE(ss8_starts_with_bytes(&s, NULL, 0));
+    TEST_ASSERT_TRUE(ss8_starts_with_bytes(&s, "x", 0));
     TEST_ASSERT_FALSE(ss8_starts_with_bytes(&s, "a", 1));
 
     ss8_copy_cstr(&s, "a");
-    TEST_ASSERT_TRUE(ss8_starts_with_bytes(&s, NULL, 0));
+    TEST_ASSERT_TRUE(ss8_starts_with_bytes(&s, "x", 0));
     TEST_ASSERT_TRUE(ss8_starts_with_bytes(&s, "a", 1));
     TEST_ASSERT_FALSE(ss8_starts_with_bytes(&s, "a\0", 2));
 
     ss8_copy_cstr(&s, "ab");
-    TEST_ASSERT_TRUE(ss8_starts_with_bytes(&s, NULL, 0));
+    TEST_ASSERT_TRUE(ss8_starts_with_bytes(&s, "x", 0));
     TEST_ASSERT_TRUE(ss8_starts_with_bytes(&s, "a", 1));
     TEST_ASSERT_FALSE(ss8_starts_with_bytes(&s, "a\0", 2));
     TEST_ASSERT_TRUE(ss8_starts_with_bytes(&s, "ab", 2));
@@ -2138,16 +2140,16 @@ void test_ends_with_bytes(void) {
     ss8str s;
     ss8_init(&s);
 
-    TEST_ASSERT_TRUE(ss8_ends_with_bytes(&s, NULL, 0));
+    TEST_ASSERT_TRUE(ss8_ends_with_bytes(&s, "x", 0));
     TEST_ASSERT_FALSE(ss8_ends_with_bytes(&s, "a", 1));
 
     ss8_copy_cstr(&s, "a");
-    TEST_ASSERT_TRUE(ss8_ends_with_bytes(&s, NULL, 0));
+    TEST_ASSERT_TRUE(ss8_ends_with_bytes(&s, "x", 0));
     TEST_ASSERT_TRUE(ss8_ends_with_bytes(&s, "a", 1));
     TEST_ASSERT_FALSE(ss8_ends_with_bytes(&s, "a\0", 2));
 
     ss8_copy_cstr(&s, "ab");
-    TEST_ASSERT_TRUE(ss8_ends_with_bytes(&s, NULL, 0));
+    TEST_ASSERT_TRUE(ss8_ends_with_bytes(&s, "x", 0));
     TEST_ASSERT_TRUE(ss8_ends_with_bytes(&s, "b", 1));
     TEST_ASSERT_FALSE(ss8_ends_with_bytes(&s, "b\0", 2));
     TEST_ASSERT_TRUE(ss8_ends_with_bytes(&s, "ab", 2));
