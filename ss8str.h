@@ -877,8 +877,8 @@ SSSTR_INLINE_DEF bool ss8_copy_to_cstr(ss8str const *SSSTR_RESTRICT str,
                                        size_t bufsize) {
     SSSTR_EXTRA_ASSERT(buf != NULL);
     ss8iNtErNaL_extra_assert_no_overlap(str, buf, bufsize);
-
-    if (bufsize == 0)
+    SSSTR_ASSERT(bufsize >= 1);
+    if (bufsize == 0) // Be "safe" despite the assertion.
         return false;
 
     size_t copylen = ss8_len(str);

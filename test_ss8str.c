@@ -841,9 +841,6 @@ void test_copy_to(void) {
 
     ss8_copy_ch_n(&s, '+', 0);
     perturb_unused_bytes(&s);
-    TEST_ASSERT_FALSE(ss8_copy_to_cstr(&s, zerolen, 0));
-    TEST_ASSERT_EQUAL_CHAR('x', zerolen[0]);
-
     blank_buffer(buf, sizeof(buf));
     TEST_ASSERT_TRUE(ss8_copy_to_cstr(&s, buf, 1));
     TEST_ASSERT_EQUAL_STRING("", buf);

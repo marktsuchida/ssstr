@@ -310,13 +310,13 @@ regular C string users. This is even easier:
 
 ```c
 // Returns length that would have been written given sufficient bufsize.
-// Can call with buf == NULL to determine required size.
+// Can call with buf == NULL to determine result length.
 size_t get_greeting(char *buf, size_t bufsize) {
     // In real code, this string would come from elsewhere.
     ss8str greeting;
     ss8_init_copy_cstr(&greeting, "Hello, World!");
 
-    if (buf)
+    if (buf && bufsize >= 1)
         ss8_copy_to_cstr(&greeting, buf, bufsize);  // Copy portion that fits.
 
     size_t ret = ss8_len(&greeting);
