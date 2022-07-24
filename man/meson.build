@@ -2,7 +2,7 @@
 # Copyright 2022 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-man3_pages = files([
+man3_pages = files(
     'man3/ss8_at.3',
     'man3/ss8_capacity.3',
     'man3/ss8_cat.3',
@@ -29,9 +29,9 @@ man3_pages = files([
     'man3/ss8_starts_with.3',
     'man3/ss8_strip.3',
     'man3/ss8_swap.3',
-])
+)
 
-man3_links = files([
+man3_links = files(
     'link3/ss8_back.3',
     'link3/ss8_cat_bytes.3',
     'link3/ss8_cat_ch.3',
@@ -55,6 +55,7 @@ man3_links = files([
     'link3/ss8_copy_cstr.3',
     'link3/ss8_copy_to_bytes.3',
     'link3/ss8_cstr_suffix.3',
+    'link3/ss8_destroy.3',
     'link3/ss8_ends_with.3',
     'link3/ss8_ends_with_bytes.3',
     'link3/ss8_ends_with_ch.3',
@@ -77,7 +78,6 @@ man3_links = files([
     'link3/ss8_find_last_of_bytes.3',
     'link3/ss8_find_last_of_cstr.3',
     'link3/ss8_find_not_ch.3',
-    'link3/ss8_destroy.3',
     'link3/ss8_front.3',
     'link3/ss8_grow_len.3',
     'link3/ss8_init_copy_bytes.3',
@@ -124,14 +124,14 @@ man3_links = files([
     'link3/ss8_substr_inplace.3',
     'link3/ss8_vsnprintf.3',
     'link3/ss8_vsprintf.3',
-])
+)
 
-man7_pages = files([
+man7_pages = files(
     'man7/ssstr.7',
-])
+)
 
-man7_links = files([
+man7_links = files(
     'link7/ss8str.7',
-])
+)
 
 install_man(man3_pages, man3_links, man7_pages, man7_links)

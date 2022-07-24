@@ -8,7 +8,8 @@ example_c_args = [
     '-D_CRT_SECURE_NO_WARNINGS',
 ]
 
-example_fgets_test = executable('test_example_fgets',
+example_fgets_test = executable(
+    'test_example_fgets',
     'test_example_fgets.c',
     include_directories: [
         public_inc,
@@ -19,7 +20,8 @@ example_fgets_test = executable('test_example_fgets',
     ],
 )
 
-example_fread_test = executable('test_example_fread',
+example_fread_test = executable(
+    'test_example_fread',
     'test_example_fread.c',
     include_directories: [
         public_inc,
@@ -30,7 +32,8 @@ example_fread_test = executable('test_example_fread',
     ],
 )
 
-example_strftime_test = executable('test_example_strftime',
+example_strftime_test = executable(
+    'test_example_strftime',
     'test_example_strftime.c',
     include_directories: [
         public_inc,
@@ -41,16 +44,20 @@ example_strftime_test = executable('test_example_strftime',
     ],
 )
 
-test('example-fgets-test', example_fgets_test,
+test(
+    'example-fgets-test',
+    example_fgets_test,
     timeout: 10,
 )
-test('example-fread-test', example_fread_test,
+test(
+    'example-fread-test',
+    example_fread_test,
     timeout: 10,
 )
 test('example-strftime-test', example_strftime_test)
 
-example_test_sources = files([
+example_test_sources = files(
     'test_example_fgets.c',
     'test_example_fread.c',
     'test_example_strftime.c',
-])
+)

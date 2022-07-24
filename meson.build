@@ -2,13 +2,16 @@
 # Copyright 2022 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-project('ssstr', 'c', 'cpp',
+project(
+    'ssstr',
+    'c',
+    'cpp',
     version: '0.1.0-dev',
     license: 'MIT',
     meson_version: '>=0.62.0',
     default_options: [
         'c_std=c99',
-        'cpp_std=c++11',  # Supports c++03 but va_list functions require 11+
+        'cpp_std=c++11', # Supports c++03 but va_list functions require 11+
         'warning_level=3',
         'werror=true',
     ],
@@ -26,7 +29,9 @@ version_check_script = files(
     'scripts/checkversion.py',
 )
 
-test('version-check', python_prog,
+test(
+    'version-check',
+    python_prog,
     args: [
         version_check_script,
         meson.project_version(),
@@ -49,7 +54,9 @@ test_sources = files(
     'test_ss8str.c',
 )
 
-ssstr_test = executable('test_ssstr', test_sources,
+ssstr_test = executable(
+    'test_ssstr',
+    test_sources,
     c_args: [
         '-UNDEBUG',
     ],
@@ -59,7 +66,9 @@ ssstr_test = executable('test_ssstr', test_sources,
 )
 test('ssstr-test', ssstr_test)
 
-ssstr_test_extra_asserts = executable('test_ssstr_extra_asserts', test_sources,
+ssstr_test_extra_asserts = executable(
+    'test_ssstr_extra_asserts',
+    test_sources,
     c_args: [
         '-UNDEBUG',
         '-DSSSTR_EXTRA_DEBUG',
@@ -70,7 +79,9 @@ ssstr_test_extra_asserts = executable('test_ssstr_extra_asserts', test_sources,
 )
 test('ssstr-extra-asserts-test', ssstr_test_extra_asserts)
 
-ssstr_test_no_asserts = executable('test_ssstr_no_asserts', test_sources,
+ssstr_test_no_asserts = executable(
+    'test_ssstr_no_asserts',
+    test_sources,
     c_args: [
         '-DNDEBUG',
     ],
@@ -84,13 +95,15 @@ test_cpp_include_sources = files(
     'test_ss8str_include.cpp',
 )
 
-ssstr_cpp_include_test = executable('test_cpp_include',
-    test_cpp_include_sources
+ssstr_cpp_include_test = executable(
+    'test_cpp_include',
+    test_cpp_include_sources,
 )
 test('ssstr-cpp-include-test', ssstr_cpp_include_test)
 
 # Make sure C++ build with C 'extern inline' works
-ssstr_cpp_include_nonstatic_test = executable('test_cpp_include_nonstatic',
+ssstr_cpp_include_nonstatic_test = executable(
+    'test_cpp_include_nonstatic',
     test_cpp_include_sources,
     cpp_args: [
         '-DSSSTR_USE_NONSTATIC_INLINE',
@@ -99,7 +112,8 @@ ssstr_cpp_include_nonstatic_test = executable('test_cpp_include_nonstatic',
 )
 test('ssstr-cpp-include-nonstatic-test', ssstr_cpp_include_nonstatic_test)
 
-google_benchmark_dep = dependency('benchmark',
+google_benchmark_dep = dependency(
+    'benchmark',
     required: get_option('benchmark'),
     disabler: true,
     fallback: 'google-benchmark',
@@ -112,12 +126,13 @@ bench_sources = files(
     'bench_ss8str.cpp',
 )
 
-ssstr_bench = executable('bench_ssstr',
+ssstr_bench = executable(
+    'bench_ssstr',
     [
         bench_sources,
     ],
     override_options: [
-        'cpp_std=c++14',  # Avoid passing /std:c++11 to clang-cl
+        'cpp_std=c++14', # Avoid passing /std:c++11 to clang-cl
         'optimization=3',
     ],
     cpp_args: [
@@ -130,7 +145,9 @@ ssstr_bench = executable('bench_ssstr',
         google_benchmark_dep,
     ],
 )
-benchmark('ssstr-bench', ssstr_bench,
+benchmark(
+    'ssstr-bench',
+    ssstr_bench,
     timeout: 120,
     verbose: true,
 )
@@ -138,9 +155,11 @@ benchmark('ssstr-bench', ssstr_bench,
 subdir('examples')
 subdir('man')
 
-man_pages_check_script = files(['scripts/checkmanpages.py'])
+man_pages_check_script = files('scripts/checkmanpages.py')
 
-test('man-pages-check', python_prog,
+test(
+    'man-pages-check',
+    python_prog,
     args: [
         man_pages_check_script,
         public_headers,
@@ -153,14 +172,15 @@ test('man-pages-check', python_prog,
     ],
 )
 
-groff_prog = find_program('groff',
+groff_prog = find_program(
+    'groff',
     required: false,
     disabler: true,
 )
-htmlman_script = files(['scripts/htmlman.py'])
+htmlman_script = files('scripts/htmlman.py')
 
 htmlman = custom_target(
-    build_always_stale: true,  # Since we cannot list output files
+    build_always_stale: true, # Since we cannot list output files
     output: 'htmlman',
     input: [
         man3_pages,
@@ -201,7 +221,8 @@ readme_snippet_test_source = custom_target(
     ],
 )
 
-readme_snippet_test = executable('test_readme_snippets',
+readme_snippet_test = executable(
+    'test_readme_snippets',
     readme_snippet_test_source,
     c_args: [
         '-UNDEBUG',
