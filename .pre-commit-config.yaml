@@ -11,7 +11,7 @@ repos:
         args: ["--allow-multiple-documents"]
 
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 2.4.0
+    rev: 2.6.1
     hooks:
       - id: editorconfig-checker
         alias: ec
@@ -22,13 +22,13 @@ repos:
       - id: clang-format
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.34.0
+    rev: v3.2.0
     hooks:
       - id: pyupgrade
         args: ["--py38-plus"]
 
   - repo: https://github.com/psf/black
-    rev: 22.3.0
+    rev: 22.10.0
     hooks:
       - id: black
 
@@ -38,7 +38,7 @@ repos:
       - id: isort
 
   - repo: https://github.com/PyCQA/flake8
-    rev: 4.0.1
+    rev: 5.0.4
     hooks:
       - id: flake8
         # Ignore items that conflict with Black
@@ -47,12 +47,12 @@ repos:
         args: ["--extend-ignore", "E203,E501"]
 
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.14
+    rev: 0.7.16
     hooks:
       - id: mdformat
         additional_dependencies:
           - mdformat-gfm
-        args: ["--wrap=79"]
+        args: ["--wrap=79", "--end-of-line=keep"]
 
   - repo: https://github.com/fsfe/reuse-tool
     rev: v1.0.0
