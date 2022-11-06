@@ -12,27 +12,38 @@ SPDX-License-Identifier: MIT
 #include <ss8str.h>
 ```
 
+**Ssstr** is intended to be used when you need a little more string handling
+capability than can be easily (and safely!) achieved with the standard library,
+but not enough to warrant introducing a heavyweight framework (such as GLib) or
+switching to C++. This may include manipulating path names, command line
+arguments, environment variables, and configuration file entries.
+
 ## Features and Design
 
 - Safer and simpler-to-use analogs of most of the C standard library `string.h`
   functions.
 - Additional conveneince functions similar to C++ `std::string` member
   functions and more.
-- Strings are always null-terminated and buffer size is managed automatically,
-  avoiding tricky edge cases.
-- Byte strings containing embedded null bytes can be handled.
-- Convenient and efficient interoperability with standard null-terminated
-  strings and unterminated byte buffers.
+- Move and swap support to minimize the need to copy strings.
+- Strings are **always null-terminated** and buffer size is managed
+  automatically, avoiding tricky edge cases.
+- Byte strings containing **embedded null bytes** can be handled.
+- Convenient and efficient **interoperability with standard null-terminated
+  strings** and unterminated byte buffers.
 - Single-file **header-only library**.
 - **Small string optimization**: strings up to 31 bytes (on 64-bit platforms)
   or 15 bytes (32-bit) can be stored directly in the object (usually on the
   stack), avoiding dynamic storage allocation.
 - Compatible with C99 and later.
-- Unit tested thoroughly.
+- Unit **tested** thoroughly.
+- Aims to compile without any warnings (including on MSVC _without_
+  `_CRT_SECURE_NO_WARNINGS` defined).
 - [Documented](https://marktsuchida.github.io/ssstr/man7/ssstr.7.html)
   carefully.
 
 ## Non-features
+
+**Ssstr** does not implement reference-counted or copy-on-write strings.
 
 **Ssstr** is meant for simple byte string manipulation, with the interpretation
 of the bytes completely left to the user.
@@ -42,9 +53,10 @@ of the bytes completely left to the user.
 - There is no support for breaking natural language strings into words, glyphs,
   codepoints, etc.
 
-There are many C libraries (such as [ICU](https://icu.unicode.org/)) that
-provide these capabilities, and **Ssstr** should be able to interoperate with
-most of them.
+There are many C libraries (such as
+[utf8proc](https://github.com/juliastrings/utf8proc) or
+[ICU](https://icu.unicode.org/)) that provide these capabilities, and **Ssstr**
+should be able to interoperate with them.
 
 Most of the **Ssstr** functions are safe for use with UTF-8 strings, but those
 that break up strings at arbitrary offsets (such as `ss8_copy_substr()`,
@@ -234,20 +246,20 @@ knew beforehand the exact length. For this, you can call `ss8_set_len()` again
 `ss8_set_len_to_cstrlen()`, (if the written string is null-terminated).
 
 Some (poorly-designed) APIs may not provide a way to determine the result
-length before you pass a large-enough buffer. In this case, you can use
-`ss8_grow_len()` to progressively increase the length of the string being used
-as the destination buffer, calling the API function in a loop until you
+length until you manage to pass a large-enough buffer. In this case, you can
+use `ss8_grow_len()` to progressively increase the length of the string being
+used as the destination buffer, calling the API function in a loop until you
 succeed. The `ss8_grow_len()` function is similar to `ss8_set_len()`, but will
 automatically chose a new length.
 
-Also depending on the API, you may need to pass either the _maximum string
-length_ (not including any null terminator) or _destination buffer size_
+Also depending on the API, you may be required to pass either the _maximum
+string length_ (not including any null terminator) or _destination buffer size_
 (including the null terminator). In the latter case, it is safe to pass
 `length + 1`, provided that the function will only ever write `\0` to the byte
 just beyond the length of the `ss8str`. (But make sure to check that this is
-the case; some functions, such as `strncpy()`, have confusing behavior.)
+the case; some functions, such as `strncpy()`, violate the condition.)
 
-**Note:** Besure not to confuse length and capacity. It is illegal to write
+**Note:** Be sure not to confuse length and capacity. It is illegal to write
 beyond the _length_ of an `ss8str` when using `ss8_cstr()` (with the null
 terminator exception mentioned above), however large its current _capacity_ may
 be.
@@ -269,7 +281,8 @@ struct tm perihelion = {
     .tm_year = 122,  // 2022
     .tm_mon = 0,     // January
     .tm_mday = 4,    // 4th
-    .tm_hour = 7, .tm_min = 10, .tm_sec = 0
+    .tm_hour = 7,
+    .tm_min = 10,
 };
 
 ss8str datetime;
@@ -295,9 +308,10 @@ ss8_destroy(&datetime);
 This example might be slightly superfluous because the format string used here
 results in a fixed 23-byte result, but it is meant as a demonstration for this
 common pattern (and other formats can generate results whose length depends on
-the current locale). And the use of `ss8_grow_len()` ensures that the first
-iteration will try the maximum length available without dynamic storage
-allocation.
+the current locale). And the use of `ss8_grow_len()` starting with an empty
+`ss8str` ensures that the first iteration will try the maximum length available
+without dynamic storage allocation (so the example above will not call
+`malloc()` on 64-bit platforms, unless `strftime()` does so internally).
 
 ### Copying to a plain C buffer
 
@@ -357,7 +371,7 @@ ss8_cat_ch_n(&dest, 'c', count);
 When assembling a string by concatenating multiple short strings, the `ss8str`
 might need to reallocate its internal buffer multiple times to hold the growing
 string. Memory allocation is slow, so this is done by enlarging the buffer
-exponentially by a constant factor (currently 1.5), to avoid excessively
+exponentially by a constant factor (currently 1.5) to avoid excessively
 frequent reallocations.
 
 However, if you know the exact or approximate final length of the string, it is
@@ -386,7 +400,7 @@ ss8_destroy(&s);
 
 Reserving space when the string is empty is most efficient because no existing
 data needs to be copied (otherwise, the entire current capacity's worth of
-bytes are copied, even if the string is shorter).
+bytes may be copied, even if the string is shorter).
 
 You can get the current capacity of an `ss8str` by calling `ss8_capacity()`,
 which returns the maximum number of bytes the string can contain without
@@ -761,22 +775,23 @@ possible, not merely exercise every line of code.
 ## Customization
 
 A few aspects of **Ssstr** can be customized by defining preprocessor macros
-_before_ including `ss8str.h`. All of them are advanced features.
+_before_ including `ss8str.h`. All of them (except `SSSTR_EXTRA_DEBUG`) are
+advanced features.
 
 ### Avoiding `static inline` functions
 
 By default, all **Ssstr** functions are `static inline`, so that simply
 including `ss8str.h` is all you need to do. However, if you include the header
-from many translation units (source files), each will get their own copy of the
-**Ssstr** functions, which may not be desirable in projects where small binary
-size is important.
+from multiple translation units (source files), each will get their own copy of
+those **Ssstr** functions which the compiler chose not to inline. This may not
+be desirable in projects where small binary size is important.
 
 If the macro `SSSTR_USE_NONSTATIC_INLINE` is defined, **Ssstr** functions will
 be defined as plain `inline`, so that duplicate copies of the functions will
 not be generated. Because of the way
-[C inline functions](https://en.cppreference.com/w/c/language/inline) work, the
-macro `SSSTR_DEFINE_EXTERN_INLINE` must also be defined in one (and only one)
-of the translation units.
+[C inline functions](https://en.cppreference.com/w/c/language/inline) work
+(which differs from C++), the macro `SSSTR_DEFINE_EXTERN_INLINE` must also be
+defined in one (and only one) of the translation units.
 
 ### Customizing memory allocation
 
@@ -790,11 +805,16 @@ of zero or a null `ptr`, so your definitions need not handle these edge cases
 in any specific manner. Also, **Ssstr** always checks the return value for
 `NULL` (see below on error handling).
 
+If you customize memory allocation, you are responsible for ensuring that
+compatible customizations are used throughout your program (or at least
+throughout a subsystem in which a given set of `ss8str` objects are passed
+around).
+
 ### Customizing run-time assertions
 
 **Ssstr** calls the standard `assert()` macro if there is a precondition
-violation (that is, programming error in user code). You can replace `assert()`
-by defining `SSSTR_ASSERT(condition)`.
+violation (that is, programming error in user code). You can replace this
+behavior by defining the macro `SSSTR_ASSERT(condition)`.
 
 To disable assertions, you should define `NDEBUG`; there is no need to define
 `SSSTR_ASSERT` just for this purpose.
@@ -841,7 +861,7 @@ has not been tested.
 Note that the string formatting functions `ss8_[cat_][v]s[n]printf()` can (at
 least in theory) encounter additional errors that will lead to a call to
 `abort()`. These include the result of string formatting being greater than or
-equal to `INT_MAX` bytes or `vs[n]printf()` returning a negative number for
+equal to `INT_MAX` bytes, or `vs[n]printf()` returning a negative number for
 some other reason. Handling of these is not customizable. Programs that want
 water-tight (and strictly platform-independent) string formatting should
 probably use a specialized library rather than depending on these convenience
@@ -887,11 +907,36 @@ to distinguish from small strings.
 On 32-bit platforms, an `ss8str` occupies 16 bytes and the capacity is never
 less than 15.
 
+In principle, any size greater than or equal to 3 pointers could be chosen for
+a string type with small string optimization. Larger choices will increase the
+chance of a string fitting in the small string buffer (avoiding dynamic
+allocation), but will waste space if many of the strings are either very short
+or longer than the small string capacity.
+
+A design with 3-pointer-sized string objects requires one of two compromises to
+be made: either the small string buffer needs to be limited to the size of 2
+pointers, or complicated (and platform-dependent) techniques need to be used to
+encode the long/short distinction into one of the 3 pointer/size fields. The
+former approach is typical in C++ `std::string` implementations, and the latter
+is used by the above-mentioned `folly::fbstring`.
+
+The 4-pointer size of `ss8str` was chosen because it is the smallest that can
+be achieved while having a single, simple implementation supporting little- and
+big-endian, 32- and 64-bit architectures and with maximum utilization of the
+small string buffer.
+
+The use cases for which **Ssstr** was designed are the handling of small
+numbers of short to moderate-length strings (path names, command line
+arguments, environment variables, configuration file entries) -- _not_ building
+databases or text editors. Applications that want to store large numbers of
+strings with high space efficiency may prefer other designs; see, for example,
+[SDS](https://github.com/antirez/sds).
+
 ## Versioning
 
-**Ssstr** uses [Semantic Versioning](https://semver.org/). The API, for
-versioning purposes, consists of the functions and data types documented in the
-manual pages, plus the customization macros documented above.
+**Ssstr** intends to use [Semantic Versioning](https://semver.org/). The API,
+for versioning purposes, consists of the functions and data types documented in
+the manual pages, plus the customization macros documented above.
 
 ABI compatibility will be maintained more strictly: the memory layout of the
 `ss8str` object will not change on a given platform (if it ever does, the type,
