@@ -167,6 +167,15 @@ extern "C" {
 #define SSSTR_SIZE_OVERFLOW() SSSTR_PANIC("Result too large")
 #endif
 
+#ifdef __GNUC__
+#define SSSTR_ATTRIBUTE_PRINTF(ifmt, ifst)                                    \
+    __attribute__((format(printf, ifmt, ifst)))
+#define SSSTR_ATTRIBUTE_VPRINTF(ifmt) SSSTR_ATTRIBUTE_PRINTF(ifmt, 0)
+#else
+#define SSSTR_ATTRIBUTE_PRINTF(ifmt, ifst)
+#define SSSTR_ATTRIBUTE_VPRINTF(ifmt)
+#endif
+
 typedef union {
     // 32 bytes on 64-bit platforms and 16 bytes on 32-bit. This could be
     // reduced to 24/12 bytes, but then we would need to deal with endian
@@ -395,26 +404,34 @@ SSSTR_INLINE ss8str *ss8_lstrip_ch(ss8str *str, char ch);
 SSSTR_INLINE ss8str *ss8_rstrip_ch(ss8str *str, char ch);
 SSSTR_INLINE ss8str *ss8_strip_ch(ss8str *str, char ch);
 #if !defined(__cplusplus) || __cplusplus >= 201103L // C++ >= 11
+SSSTR_ATTRIBUTE_VPRINTF(2)
 SSSTR_INLINE ss8str *ss8_cat_vsprintf(ss8str *SSSTR_RESTRICT dest,
                                       char const *SSSTR_RESTRICT fmt,
                                       va_list args);
+SSSTR_ATTRIBUTE_VPRINTF(2)
 SSSTR_INLINE ss8str *ss8_vsprintf(ss8str *SSSTR_RESTRICT dest,
                                   char const *SSSTR_RESTRICT fmt,
                                   va_list args);
+SSSTR_ATTRIBUTE_VPRINTF(3)
 SSSTR_INLINE ss8str *ss8_cat_vsnprintf(ss8str *SSSTR_RESTRICT dest,
                                        size_t maxlen,
                                        char const *SSSTR_RESTRICT fmt,
                                        va_list args);
+SSSTR_ATTRIBUTE_VPRINTF(3)
 SSSTR_INLINE ss8str *ss8_vsnprintf(ss8str *SSSTR_RESTRICT dest, size_t maxlen,
                                    char const *SSSTR_RESTRICT fmt,
                                    va_list args);
+SSSTR_ATTRIBUTE_PRINTF(2, 3)
 SSSTR_INLINE ss8str *ss8_cat_sprintf(ss8str *SSSTR_RESTRICT dest,
                                      char const *SSSTR_RESTRICT fmt, ...);
+SSSTR_ATTRIBUTE_PRINTF(2, 3)
 SSSTR_INLINE ss8str *ss8_sprintf(ss8str *SSSTR_RESTRICT dest,
                                  char const *SSSTR_RESTRICT fmt, ...);
+SSSTR_ATTRIBUTE_PRINTF(3, 4)
 SSSTR_INLINE ss8str *ss8_cat_snprintf(ss8str *SSSTR_RESTRICT dest,
                                       size_t maxlen,
                                       char const *SSSTR_RESTRICT fmt, ...);
+SSSTR_ATTRIBUTE_PRINTF(3, 4)
 SSSTR_INLINE ss8str *ss8_snprintf(ss8str *SSSTR_RESTRICT dest, size_t maxlen,
                                   char const *SSSTR_RESTRICT fmt, ...);
 #endif // C++ >= 11
