@@ -45,6 +45,14 @@ def parse_snippet_lines(lines):
                 yield i, "prologue", line.split(None, 1)[1]
             elif line.startswith("%SNIPPET_EPILOGUE"):
                 yield i, "epilogue", line.split(None, 1)[1]
+            elif line.startswith("%"):
+                lineno = i + 1
+                directive = line.split(None, 1)[0]
+                print(
+                    f"Unknown directive {directive} at line {lineno}",
+                    file=sys.stderr,
+                )
+                assert False
             elif line.rstrip() == "```c":
                 start = i
                 lines = []
