@@ -130,8 +130,8 @@ extern "C" {
 // performance and binary size.
 // Extra assertions include pointer null checks, checks for corrupted ss8str
 // values (best effort), and checks for violation of restrict pointer
-// semantics. Pattern filling of uninitialized or moved-out (sub)strings is
-// also enabled.
+// semantics. Pattern filling of uninitialized (sub)strings and moved-from
+// strings is also enabled.
 #ifdef SSSTR_EXTRA_DEBUG
 #ifdef NDEBUG
 // Avoid confusing behavior in case custom SSSTR_ASSERT() is NDEBUG-agnostic.
@@ -912,10 +912,10 @@ SSSTR_INLINE_DEF void ss8_swap(ss8str *SSSTR_RESTRICT str1,
     memcpy(str2, &temp, sizeof(ss8str));
 }
 
-SSSTR_INLINE void ss8iNtErNaL_mark_moved_out(ss8str *s);
-SSSTR_INLINE_DEF void ss8iNtErNaL_mark_moved_out(ss8str *s) {
+SSSTR_INLINE void ss8iNtErNaL_mark_moved_from(ss8str *s);
+SSSTR_INLINE_DEF void ss8iNtErNaL_mark_moved_from(ss8str *s) {
 #ifdef SSSTR_EXTRA_DEBUG
-    ss8_copy_cstr(s, "!!! MOVED OUT SS8STR !!!");
+    ss8_copy_cstr(s, "!!! MOVED-FROM SS8STR !!!");
 #else
     (void)s;
 #endif
@@ -950,7 +950,7 @@ SSSTR_INLINE_DEF ss8str *ss8_move(ss8str *SSSTR_RESTRICT dest,
         ss8_init(src);
 #endif
 
-    ss8iNtErNaL_mark_moved_out(src);
+    ss8iNtErNaL_mark_moved_from(src);
     return dest;
 }
 
@@ -979,7 +979,7 @@ SSSTR_INLINE_DEF ss8str *ss8_init_move(ss8str *SSSTR_RESTRICT str,
     memcpy(str, src, sizeof(ss8str));
     ss8_init(src);
 
-    ss8iNtErNaL_mark_moved_out(src);
+    ss8iNtErNaL_mark_moved_from(src);
     return str;
 }
 

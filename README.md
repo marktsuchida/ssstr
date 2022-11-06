@@ -815,7 +815,7 @@ corrupted `ss8str` objects.
 In addition, when built with `SSSTR_EXTRA_DEBUG` defined, the portion of a
 string extended by `ss8_set_len()` or `ss8_grow_len()` is filled with `'~'`,
 and the right-hand-side of `ss8_move()` or `ss8_init_move()` is set to the
-string `"!!! MOVED OUT SS8STR !!!"`. These behaviors are intended to increase
+string `"!!! MOVED-FROM SS8STR !!!"`. These behaviors are intended to increase
 the likelihood of spotting bugs due to erroneous access to indeterminate data.
 
 ### Customizing error handling
