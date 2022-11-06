@@ -24,8 +24,8 @@ void test_example_strftime(void) {
     for (;;) {
         ss8_grow_len(&timestr, SIZE_MAX, SIZE_MAX);
 
-        size_t n = strftime(ss8_cstr(&timestr), ss8_len(&timestr) + 1, "%c",
-                            localtime(&now));
+        size_t n = strftime(ss8_mutable_cstr(&timestr), ss8_len(&timestr) + 1,
+                            "%c", localtime(&now));
         if (n > 0) {
             ss8_set_len(&timestr, n);
             break;

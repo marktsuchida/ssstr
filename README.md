@@ -178,10 +178,10 @@ size_t len = ss8_len(&example);             // 5
 bool e = ss8_is_empty(&example);            // false
 
 // Pass to a function expecting a null-terminated string
-puts(ss8_const_cstr(&example));
+puts(ss8_cstr(&example));
 
 // Pass a right substring (prints "lo!\n")
-printf("%s!\n", ss8_const_cstr_suffix(&example, 3));
+printf("%s!\n", ss8_cstr_suffix(&example, 3));
 
 char ch = ss8_at(&example, 1);              // 'e'
 char first = ss8_front(&example);           // 'H'
@@ -198,12 +198,12 @@ ss8_destroy(&example);
 %SNIPPET_EPILOGUE (void)last;
 -->
 
-Note that the result of `ss8_len(&s)` and `strlen(ss8_const_cstr(&s))` would
-differ if the string contained embedded null bytes.
+Note that the result of `ss8_len(&s)` and `strlen(ss8_cstr(&s))` would differ
+if the string contained embedded null bytes.
 
-The `ss8_const_cstr()` function returns a pointer to the string's internal
-buffer, without making a copy. The string is always null-terminated, whether or
-not it contains embedded null bytes.
+The `ss8_cstr()` function returns a pointer to the string's internal buffer,
+without making a copy. The string is always null-terminated, whether or not it
+contains embedded null bytes.
 
 ### Mutating characters
 
@@ -235,9 +235,10 @@ The `ss8_set_len()` function adjusts the length of the string, leaving any new
 portion of the string uninitialized. This can be used to prepare a destination
 buffer of the desired size.
 
-`ss8_cstr()`, the non-const version of `ss8_const_cstr()`, returns a pointer
+`ss8_mutable_cstr()`, the non-const version of `ss8_cstr()`, returns a pointer
 that you can pass to functions that will write a string. There is also
-`ss8_cstr_suffix()` which you can use to append onto an existing string.
+`ss8_mutable_cstr_suffix()` which you can use to append onto an existing
+string.
 
 If you adjusted the length of an `ss8str` using `ss8_set_len()`, you probably
 need to readjust it after the call to the string-producing function, unless you
@@ -260,9 +261,9 @@ just beyond the length of the `ss8str`. (But make sure to check that this is
 the case; some functions, such as `strncpy()`, violate the condition.)
 
 **Note:** Be sure not to confuse length and capacity. It is illegal to write
-beyond the _length_ of an `ss8str` when using `ss8_cstr()` (with the null
-terminator exception mentioned above), however large its current _capacity_ may
-be.
+beyond the _length_ of an `ss8str` when using `ss8_mutable_cstr()` (with the
+null terminator exception mentioned above), however large its current
+_capacity_ may be.
 
 #### Example: Calling `strftime()`
 
@@ -291,12 +292,12 @@ ss8_init(&datetime);
 size_t len = 0;
 while (!len) {
     ss8_grow_len(&datetime, SIZE_MAX, SIZE_MAX);
-    len = strftime(ss8_cstr(&datetime), ss8_len(&datetime) + 1,
+    len = strftime(ss8_mutable_cstr(&datetime), ss8_len(&datetime) + 1,
                    "%Y-%m-%d %H:%M:%S UTC", &perihelion);
 }
 ss8_set_len(&datetime, len);
 
-printf("%s\n", ss8_const_cstr(&datetime));
+printf("%s\n", ss8_cstr(&datetime));
 
 ss8_destroy(&datetime);
 ```
@@ -714,7 +715,7 @@ same meaning as the `printf()` family of functions provided by the standard
 library.
 
 In particular, any `"%s"` format specifier requires a corresponding standard
-null-terminated string, so you need to use `ss8_const_cstr()` if printing an
+null-terminated string, so you need to use `ss8_cstr()` if printing an
 `ss8str`:
 
 <!--
@@ -725,7 +726,7 @@ null-terminated string, so you need to use `ss8_const_cstr()` if printing an
 ss8str warning, dest;
 ss8_init_copy_cstr(&warning, "I'm not a C string");
 ss8_init(&dest);
-ss8_sprintf(&dest, "warning: %s (%d)", ss8_const_cstr(&warning), 42);
+ss8_sprintf(&dest, "warning: %s (%d)", ss8_cstr(&warning), 42);
 // ...
 ss8_destroy(&dest);
 ss8_destroy(&warning);

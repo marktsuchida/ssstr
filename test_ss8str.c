@@ -211,37 +211,37 @@ void test_cstr(void) {
     perturb_buffer(&s, sizeof(s));
     *lastbyte = ss8iNtErNaL_shortcap;
     s.iNtErNaL_S[0] = '\0';
+    TEST_ASSERT_EQUAL_PTR(s.iNtErNaL_S, ss8_mutable_cstr(&s));
     TEST_ASSERT_EQUAL_PTR(s.iNtErNaL_S, ss8_cstr(&s));
-    TEST_ASSERT_EQUAL_PTR(s.iNtErNaL_S, ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_PTR(s.iNtErNaL_S, ss8_mutable_cstr_suffix(&s, 0));
     TEST_ASSERT_EQUAL_PTR(s.iNtErNaL_S, ss8_cstr_suffix(&s, 0));
-    TEST_ASSERT_EQUAL_PTR(s.iNtErNaL_S, ss8_const_cstr_suffix(&s, 0));
 
     perturb_buffer(&s, sizeof(s));
     *lastbyte = ss8iNtErNaL_shortcap - 1;
     s.iNtErNaL_S[1] = '\0';
+    TEST_ASSERT_EQUAL_PTR(s.iNtErNaL_S + 1, ss8_mutable_cstr_suffix(&s, 1));
     TEST_ASSERT_EQUAL_PTR(s.iNtErNaL_S + 1, ss8_cstr_suffix(&s, 1));
-    TEST_ASSERT_EQUAL_PTR(s.iNtErNaL_S + 1, ss8_const_cstr_suffix(&s, 1));
 
     char buf[3] = "";
     perturb_buffer(&s, sizeof(s));
     *lastbyte = ss8iNtErNaL_longmode;
     s.iNtErNaL_L.len = 0;
     s.iNtErNaL_L.ptr = buf;
+    TEST_ASSERT_EQUAL_PTR(buf, ss8_mutable_cstr(&s));
     TEST_ASSERT_EQUAL_PTR(buf, ss8_cstr(&s));
-    TEST_ASSERT_EQUAL_PTR(buf, ss8_const_cstr(&s));
 
     s.iNtErNaL_L.len = 1;
     buf[0] = '*';
     buf[1] = '\0';
+    TEST_ASSERT_EQUAL_PTR(buf, ss8_mutable_cstr_suffix(&s, 0));
     TEST_ASSERT_EQUAL_PTR(buf, ss8_cstr_suffix(&s, 0));
-    TEST_ASSERT_EQUAL_PTR(buf, ss8_const_cstr_suffix(&s, 0));
 
     s.iNtErNaL_L.len = 2;
     buf[0] = '*';
     buf[1] = '*';
     buf[2] = '\0';
+    TEST_ASSERT_EQUAL_PTR(buf + 1, ss8_mutable_cstr_suffix(&s, 1));
     TEST_ASSERT_EQUAL_PTR(buf + 1, ss8_cstr_suffix(&s, 1));
-    TEST_ASSERT_EQUAL_PTR(buf + 1, ss8_const_cstr_suffix(&s, 1));
 
     // No free (s is not valid).
 }
@@ -302,20 +302,19 @@ void test_reserve_short_to_short(void) {
 
     ss8_copy_ch_n(&s, '+', 1);
     perturb_unused_bytes(&s);
-    TEST_ASSERT_EQUAL_STRING("+", ss8_const_cstr(ss8_reserve(&s, 2)));
+    TEST_ASSERT_EQUAL_STRING("+", ss8_cstr(ss8_reserve(&s, 2)));
     TEST_ASSERT_EQUAL_size_t(1, ss8_len(&s));
 
     ss8_copy_ch_n(&s, '+', 2);
     perturb_unused_bytes(&s);
-    TEST_ASSERT_EQUAL_STRING("++", ss8_const_cstr(ss8_reserve(&s, 3)));
+    TEST_ASSERT_EQUAL_STRING("++", ss8_cstr(ss8_reserve(&s, 3)));
     TEST_ASSERT_EQUAL_size_t(2, ss8_len(&s));
 
     ss8_copy_ch_n(&s, '+', shortbufsiz - 2);
     perturb_unused_bytes(&s);
     char buf[ss8iNtErNaL_shortbufsiz - 1];
     make_test_string(buf, sizeof(buf));
-    TEST_ASSERT_EQUAL_STRING(buf,
-                             ss8_const_cstr(ss8_reserve(&s, shortbufsiz - 1)));
+    TEST_ASSERT_EQUAL_STRING(buf, ss8_cstr(ss8_reserve(&s, shortbufsiz - 1)));
     TEST_ASSERT_EQUAL_size_t(shortbufsiz - 2, ss8_len(&s));
 
     ss8_destroy(&s);
@@ -348,8 +347,7 @@ void test_reserve_short_to_long(void) {
     perturb_unused_bytes(&s);
     char buf[ss8iNtErNaL_shortbufsiz];
     make_test_string(buf, sizeof(buf));
-    TEST_ASSERT_EQUAL_STRING(buf,
-                             ss8_const_cstr(ss8_reserve(&s, shortbufsiz)));
+    TEST_ASSERT_EQUAL_STRING(buf, ss8_cstr(ss8_reserve(&s, shortbufsiz)));
     TEST_ASSERT_EQUAL_size_t(shortbufsiz - 1, ss8_len(&s));
     ss8_destroy(&s);
 }
@@ -372,8 +370,7 @@ void test_reserve_long_to_long(void) {
     perturb_unused_bytes(&s);
     char buf[ss8iNtErNaL_shortbufsiz + 1];
     make_test_string(buf, sizeof(buf));
-    TEST_ASSERT_EQUAL_STRING(buf,
-                             ss8_const_cstr(ss8_reserve(&s, shortbufsiz + 1)));
+    TEST_ASSERT_EQUAL_STRING(buf, ss8_cstr(ss8_reserve(&s, shortbufsiz + 1)));
     TEST_ASSERT_EQUAL_size_t(shortbufsiz, ss8_len(&s));
     ss8_destroy(&s);
 }
@@ -383,11 +380,11 @@ void test_set_len(void) {
     ss8_init(&s);
     perturb_unused_bytes(&s);
     ss8_set_len(&s, 100);
-    memset(ss8_cstr(&s), '+', 100);
+    memset(ss8_mutable_cstr(&s), '+', 100);
     perturb_unused_bytes(&s);
     ss8str t;
     ss8_init_copy_ch_n(&t, '+', 100); // Trust.
-    TEST_ASSERT_EQUAL_STRING(ss8_const_cstr(&t), ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING(ss8_cstr(&t), ss8_cstr(&s));
     ss8_destroy(&s);
     ss8_destroy(&t);
 }
@@ -400,13 +397,13 @@ void test_set_len_to_cstrlen(void) {
     perturb_unused_bytes(&s);
     ss8_set_len_to_cstrlen(&s);
     TEST_ASSERT_EQUAL_size_t(3, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("aaa", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("aaa", ss8_cstr(&s));
 
     ss8_copy_cstr(&s, "abc");
     perturb_unused_bytes(&s);
     ss8_set_len_to_cstrlen(&s);
     TEST_ASSERT_EQUAL_size_t(3, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("abc", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("abc", ss8_cstr(&s));
 
     ss8_destroy(&s);
 }
@@ -462,21 +459,21 @@ void test_shrink_to_fit_short_to_short(void) {
     TEST_ASSERT_EQUAL_PTR(&s, ss8_shrink_to_fit(&s));
     TEST_ASSERT_EQUAL_size_t(0, ss8_len(&s));
     TEST_ASSERT_EQUAL_size_t(maxshortlen, ss8_capacity(&s));
-    TEST_ASSERT_EQUAL_STRING("", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("", ss8_cstr(&s));
 
     ss8_copy_ch_n(&s, '+', 1);
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_shrink_to_fit(&s));
     TEST_ASSERT_EQUAL_size_t(1, ss8_len(&s));
     TEST_ASSERT_EQUAL_size_t(maxshortlen, ss8_capacity(&s));
-    TEST_ASSERT_EQUAL_STRING("+", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("+", ss8_cstr(&s));
 
     ss8_reserve(&s, maxshortlen);
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_shrink_to_fit(&s));
     TEST_ASSERT_EQUAL_size_t(1, ss8_len(&s));
     TEST_ASSERT_EQUAL_size_t(maxshortlen, ss8_capacity(&s));
-    TEST_ASSERT_EQUAL_STRING("+", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("+", ss8_cstr(&s));
 
     ss8_copy_ch_n(&s, '+', maxshortlen);
     perturb_unused_bytes(&s);
@@ -485,7 +482,7 @@ void test_shrink_to_fit_short_to_short(void) {
     TEST_ASSERT_EQUAL_size_t(maxshortlen, ss8_capacity(&s));
     char buf[ss8iNtErNaL_shortbufsiz];
     make_test_string(buf, sizeof(buf));
-    TEST_ASSERT_EQUAL_STRING(buf, ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING(buf, ss8_cstr(&s));
 
     ss8_destroy(&s);
 }
@@ -501,7 +498,7 @@ void test_shrink_to_fit_long_to_short(void) {
     TEST_ASSERT_EQUAL_PTR(&s, ss8_shrink_to_fit(&s));
     TEST_ASSERT_EQUAL_size_t(0, ss8_len(&s));
     TEST_ASSERT_EQUAL_size_t(maxshortlen, ss8_capacity(&s));
-    TEST_ASSERT_EQUAL_STRING("", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("", ss8_cstr(&s));
 
     ss8_copy_ch_n(&s, '+', 1);
     ss8_reserve(&s, maxshortlen + 1);
@@ -509,7 +506,7 @@ void test_shrink_to_fit_long_to_short(void) {
     TEST_ASSERT_EQUAL_PTR(&s, ss8_shrink_to_fit(&s));
     TEST_ASSERT_EQUAL_size_t(1, ss8_len(&s));
     TEST_ASSERT_EQUAL_size_t(maxshortlen, ss8_capacity(&s));
-    TEST_ASSERT_EQUAL_STRING("+", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("+", ss8_cstr(&s));
 
     ss8_copy_ch_n(&s, '+', maxshortlen);
     ss8_reserve(&s, maxshortlen + 1);
@@ -519,7 +516,7 @@ void test_shrink_to_fit_long_to_short(void) {
     TEST_ASSERT_EQUAL_size_t(maxshortlen, ss8_capacity(&s));
     char buf[ss8iNtErNaL_shortbufsiz];
     make_test_string(buf, sizeof(buf));
-    TEST_ASSERT_EQUAL_STRING(buf, ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING(buf, ss8_cstr(&s));
 
     ss8_destroy(&s);
 }
@@ -538,7 +535,7 @@ void test_shrink_to_fit_long_to_long(void) {
     TEST_ASSERT_EQUAL_size_t(maxshortlen + 1, ss8_capacity(&s));
     char buf[ss8iNtErNaL_shortbufsiz + 1];
     make_test_string(buf, sizeof(buf));
-    TEST_ASSERT_EQUAL_STRING(buf, ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING(buf, ss8_cstr(&s));
 
     // No-shrink case
     size_t captofill = ss8_capacity(&s);
@@ -559,8 +556,7 @@ void test_shrink_to_fit_long_to_long(void) {
         size_t elen = ss8_len(e);                                             \
         TEST_ASSERT_EQUAL_size_t(elen, ss8_len(a));                           \
         if (elen > 0) {                                                       \
-            TEST_ASSERT_EQUAL_MEMORY(ss8_const_cstr(e), ss8_const_cstr(a),    \
-                                     elen);                                   \
+            TEST_ASSERT_EQUAL_MEMORY(ss8_cstr(e), ss8_cstr(a), elen);         \
         }                                                                     \
     } while (0);
 
@@ -571,7 +567,7 @@ void test_shrink_to_fit_long_to_long(void) {
         size_t elen = strlen(e);                                              \
         TEST_ASSERT_EQUAL_size_t(elen, ss8_len(a));                           \
         if (elen > 0) {                                                       \
-            TEST_ASSERT_EQUAL_MEMORY(e, ss8_const_cstr(a), elen);             \
+            TEST_ASSERT_EQUAL_MEMORY(e, ss8_cstr(a), elen);                   \
         }                                                                     \
     } while (0);
 
@@ -608,12 +604,12 @@ void test_copy_bytes(void) {
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_bytes(&s, "x", 0));
     TEST_ASSERT_EQUAL_size_t(0, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("", ss8_cstr(&s));
 
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_bytes(&s, "+", 1));
     TEST_ASSERT_EQUAL_size_t(1, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("+", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("+", ss8_cstr(&s));
 
     size_t const maxshortlen = ss8iNtErNaL_shortbufsiz - 1;
 
@@ -626,7 +622,7 @@ void test_copy_bytes(void) {
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_bytes(&s, buf, maxshortlen));
     TEST_ASSERT_EQUAL_size_t(maxshortlen, ss8_len(&s));
     make_test_string(expected, maxshortlen + 1);
-    TEST_ASSERT_EQUAL_STRING(expected, ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING(expected, ss8_cstr(&s));
 
     make_test_string(expected, maxshortlen + 2);
 
@@ -634,14 +630,14 @@ void test_copy_bytes(void) {
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_bytes(&s, buf, maxshortlen + 1));
     TEST_ASSERT_EQUAL_size_t(maxshortlen + 1, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING(expected, ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING(expected, ss8_cstr(&s));
 
     // Empty long mode -> long mode
     ss8_clear(&s);
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_bytes(&s, buf, maxshortlen + 1));
     TEST_ASSERT_EQUAL_size_t(maxshortlen + 1, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING(expected, ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING(expected, ss8_cstr(&s));
 
     // Empty short mode -> long mode
     ss8_destroy(&s);
@@ -649,7 +645,7 @@ void test_copy_bytes(void) {
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_bytes(&s, buf, maxshortlen + 1));
     TEST_ASSERT_EQUAL_size_t(maxshortlen + 1, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING(expected, ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING(expected, ss8_cstr(&s));
 
     make_test_string(expected, maxshortlen + 1);
 
@@ -658,14 +654,14 @@ void test_copy_bytes(void) {
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_bytes(&s, buf, maxshortlen));
     TEST_ASSERT_EQUAL_size_t(maxshortlen, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING(expected, ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING(expected, ss8_cstr(&s));
 
     // Long mode -> empty
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_bytes(&s, buf, maxshortlen + 1));
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_bytes(&s, "", 0));
     TEST_ASSERT_EQUAL_size_t(0, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("", ss8_cstr(&s));
 
     ss8_destroy(&s);
 }
@@ -679,13 +675,13 @@ void test_copy(void) {
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy(&s, &t));
     TEST_ASSERT_EQUAL_size_t(0, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("", ss8_cstr(&s));
 
     perturb_unused_bytes(&s);
     ss8_copy_ch(&t, '+');
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy(&s, &t));
     TEST_ASSERT_EQUAL_size_t(1, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("+", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("+", ss8_cstr(&s));
 
     size_t const maxshortlen = ss8iNtErNaL_shortbufsiz - 1;
 
@@ -694,14 +690,14 @@ void test_copy(void) {
     ss8_copy_ch_n(&t, '+', maxshortlen);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy(&s, &t));
     TEST_ASSERT_EQUAL_size_t(maxshortlen, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING(ss8_const_cstr(&t), ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING(ss8_cstr(&t), ss8_cstr(&s));
 
     // Non-empty short mode -> long mode
     perturb_unused_bytes(&s);
     ss8_copy_ch_n(&t, '+', maxshortlen + 1);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy(&s, &t));
     TEST_ASSERT_EQUAL_size_t(maxshortlen + 1, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING(ss8_const_cstr(&t), ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING(ss8_cstr(&t), ss8_cstr(&s));
 
     // Empty long mode -> long mode
     ss8_clear(&s);
@@ -709,7 +705,7 @@ void test_copy(void) {
     ss8_copy_ch_n(&t, '+', maxshortlen + 1);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy(&s, &t));
     TEST_ASSERT_EQUAL_size_t(maxshortlen + 1, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING(ss8_const_cstr(&t), ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING(ss8_cstr(&t), ss8_cstr(&s));
 
     // Empty short mode -> long mode
     ss8_destroy(&s);
@@ -718,7 +714,7 @@ void test_copy(void) {
     ss8_copy_ch_n(&t, '+', maxshortlen + 1);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy(&s, &t));
     TEST_ASSERT_EQUAL_size_t(maxshortlen + 1, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING(ss8_const_cstr(&t), ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING(ss8_cstr(&t), ss8_cstr(&s));
 
     // Long mode -> fits in short mode
     ss8_copy_ch_n(&t, '+', maxshortlen + 1);
@@ -727,7 +723,7 @@ void test_copy(void) {
     ss8_copy_ch_n(&t, '+', maxshortlen);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy(&s, &t));
     TEST_ASSERT_EQUAL_size_t(maxshortlen, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING(ss8_const_cstr(&t), ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING(ss8_cstr(&t), ss8_cstr(&s));
 
     // Long mode -> empty
     ss8_copy_ch_n(&t, '+', maxshortlen + 1);
@@ -736,7 +732,7 @@ void test_copy(void) {
     ss8_clear(&t);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy(&s, &t));
     TEST_ASSERT_EQUAL_size_t(0, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("", ss8_cstr(&s));
 
     ss8_destroy(&s);
     ss8_destroy(&t);
@@ -751,27 +747,27 @@ void test_copy_ch_n(void) {
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_ch_n(&s, '+', 0));
     TEST_ASSERT_EQUAL_size_t(0, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("", ss8_cstr(&s));
 
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_ch_n(&s, '+', 1));
     TEST_ASSERT_EQUAL_size_t(1, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("+", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("+", ss8_cstr(&s));
 
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_ch_n(&s, '+', 2));
     TEST_ASSERT_EQUAL_size_t(2, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("++", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("++", ss8_cstr(&s));
 
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_ch_n(&s, '+', 1));
     TEST_ASSERT_EQUAL_size_t(1, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("+", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("+", ss8_cstr(&s));
 
     perturb_unused_bytes(&s);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_copy_ch_n(&s, '+', 0));
     TEST_ASSERT_EQUAL_size_t(0, ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("", ss8_cstr(&s));
 
     ss8_destroy(&s);
 }
@@ -880,9 +876,9 @@ void test_swap(void) {
     ss8_init_copy_cstr(&t, "Bob");
     ss8_swap(&s, &t);
     TEST_ASSERT_EQUAL_size_t(strlen("Bob"), ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("Bob", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("Bob", ss8_cstr(&s));
     TEST_ASSERT_EQUAL_size_t(strlen("Alice"), ss8_len(&t));
-    TEST_ASSERT_EQUAL_STRING("Alice", ss8_const_cstr(&t));
+    TEST_ASSERT_EQUAL_STRING("Alice", ss8_cstr(&t));
     ss8_destroy(&s);
     ss8_init(&s);
     ss8_destroy(&t);
@@ -893,11 +889,11 @@ void test_swap(void) {
     ss8_copy_ch_n(&t, 'B', 127);
     ss8_swap(&s, &t);
     TEST_ASSERT_EQUAL_size_t(127, ss8_len(&s));
-    TEST_ASSERT_EQUAL_size_t(127, strlen(ss8_const_cstr(&s)));
+    TEST_ASSERT_EQUAL_size_t(127, strlen(ss8_cstr(&s)));
     TEST_ASSERT_EQUAL_CHAR('B', ss8_at(&s, 0));
     TEST_ASSERT_EQUAL_CHAR('B', ss8_at(&s, 126));
     TEST_ASSERT_EQUAL_size_t(strlen("Alice"), ss8_len(&t));
-    TEST_ASSERT_EQUAL_STRING("Alice", ss8_const_cstr(&t));
+    TEST_ASSERT_EQUAL_STRING("Alice", ss8_cstr(&t));
     ss8_destroy(&s);
     ss8_init(&s);
     ss8_destroy(&t);
@@ -908,11 +904,11 @@ void test_swap(void) {
     ss8_copy_ch_n(&t, 'B', 127);
     ss8_swap(&s, &t);
     TEST_ASSERT_EQUAL_size_t(127, ss8_len(&s));
-    TEST_ASSERT_EQUAL_size_t(127, strlen(ss8_const_cstr(&s)));
+    TEST_ASSERT_EQUAL_size_t(127, strlen(ss8_cstr(&s)));
     TEST_ASSERT_EQUAL_CHAR('B', ss8_at(&s, 0));
     TEST_ASSERT_EQUAL_CHAR('B', ss8_at(&s, 126));
     TEST_ASSERT_EQUAL_size_t(255, ss8_len(&t));
-    TEST_ASSERT_EQUAL_size_t(255, strlen(ss8_const_cstr(&t)));
+    TEST_ASSERT_EQUAL_size_t(255, strlen(ss8_cstr(&t)));
     TEST_ASSERT_EQUAL_CHAR('A', ss8_at(&t, 0));
     TEST_ASSERT_EQUAL_CHAR('A', ss8_at(&t, 254));
     ss8_destroy(&s);
@@ -926,7 +922,7 @@ void test_move(void) {
     ss8_init_copy_cstr(&t, "Bob");
     TEST_ASSERT_EQUAL_PTR(&s, ss8_move(&s, &t));
     TEST_ASSERT_EQUAL_size_t(strlen("Bob"), ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("Bob", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("Bob", ss8_cstr(&s));
     ss8_destroy(&s);
     ss8_init(&s);
     ss8_destroy(&t);
@@ -937,7 +933,7 @@ void test_move(void) {
     ss8_copy_ch_n(&t, 'B', 127);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_move(&s, &t));
     TEST_ASSERT_EQUAL_size_t(127, ss8_len(&s));
-    TEST_ASSERT_EQUAL_size_t(127, strlen(ss8_const_cstr(&s)));
+    TEST_ASSERT_EQUAL_size_t(127, strlen(ss8_cstr(&s)));
     TEST_ASSERT_EQUAL_CHAR('B', ss8_at(&s, 0));
     TEST_ASSERT_EQUAL_CHAR('B', ss8_at(&s, 126));
     ss8_destroy(&s);
@@ -950,7 +946,7 @@ void test_move(void) {
     ss8_copy_cstr(&t, "Alice");
     TEST_ASSERT_EQUAL_PTR(&s, ss8_move(&s, &t));
     TEST_ASSERT_EQUAL_size_t(strlen("Alice"), ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("Alice", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("Alice", ss8_cstr(&s));
     ss8_destroy(&s);
     ss8_init(&s);
     ss8_destroy(&t);
@@ -961,7 +957,7 @@ void test_move(void) {
     ss8_copy_ch_n(&t, 'B', 127);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_move(&s, &t));
     TEST_ASSERT_EQUAL_size_t(127, ss8_len(&s));
-    TEST_ASSERT_EQUAL_size_t(127, strlen(ss8_const_cstr(&s)));
+    TEST_ASSERT_EQUAL_size_t(127, strlen(ss8_cstr(&s)));
     TEST_ASSERT_EQUAL_CHAR('B', ss8_at(&s, 0));
     TEST_ASSERT_EQUAL_CHAR('B', ss8_at(&s, 126));
     ss8_destroy(&s);
@@ -975,7 +971,7 @@ void test_move_destroy(void) {
     ss8_init_copy_cstr(&t, "Bob");
     TEST_ASSERT_EQUAL_PTR(&s, ss8_move_destroy(&s, &t));
     TEST_ASSERT_EQUAL_size_t(strlen("Bob"), ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("Bob", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("Bob", ss8_cstr(&s));
     ss8_destroy(&s);
     ss8_init(&s);
     ss8_init(&t);
@@ -985,7 +981,7 @@ void test_move_destroy(void) {
     ss8_copy_ch_n(&t, 'B', 127);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_move_destroy(&s, &t));
     TEST_ASSERT_EQUAL_size_t(127, ss8_len(&s));
-    TEST_ASSERT_EQUAL_size_t(127, strlen(ss8_const_cstr(&s)));
+    TEST_ASSERT_EQUAL_size_t(127, strlen(ss8_cstr(&s)));
     TEST_ASSERT_EQUAL_CHAR('B', ss8_at(&s, 0));
     TEST_ASSERT_EQUAL_CHAR('B', ss8_at(&s, 126));
     ss8_destroy(&s);
@@ -997,7 +993,7 @@ void test_move_destroy(void) {
     ss8_copy_cstr(&t, "Alice");
     TEST_ASSERT_EQUAL_PTR(&s, ss8_move_destroy(&s, &t));
     TEST_ASSERT_EQUAL_size_t(strlen("Alice"), ss8_len(&s));
-    TEST_ASSERT_EQUAL_STRING("Alice", ss8_const_cstr(&s));
+    TEST_ASSERT_EQUAL_STRING("Alice", ss8_cstr(&s));
     ss8_destroy(&s);
     ss8_init(&s);
     ss8_init(&t);
@@ -1007,7 +1003,7 @@ void test_move_destroy(void) {
     ss8_copy_ch_n(&t, 'B', 127);
     TEST_ASSERT_EQUAL_PTR(&s, ss8_move_destroy(&s, &t));
     TEST_ASSERT_EQUAL_size_t(127, ss8_len(&s));
-    TEST_ASSERT_EQUAL_size_t(127, strlen(ss8_const_cstr(&s)));
+    TEST_ASSERT_EQUAL_size_t(127, strlen(ss8_cstr(&s)));
     TEST_ASSERT_EQUAL_CHAR('B', ss8_at(&s, 0));
     TEST_ASSERT_EQUAL_CHAR('B', ss8_at(&s, 126));
     ss8_destroy(&s);

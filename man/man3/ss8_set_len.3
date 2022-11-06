@@ -75,7 +75,7 @@ is equivalent to
 .PP
 .in +4
 .EX
-.BI "ss8_set_len(" str ", strlen(ss8_const_cstr(" str "));"
+.BI "ss8_set_len(" str ", strlen(ss8_cstr(" str "));"
 .EE
 .in
 .PP
@@ -114,7 +114,7 @@ ss8str bytes;
 ss8_init(&bytes);
 
 ss8_set_len(&bytes, 1024);
-size_t nread = fread(ss8_cstr(&bytes),
+size_t nread = fread(ss8_mutable_cstr(&bytes),
                      ss8_len(&bytes), 1, fp);
 ss8_set_len(&bytes, nread);
 
@@ -143,7 +143,8 @@ for (;;) {
 
     // strftime() only returns zero (given "%c") if the buffer is
     // too small to fit the result.
-    size_t n = strftime(ss8_cstr(&timestr), ss8_len(&timestr) + 1,
+    size_t n = strftime(ss8_mutable_cstr(&timestr),
+                        ss8_len(&timestr) + 1,
                         "%c", localtime(&now));
     if (n > 0) {
         ss8_set_len(&timestr, n);
@@ -181,7 +182,8 @@ do {
         break;
     }
 
-    if (!fgets(ss8_cstr_suffix(&line, nread), growth + 1, fp)) {
+    if (!fgets(ss8_mutable_cstr_suffix(&line, nread),
+               growth + 1, fp)) {
         ss8_clear(&line);
         break;
     }
@@ -204,8 +206,8 @@ Other edge cases occur if the line is longer than
 .B SIZE_MAX - 1
 bytes or the input reaches end-of-file before a newline.
 .SH SEE ALSO
-.BR ss8_cstr (3),
 .BR ss8_len (3),
+.BR ss8_mutable_cstr (3),
 .BR ss8_reserve (3),
 .BR ss8_shrink_to_fit (3),
 .BR ss8_substr_inplace (3),

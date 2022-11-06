@@ -22,7 +22,7 @@ void test_example_fread(void) {
     ss8_init(&bytes);
 
     ss8_set_len(&bytes, 1024);
-    size_t nread = fread(ss8_cstr(&bytes), ss8_len(&bytes), 1, fp);
+    size_t nread = fread(ss8_mutable_cstr(&bytes), ss8_len(&bytes), 1, fp);
     ss8_set_len(&bytes, nread);
 #undef SNIPPET
 

@@ -31,7 +31,7 @@ void test_example_fgets(void) {
             break;
         }
 
-        if (!fgets(ss8_cstr_suffix(&line, nread), growth + 1, fp)) {
+        if (!fgets(ss8_mutable_cstr_suffix(&line, nread), growth + 1, fp)) {
             ss8_clear(&line);
             break;
         }

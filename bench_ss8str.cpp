@@ -14,7 +14,7 @@ static void EmptyStringCreation(benchmark::State &state) {
     for (auto _ : state) {
         ss8str s;
         ss8_init(&s);
-        benchmark::DoNotOptimize(ss8_cstr(&s));
+        benchmark::DoNotOptimize(ss8_mutable_cstr(&s));
         benchmark::ClobberMemory();
         ss8_destroy(&s);
     }
@@ -34,7 +34,7 @@ static void StringCreation(benchmark::State &state) {
     for (auto _ : state) {
         ss8str s;
         ss8_init_copy_ch_n(&s, '*', state.range(0));
-        benchmark::DoNotOptimize(ss8_cstr(&s));
+        benchmark::DoNotOptimize(ss8_mutable_cstr(&s));
         benchmark::ClobberMemory();
         ss8_destroy(&s);
     }
@@ -61,10 +61,10 @@ static void StringCopy(benchmark::State &state) {
     }
     for (auto _ : state) {
         ss8_copy(&s, &x);
-        benchmark::DoNotOptimize(ss8_cstr(&s));
+        benchmark::DoNotOptimize(ss8_mutable_cstr(&s));
         benchmark::ClobberMemory();
         ss8_copy(&x, &s); // Make comparable to swap
-        benchmark::DoNotOptimize(ss8_cstr(&x));
+        benchmark::DoNotOptimize(ss8_mutable_cstr(&x));
         benchmark::ClobberMemory();
     }
     ss8_destroy(&s);
@@ -101,10 +101,10 @@ static void StringMove(benchmark::State &state) {
     }
     for (auto _ : state) {
         ss8_move(&s, &x);
-        benchmark::DoNotOptimize(ss8_cstr(&s));
+        benchmark::DoNotOptimize(ss8_mutable_cstr(&s));
         benchmark::ClobberMemory();
         ss8_move(&x, &s);
-        benchmark::DoNotOptimize(ss8_cstr(&x));
+        benchmark::DoNotOptimize(ss8_mutable_cstr(&x));
         benchmark::ClobberMemory();
     }
     ss8_destroy(&s);
@@ -137,10 +137,10 @@ static void StringSwap(benchmark::State &state) {
         ss8str s;
         ss8_init(&s);
         ss8_swap(&s, &x);
-        benchmark::DoNotOptimize(ss8_cstr(&s));
+        benchmark::DoNotOptimize(ss8_mutable_cstr(&s));
         benchmark::ClobberMemory();
         ss8_swap(&x, &s);
-        benchmark::DoNotOptimize(ss8_cstr(&x));
+        benchmark::DoNotOptimize(ss8_mutable_cstr(&x));
         benchmark::ClobberMemory();
         ss8_destroy(&s);
     }

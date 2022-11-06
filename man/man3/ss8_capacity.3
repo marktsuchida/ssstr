@@ -40,7 +40,7 @@ insertions, concatenations, or replacements are about to be performed and the
 final length of the string is known, either precisely or approximately.
 .PP
 Reserved capacity is not available length; writing to
-.BI ss8_cstr( str )
+.BI ss8_mutable_cstr( str )
 beyond the length of
 .BI * str
 results in undefined behavior. See

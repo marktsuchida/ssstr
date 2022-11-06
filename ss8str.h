@@ -208,11 +208,10 @@ SSSTR_INLINE void ss8_destroy(ss8str *str);
 SSSTR_INLINE size_t ss8_len(ss8str const *str);
 SSSTR_INLINE bool ss8_is_empty(ss8str const *str);
 SSSTR_INLINE size_t ss8_capacity(ss8str const *str);
-SSSTR_INLINE char *ss8_cstr(ss8str *str);
-SSSTR_INLINE char const *ss8_const_cstr(ss8str const *str);
-SSSTR_INLINE char *ss8_cstr_suffix(ss8str *str, size_t start);
-SSSTR_INLINE char const *ss8_const_cstr_suffix(ss8str const *str,
-                                               size_t start);
+SSSTR_INLINE char *ss8_mutable_cstr(ss8str *str);
+SSSTR_INLINE char const *ss8_cstr(ss8str const *str);
+SSSTR_INLINE char *ss8_mutable_cstr_suffix(ss8str *str, size_t start);
+SSSTR_INLINE char const *ss8_cstr_suffix(ss8str const *str, size_t start);
 SSSTR_INLINE char ss8_at(ss8str const *str, size_t pos);
 SSSTR_INLINE ss8str *ss8_set_at(ss8str *str, size_t pos, char ch);
 SSSTR_INLINE char ss8_front(ss8str const *str);
@@ -528,7 +527,7 @@ SSSTR_INLINE_DEF size_t ss8_capacity(ss8str const *str) {
     return ss8iNtErNaL_bufsize(str) - 1;
 }
 
-SSSTR_INLINE_DEF char *ss8_cstr(ss8str *str) {
+SSSTR_INLINE_DEF char *ss8_mutable_cstr(ss8str *str) {
     SSSTR_EXTRA_ASSERT(str != NULL);
     ss8iNtErNaL_extra_assert_invariants(str);
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
@@ -538,29 +537,28 @@ SSSTR_INLINE_DEF char *ss8_cstr(ss8str *str) {
         return str->iNtErNaL_L.ptr;
 }
 
-SSSTR_INLINE_DEF char const *ss8_const_cstr(ss8str const *str) {
-    return ss8_cstr((ss8str *)str);
+SSSTR_INLINE_DEF char const *ss8_cstr(ss8str const *str) {
+    return ss8_mutable_cstr((ss8str *)str);
 }
 
-SSSTR_INLINE_DEF char *ss8_cstr_suffix(ss8str *str, size_t start) {
+SSSTR_INLINE_DEF char *ss8_mutable_cstr_suffix(ss8str *str, size_t start) {
+    SSSTR_ASSERT(start <= ss8_len(str));
+    return ss8_mutable_cstr(str) + start;
+}
+
+SSSTR_INLINE_DEF char const *ss8_cstr_suffix(ss8str const *str, size_t start) {
     SSSTR_ASSERT(start <= ss8_len(str));
     return ss8_cstr(str) + start;
 }
 
-SSSTR_INLINE_DEF char const *ss8_const_cstr_suffix(ss8str const *str,
-                                                   size_t start) {
-    SSSTR_ASSERT(start <= ss8_len(str));
-    return ss8_const_cstr(str) + start;
-}
-
 SSSTR_INLINE_DEF char ss8_at(ss8str const *str, size_t pos) {
     SSSTR_ASSERT(pos < ss8_len(str));
-    return ss8_const_cstr(str)[pos];
+    return ss8_cstr(str)[pos];
 }
 
 SSSTR_INLINE_DEF ss8str *ss8_set_at(ss8str *str, size_t pos, char ch) {
     SSSTR_ASSERT(pos < ss8_len(str));
-    ss8_cstr(str)[pos] = ch;
+    ss8_mutable_cstr(str)[pos] = ch;
     return str;
 }
 
@@ -633,7 +631,7 @@ SSSTR_INLINE_DEF char *ss8iNtErNaL_reserve(ss8str *str, size_t capacity) {
     ss8iNtErNaL_extra_assert_invariants(str);
     if (capacity >= ss8iNtErNaL_bufsize(str))
         return ss8iNtErNaL_reserve_impl(str, capacity);
-    return ss8_cstr(str);
+    return ss8_mutable_cstr(str);
 }
 
 SSSTR_INLINE_DEF ss8str *ss8_reserve(ss8str *str, size_t capacity) {
@@ -648,7 +646,7 @@ SSSTR_INLINE_DEF void ss8_set_len(ss8str *str, size_t newlen) {
     // Fill any uninitialized portion with a recognizable character.
     size_t oldlen = ss8_len(str);
     if (newlen > oldlen) {
-        memset(ss8_cstr(str) + oldlen, '~', newlen - oldlen);
+        memset(ss8_mutable_cstr(str) + oldlen, '~', newlen - oldlen);
     }
 #endif
     ss8iNtErNaL_setlen(str, newlen);
@@ -687,7 +685,7 @@ SSSTR_INLINE_DEF size_t ss8_grow_len(ss8str *str, size_t maxlen,
 }
 
 SSSTR_INLINE_DEF void ss8_set_len_to_cstrlen(ss8str *str) {
-    size_t len = strlen(ss8_const_cstr(str));
+    size_t len = strlen(ss8_cstr(str));
     ss8iNtErNaL_setlen(str, len);
 }
 
@@ -746,7 +744,7 @@ SSSTR_INLINE_DEF void ss8iNtErNaL_extra_assert_no_overlap(ss8str const *str,
     // 8/16-bit platforms with near and far pointers, this may not necessarily
     // work correctly.
 
-    uintptr_t lbegin = (uintptr_t)ss8_const_cstr(str);
+    uintptr_t lbegin = (uintptr_t)ss8_cstr(str);
     uintptr_t lend = lbegin + ss8iNtErNaL_bufsize(str);
     SSSTR_EXTRA_ASSERT(lbegin <= lend);
 
@@ -767,7 +765,7 @@ SSSTR_INLINE_DEF ss8str *ss8_copy_bytes(ss8str *SSSTR_RESTRICT dest,
     ss8iNtErNaL_extra_assert_no_overlap(dest, src, srclen);
 
     ss8_reserve(ss8_clear(dest), srclen);
-    char *p = ss8_cstr(dest);
+    char *p = ss8_mutable_cstr(dest);
     memcpy(p, src, srclen);
     p[srclen] = '\0';
     ss8iNtErNaL_setlen(dest, srclen);
@@ -783,8 +781,7 @@ SSSTR_INLINE_DEF ss8str *ss8_copy_cstr(ss8str *SSSTR_RESTRICT dest,
 SSSTR_INLINE_DEF ss8str *ss8_copy(ss8str *SSSTR_RESTRICT dest,
                                   ss8str const *SSSTR_RESTRICT src) {
     SSSTR_EXTRA_ASSERT(src != NULL);
-    ss8iNtErNaL_extra_assert_no_overlap(dest, ss8_const_cstr(src),
-                                        ss8_len(src));
+    ss8iNtErNaL_extra_assert_no_overlap(dest, ss8_cstr(src), ss8_len(src));
 
     // According to preliminary benchmarking, both of the following
     // optimizations are effective. However, short-mode-to-short-mode copy is
@@ -802,11 +799,11 @@ SSSTR_INLINE_DEF ss8str *ss8_copy(ss8str *SSSTR_RESTRICT dest,
 #endif
 
     size_t len = ss8_len(src);
-    char const *q = ss8_const_cstr(src);
+    char const *q = ss8_cstr(src);
 #if 0
     // Optimize short copy even if src and/or dest is in long mode.
     if (len < ss8iNtErNaL_shortbufsiz) {
-        char *p = ss8_cstr(dest);
+        char *p = ss8_mutable_cstr(dest);
         memcpy(p, q, ss8iNtErNaL_shortbufsiz);
         return dest;
     }
@@ -820,7 +817,7 @@ SSSTR_INLINE_DEF ss8str *ss8_copy_ch_n(ss8str *dest, char ch, size_t count) {
     // memset().
 
     ss8_reserve(ss8_clear(dest), count);
-    char *p = ss8_cstr(dest);
+    char *p = ss8_mutable_cstr(dest);
     memset(p, ch, count);
     p[count] = '\0';
     ss8iNtErNaL_setlen(dest, count);
@@ -870,7 +867,7 @@ SSSTR_INLINE_DEF bool ss8_copy_to_bytes(ss8str const *SSSTR_RESTRICT str,
         did_fit = false;
     }
 
-    memcpy(buf, ss8_const_cstr(str), copylen);
+    memcpy(buf, ss8_cstr(str), copylen);
     return did_fit;
 }
 
@@ -892,7 +889,7 @@ SSSTR_INLINE_DEF bool ss8_copy_to_cstr(ss8str const *SSSTR_RESTRICT str,
 
     // We could use strncpy(), but the principle of least surprise probably
     // means that we should copy any part after an internal '\0' as well.
-    memcpy(buf, ss8_const_cstr(str), copylen);
+    memcpy(buf, ss8_cstr(str), copylen);
     buf[copylen] = '\0';
     return did_fit;
 }
@@ -927,8 +924,7 @@ SSSTR_INLINE_DEF ss8str *ss8_move(ss8str *SSSTR_RESTRICT dest,
     SSSTR_EXTRA_ASSERT(src != NULL);
     ss8iNtErNaL_extra_assert_invariants(dest);
     ss8iNtErNaL_extra_assert_invariants(src);
-    ss8iNtErNaL_extra_assert_no_overlap(dest, ss8_const_cstr(src),
-                                        ss8_len(src));
+    ss8iNtErNaL_extra_assert_no_overlap(dest, ss8_cstr(src), ss8_len(src));
 
     // Our API contract places no restriction on the contents of src after the
     // move, or whether or not free() is called.
@@ -960,8 +956,7 @@ SSSTR_INLINE_DEF ss8str *ss8_move_destroy(ss8str *SSSTR_RESTRICT dest,
     SSSTR_EXTRA_ASSERT(src != NULL);
     ss8iNtErNaL_extra_assert_invariants(dest);
     ss8iNtErNaL_extra_assert_invariants(src);
-    ss8iNtErNaL_extra_assert_no_overlap(dest, ss8_const_cstr(src),
-                                        ss8_len(src));
+    ss8iNtErNaL_extra_assert_no_overlap(dest, ss8_cstr(src), ss8_len(src));
 
     ss8_destroy(dest);
     memcpy(dest, src, sizeof(ss8str));
@@ -998,14 +993,14 @@ SSSTR_INLINE_DEF ss8str *ss8_init_move_destroy(ss8str *SSSTR_RESTRICT str,
 SSSTR_INLINE_DEF ss8str *ss8_copy_substr(ss8str *SSSTR_RESTRICT dest,
                                          ss8str const *SSSTR_RESTRICT src,
                                          size_t start, size_t len) {
-    ss8iNtErNaL_extra_assert_no_overlap(dest, ss8_const_cstr(src),
+    ss8iNtErNaL_extra_assert_no_overlap(dest, ss8_cstr(src),
                                         ss8iNtErNaL_bufsize(src));
 
     size_t srclen = ss8_len(src);
     SSSTR_ASSERT(start <= srclen);
     if (len >= srclen - start)
         len = srclen - start;
-    return ss8_copy_bytes(dest, ss8_const_cstr(src) + start, len);
+    return ss8_copy_bytes(dest, ss8_cstr(src) + start, len);
 }
 
 SSSTR_INLINE_DEF ss8str *ss8_substr_inplace(ss8str *str, size_t start,
@@ -1015,7 +1010,7 @@ SSSTR_INLINE_DEF ss8str *ss8_substr_inplace(ss8str *str, size_t start,
     if (len >= slen - start)
         len = slen - start;
 
-    char *p = ss8_cstr(str);
+    char *p = ss8_mutable_cstr(str);
     memmove(p, p + start, len);
     p[len] = '\0';
     ss8iNtErNaL_setlen(str, len);
@@ -1063,7 +1058,7 @@ SSSTR_INLINE_DEF ss8str *ss8_insert_bytes(ss8str *SSSTR_RESTRICT dest,
     size_t newlen = ss8iNtErNaL_add_sizes(destlen, srclen);
 
     ss8iNtErNaL_grow(dest, newlen);
-    char *p = ss8_cstr(dest) + pos;
+    char *p = ss8_mutable_cstr(dest) + pos;
     memmove(p + srclen, p, destlen - pos + 1);
     memcpy(p, src, srclen);
     ss8iNtErNaL_setlen(dest, newlen);
@@ -1079,7 +1074,7 @@ SSSTR_INLINE_DEF ss8str *ss8_insert_cstr(ss8str *SSSTR_RESTRICT dest,
 
 SSSTR_INLINE_DEF ss8str *ss8_insert(ss8str *SSSTR_RESTRICT dest, size_t pos,
                                     ss8str const *SSSTR_RESTRICT src) {
-    return ss8_insert_bytes(dest, pos, ss8_const_cstr(src), ss8_len(src));
+    return ss8_insert_bytes(dest, pos, ss8_cstr(src), ss8_len(src));
 }
 
 SSSTR_INLINE_DEF ss8str *ss8_cat_bytes(ss8str *SSSTR_RESTRICT dest,
@@ -1097,7 +1092,7 @@ SSSTR_INLINE_DEF ss8str *ss8_cat_cstr(ss8str *SSSTR_RESTRICT dest,
 
 SSSTR_INLINE_DEF ss8str *ss8_cat(ss8str *SSSTR_RESTRICT dest,
                                  ss8str const *SSSTR_RESTRICT src) {
-    return ss8_cat_bytes(dest, ss8_const_cstr(src), ss8_len(src));
+    return ss8_cat_bytes(dest, ss8_cstr(src), ss8_len(src));
 }
 
 SSSTR_INLINE_DEF ss8str *ss8_erase(ss8str *str, size_t pos, size_t len) {
@@ -1106,7 +1101,7 @@ SSSTR_INLINE_DEF ss8str *ss8_erase(ss8str *str, size_t pos, size_t len) {
     if (len > slen - pos)
         len = slen - pos;
 
-    char *p = ss8_cstr(str) + pos;
+    char *p = ss8_mutable_cstr(str) + pos;
     memmove(p, p + len, slen - pos - len + 1);
     ss8iNtErNaL_setlen(str, slen - len);
     return str;
@@ -1126,7 +1121,7 @@ SSSTR_INLINE_DEF ss8str *ss8_replace_bytes(ss8str *SSSTR_RESTRICT dest,
     size_t newlen = ss8iNtErNaL_add_sizes(destlen - len, srclen);
 
     ss8iNtErNaL_grow(dest, newlen);
-    char *p = ss8_cstr(dest) + pos;
+    char *p = ss8_mutable_cstr(dest) + pos;
     memmove(p + srclen, p + len, destlen - pos - len + 1);
     memcpy(p, src, srclen);
     ss8iNtErNaL_setlen(dest, newlen);
@@ -1143,8 +1138,7 @@ SSSTR_INLINE_DEF ss8str *ss8_replace_cstr(ss8str *SSSTR_RESTRICT dest,
 SSSTR_INLINE_DEF ss8str *ss8_replace(ss8str *SSSTR_RESTRICT dest, size_t pos,
                                      size_t len,
                                      ss8str const *SSSTR_RESTRICT src) {
-    return ss8_replace_bytes(dest, pos, len, ss8_const_cstr(src),
-                             ss8_len(src));
+    return ss8_replace_bytes(dest, pos, len, ss8_cstr(src), ss8_len(src));
 }
 
 SSSTR_INLINE_DEF ss8str *ss8_insert_ch_n(ss8str *dest, size_t pos, char ch,
@@ -1154,7 +1148,7 @@ SSSTR_INLINE_DEF ss8str *ss8_insert_ch_n(ss8str *dest, size_t pos, char ch,
     size_t newlen = ss8iNtErNaL_add_sizes(destlen, count);
 
     ss8iNtErNaL_grow(dest, newlen);
-    char *p = ss8_cstr(dest) + pos;
+    char *p = ss8_mutable_cstr(dest) + pos;
     memmove(p + count, p, destlen - pos + 1);
     memset(p, ch, count);
     ss8iNtErNaL_setlen(dest, newlen);
@@ -1175,7 +1169,7 @@ SSSTR_INLINE_DEF ss8str *ss8_replace_ch_n(ss8str *dest, size_t pos, size_t len,
     size_t newlen = ss8iNtErNaL_add_sizes(destlen - len, count);
 
     ss8iNtErNaL_grow(dest, newlen);
-    char *p = ss8_cstr(dest) + pos;
+    char *p = ss8_mutable_cstr(dest) + pos;
     memmove(p + count, p + len, destlen - pos - len + 1);
     memset(p, ch, count);
     ss8iNtErNaL_setlen(dest, newlen);
@@ -1203,7 +1197,7 @@ SSSTR_INLINE_DEF int ss8_cmp_bytes(ss8str const *lhs, char const *rhs,
     size_t cmplen = llen;
     if (rhslen < cmplen)
         cmplen = rhslen;
-    char const *l = ss8_const_cstr(lhs);
+    char const *l = ss8_cstr(lhs);
     int c = memcmp(l, rhs, cmplen);
     if (c != 0 || llen == rhslen)
         return c;
@@ -1221,14 +1215,14 @@ SSSTR_INLINE_DEF int ss8_cmp_cstr(ss8str const *lhs, char const *rhs) {
 }
 
 SSSTR_INLINE_DEF int ss8_cmp(ss8str const *lhs, ss8str const *rhs) {
-    return ss8_cmp_bytes(lhs, ss8_const_cstr(rhs), ss8_len(rhs));
+    return ss8_cmp_bytes(lhs, ss8_cstr(rhs), ss8_len(rhs));
 }
 
 SSSTR_INLINE_DEF int ss8_cmp_ch(ss8str const *lhs, char rhs) {
     size_t llen = ss8_len(lhs);
     if (llen == 0)
         return -1;
-    int c = (unsigned char)ss8_const_cstr(lhs)[0] - (unsigned char)rhs;
+    int c = (unsigned char)ss8_cstr(lhs)[0] - (unsigned char)rhs;
     if (c != 0 || llen == 1)
         return c;
     return 1;
@@ -1241,7 +1235,7 @@ SSSTR_INLINE_DEF bool ss8_equals_bytes(ss8str const *lhs, char const *rhs,
     size_t llen = ss8_len(lhs);
     if (llen != rhslen)
         return false;
-    return memcmp(ss8_const_cstr(lhs), rhs, llen) == 0;
+    return memcmp(ss8_cstr(lhs), rhs, llen) == 0;
 }
 
 SSSTR_INLINE_DEF bool ss8_equals_cstr(ss8str const *lhs, char const *rhs) {
@@ -1250,18 +1244,18 @@ SSSTR_INLINE_DEF bool ss8_equals_cstr(ss8str const *lhs, char const *rhs) {
 }
 
 SSSTR_INLINE_DEF bool ss8_equals(ss8str const *lhs, ss8str const *rhs) {
-    return ss8_equals_bytes(lhs, ss8_const_cstr(rhs), ss8_len(rhs));
+    return ss8_equals_bytes(lhs, ss8_cstr(rhs), ss8_len(rhs));
 }
 
 SSSTR_INLINE_DEF bool ss8_equals_ch(ss8str const *lhs, char rhs) {
-    return ss8_len(lhs) == 1 && ss8_const_cstr(lhs)[0] == rhs;
+    return ss8_len(lhs) == 1 && ss8_cstr(lhs)[0] == rhs;
 }
 
 SSSTR_INLINE_DEF size_t ss8_find_bytes(ss8str const *haystack, size_t start,
                                        char const *needle, size_t needlelen) {
     SSSTR_EXTRA_ASSERT(needle != NULL);
 
-    char const *h = ss8_const_cstr(haystack);
+    char const *h = ss8_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
     SSSTR_ASSERT(start <= haystacklen);
     if (needlelen == 0)
@@ -1286,13 +1280,12 @@ SSSTR_INLINE_DEF size_t ss8_find_cstr(ss8str const *haystack, size_t start,
 
 SSSTR_INLINE_DEF size_t ss8_find(ss8str const *haystack, size_t start,
                                  ss8str const *needle) {
-    return ss8_find_bytes(haystack, start, ss8_const_cstr(needle),
-                          ss8_len(needle));
+    return ss8_find_bytes(haystack, start, ss8_cstr(needle), ss8_len(needle));
 }
 
 SSSTR_INLINE_DEF size_t ss8_find_ch(ss8str const *haystack, size_t start,
                                     char needle) {
-    char const *h = ss8_const_cstr(haystack);
+    char const *h = ss8_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
     SSSTR_ASSERT(start <= haystacklen);
     char const *p = SSSTR_CHARP_MEMCHR(h + start, needle, haystacklen - start);
@@ -1301,7 +1294,7 @@ SSSTR_INLINE_DEF size_t ss8_find_ch(ss8str const *haystack, size_t start,
 
 SSSTR_INLINE_DEF size_t ss8_find_not_ch(ss8str const *haystack, size_t start,
                                         char needle) {
-    char const *h = ss8_const_cstr(haystack);
+    char const *h = ss8_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
     SSSTR_ASSERT(start <= haystacklen);
     char const *begin = h + start;
@@ -1317,7 +1310,7 @@ SSSTR_INLINE_DEF size_t ss8_rfind_bytes(ss8str const *haystack, size_t start,
                                         char const *needle, size_t needlelen) {
     SSSTR_EXTRA_ASSERT(needle != NULL);
 
-    char const *h = ss8_const_cstr(haystack);
+    char const *h = ss8_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
     if (needlelen > haystacklen)
         return SIZE_MAX;
@@ -1348,13 +1341,12 @@ SSSTR_INLINE_DEF size_t ss8_rfind_cstr(ss8str const *haystack, size_t start,
 
 SSSTR_INLINE_DEF size_t ss8_rfind(ss8str const *haystack, size_t start,
                                   ss8str const *needle) {
-    return ss8_rfind_bytes(haystack, start, ss8_const_cstr(needle),
-                           ss8_len(needle));
+    return ss8_rfind_bytes(haystack, start, ss8_cstr(needle), ss8_len(needle));
 }
 
 SSSTR_INLINE_DEF size_t ss8_rfind_ch(ss8str const *haystack, size_t start,
                                      char needle) {
-    char const *h = ss8_const_cstr(haystack);
+    char const *h = ss8_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
     if (haystacklen == 0)
         return SIZE_MAX;
@@ -1374,7 +1366,7 @@ SSSTR_INLINE_DEF size_t ss8_rfind_ch(ss8str const *haystack, size_t start,
 
 SSSTR_INLINE_DEF size_t ss8_rfind_not_ch(ss8str const *haystack, size_t start,
                                          char needle) {
-    char const *h = ss8_const_cstr(haystack);
+    char const *h = ss8_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
     char const *end = h + haystacklen;
     SSSTR_ASSERT(start <= haystacklen);
@@ -1396,7 +1388,7 @@ SSSTR_INLINE_DEF size_t ss8_find_first_of_bytes(ss8str const *haystack,
                                                 size_t count) {
     SSSTR_EXTRA_ASSERT(needles != NULL);
 
-    char const *h = ss8_const_cstr(haystack);
+    char const *h = ss8_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
     SSSTR_ASSERT(start <= haystacklen);
     char const *begin = h + start;
@@ -1417,7 +1409,7 @@ SSSTR_INLINE_DEF size_t ss8_find_first_not_of_bytes(ss8str const *haystack,
                                                     size_t count) {
     SSSTR_EXTRA_ASSERT(needles != NULL);
 
-    char const *h = ss8_const_cstr(haystack);
+    char const *h = ss8_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
     SSSTR_ASSERT(start <= haystacklen);
     char const *begin = h + start;
@@ -1435,7 +1427,7 @@ SSSTR_INLINE_DEF size_t ss8_find_last_of_bytes(ss8str const *haystack,
                                                size_t count) {
     SSSTR_EXTRA_ASSERT(needles != NULL);
 
-    char const *h = ss8_const_cstr(haystack);
+    char const *h = ss8_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
     char const *end = h + haystacklen;
     SSSTR_ASSERT(start <= haystacklen);
@@ -1457,7 +1449,7 @@ SSSTR_INLINE_DEF size_t ss8_find_last_not_of_bytes(ss8str const *haystack,
                                                    size_t count) {
     SSSTR_EXTRA_ASSERT(needles != NULL);
 
-    char const *h = ss8_const_cstr(haystack);
+    char const *h = ss8_cstr(haystack);
     size_t haystacklen = ss8_len(haystack);
     char const *end = h + haystacklen;
     SSSTR_ASSERT(start <= haystacklen);
@@ -1505,27 +1497,27 @@ SSSTR_INLINE_DEF size_t ss8_find_last_not_of_cstr(ss8str const *haystack,
 
 SSSTR_INLINE_DEF size_t ss8_find_first_of(ss8str const *haystack, size_t start,
                                           ss8str const *needles) {
-    return ss8_find_first_of_bytes(haystack, start, ss8_const_cstr(needles),
+    return ss8_find_first_of_bytes(haystack, start, ss8_cstr(needles),
                                    ss8_len(needles));
 }
 
 SSSTR_INLINE_DEF size_t ss8_find_first_not_of(ss8str const *haystack,
                                               size_t start,
                                               ss8str const *needles) {
-    return ss8_find_first_not_of_bytes(
-        haystack, start, ss8_const_cstr(needles), ss8_len(needles));
+    return ss8_find_first_not_of_bytes(haystack, start, ss8_cstr(needles),
+                                       ss8_len(needles));
 }
 
 SSSTR_INLINE_DEF size_t ss8_find_last_of(ss8str const *haystack, size_t start,
                                          ss8str const *needles) {
-    return ss8_find_last_of_bytes(haystack, start, ss8_const_cstr(needles),
+    return ss8_find_last_of_bytes(haystack, start, ss8_cstr(needles),
                                   ss8_len(needles));
 }
 
 SSSTR_INLINE_DEF size_t ss8_find_last_not_of(ss8str const *haystack,
                                              size_t start,
                                              ss8str const *needles) {
-    return ss8_find_last_not_of_bytes(haystack, start, ss8_const_cstr(needles),
+    return ss8_find_last_not_of_bytes(haystack, start, ss8_cstr(needles),
                                       ss8_len(needles));
 }
 
@@ -1536,7 +1528,7 @@ SSSTR_INLINE_DEF bool ss8_starts_with_bytes(ss8str const *str,
 
     if (ss8_len(str) < prefixlen)
         return false;
-    return memcmp(ss8_const_cstr(str), prefix, prefixlen) == 0;
+    return memcmp(ss8_cstr(str), prefix, prefixlen) == 0;
 }
 
 SSSTR_INLINE_DEF bool ss8_starts_with_cstr(ss8str const *str,
@@ -1547,7 +1539,7 @@ SSSTR_INLINE_DEF bool ss8_starts_with_cstr(ss8str const *str,
 
 SSSTR_INLINE_DEF bool ss8_starts_with(ss8str const *str,
                                       ss8str const *prefix) {
-    return ss8_starts_with_bytes(str, ss8_const_cstr(prefix), ss8_len(prefix));
+    return ss8_starts_with_bytes(str, ss8_cstr(prefix), ss8_len(prefix));
 }
 
 SSSTR_INLINE_DEF bool ss8_starts_with_ch(ss8str const *str, char ch) {
@@ -1561,7 +1553,7 @@ ss8_ends_with_bytes(ss8str const *str, char const *suffix, size_t suffixlen) {
     size_t len = ss8_len(str);
     if (len < suffixlen)
         return false;
-    char const *end = ss8_const_cstr(str) + len;
+    char const *end = ss8_cstr(str) + len;
     return memcmp(end - suffixlen, suffix, suffixlen) == 0;
 }
 
@@ -1572,7 +1564,7 @@ SSSTR_INLINE_DEF bool ss8_ends_with_cstr(ss8str const *str,
 }
 
 SSSTR_INLINE_DEF bool ss8_ends_with(ss8str const *str, ss8str const *suffix) {
-    return ss8_ends_with_bytes(str, ss8_const_cstr(suffix), ss8_len(suffix));
+    return ss8_ends_with_bytes(str, ss8_cstr(suffix), ss8_len(suffix));
 }
 
 SSSTR_INLINE_DEF bool ss8_ends_with_ch(ss8str const *str, char ch) {
@@ -1590,7 +1582,7 @@ SSSTR_INLINE_DEF bool ss8_contains_cstr(ss8str const *str, char const *infix) {
 }
 
 SSSTR_INLINE_DEF bool ss8_contains(ss8str const *str, ss8str const *infix) {
-    return ss8_contains_bytes(str, ss8_const_cstr(infix), ss8_len(infix));
+    return ss8_contains_bytes(str, ss8_cstr(infix), ss8_len(infix));
 }
 
 SSSTR_INLINE_DEF bool ss8_contains_ch(ss8str const *str, char ch) {
@@ -1649,17 +1641,17 @@ SSSTR_INLINE_DEF ss8str *ss8_strip_cstr(ss8str *SSSTR_RESTRICT str,
 
 SSSTR_INLINE_DEF ss8str *ss8_lstrip(ss8str *SSSTR_RESTRICT str,
                                     ss8str const *SSSTR_RESTRICT chars) {
-    return ss8_lstrip_bytes(str, ss8_const_cstr(chars), ss8_len(chars));
+    return ss8_lstrip_bytes(str, ss8_cstr(chars), ss8_len(chars));
 }
 
 SSSTR_INLINE_DEF ss8str *ss8_rstrip(ss8str *SSSTR_RESTRICT str,
                                     ss8str const *SSSTR_RESTRICT chars) {
-    return ss8_rstrip_bytes(str, ss8_const_cstr(chars), ss8_len(chars));
+    return ss8_rstrip_bytes(str, ss8_cstr(chars), ss8_len(chars));
 }
 
 SSSTR_INLINE_DEF ss8str *ss8_strip(ss8str *SSSTR_RESTRICT str,
                                    ss8str const *SSSTR_RESTRICT chars) {
-    return ss8_strip_bytes(str, ss8_const_cstr(chars), ss8_len(chars));
+    return ss8_strip_bytes(str, ss8_cstr(chars), ss8_len(chars));
 }
 
 SSSTR_INLINE_DEF ss8str *ss8_lstrip_ch(ss8str *str, char ch) {
@@ -1714,7 +1706,7 @@ SSSTR_INLINE_DEF ss8str *ss8_cat_vsprintf(ss8str *SSSTR_RESTRICT dest,
         maxformatsize = INT_MAX;
 
     // First try without enlarging dest.
-    char *p = ss8_cstr(dest) + destlen;
+    char *p = ss8_mutable_cstr(dest) + destlen;
     va_list args_copy;
     va_copy(args_copy, args);
     errno = 0;
@@ -1738,7 +1730,8 @@ SSSTR_INLINE_DEF ss8str *ss8_cat_vsprintf(ss8str *SSSTR_RESTRICT dest,
     else
         ss8iNtErNaL_grow(dest, totallen);
     errno = 0;
-    int r2 = vsnprintf(ss8_cstr(dest) + destlen, resultlen + 1, fmt, args);
+    int r2 =
+        vsnprintf(ss8_mutable_cstr(dest) + destlen, resultlen + 1, fmt, args);
     if (r2 != r1)
         SSSTR_PANIC_ERRNO("vsnprintf error");
     ss8iNtErNaL_setlen(dest, totallen);
@@ -1769,7 +1762,7 @@ SSSTR_INLINE_DEF ss8str *ss8_cat_vsnprintf(ss8str *SSSTR_RESTRICT dest,
         maxformatsize = maxlen + 1;
 
     // First try without enlarging dest.
-    char *p = ss8_cstr(dest) + destlen;
+    char *p = ss8_mutable_cstr(dest) + destlen;
     va_list args_copy;
     va_copy(args_copy, args);
     errno = 0;
@@ -1793,7 +1786,8 @@ SSSTR_INLINE_DEF ss8str *ss8_cat_vsnprintf(ss8str *SSSTR_RESTRICT dest,
     else
         ss8iNtErNaL_grow(dest, totallen);
     errno = 0;
-    int r2 = vsnprintf(ss8_cstr(dest) + destlen, resultlen + 1, fmt, args);
+    int r2 =
+        vsnprintf(ss8_mutable_cstr(dest) + destlen, resultlen + 1, fmt, args);
     if (r2 != r1)
         SSSTR_PANIC_ERRNO("vsnprintf error");
     ss8iNtErNaL_setlen(dest, totallen);
