@@ -35,9 +35,9 @@ SS8_CAPACITY(3)                  <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        performed and the final length of the string is known, either precisely
        or approximately.
 
-       Reserved capacity is not available length; writing to <b>ss8_cstr(</b><i>str</i><b>)</b> be‐
-       yond  the  length  of  <b>*</b><i>str</i>  results   in   undefined   behavior.   See
-       <a href="../man3/ss8_set_len.3.html"><b>ss8_set_len</b>(3)</a> for ways to change the available length.
+       Reserved  capacity  is  not  available  length;  writing  to  <b>ss8_muta‐</b>
+       <b>ble_cstr(</b><i>str</i><b>)</b> beyond the length of <b>*</b><i>str</i> results in undefined  behavior.
+       See <a href="../man3/ss8_set_len.3.html"><b>ss8_set_len</b>(3)</a> for ways to change the available length.
 
        <b>ss8_shrink_to_fit</b>()  reallocates  the  internal buffer of the <b>ss8str</b> at
        <i>str</i> so that it is the minimum size required to hold its contents.

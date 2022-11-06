@@ -11,46 +11,47 @@ SS8_CSTR(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
 
 <b>NAME</b>
-       ss8_cstr,  ss8_const_cstr, ss8_cstr_suffix, ss8_const_cstr_suffix - ac‐
-       cess the bytes of an ssstr byte string as a null-terminated byte string
+       ss8_cstr,  ss8_mutable_cstr, ss8_cstr_suffix, ss8_mutable_cstr_suffix -
+       access the bytes of an ssstr byte  string  as  a  null-terminated  byte
+       string
 
 <b>SYNOPSIS</b>
        <b>#include &lt;ss8str.h&gt;</b>
 
-       <b>char       *ss8_cstr(ss8str *</b><i>str</i><b>);</b>
-       <b>char const *ss8_const_cstr(ss8str const *</b><i>str</i><b>);</b>
-       <b>char       *ss8_cstr_suffix(ss8str *</b><i>str</i><b>, size_t</b> <i>start</i><b>);</b>
-       <b>char const *ss8_const_cstr_suffix(ss8str const *</b><i>str</i><b>,</b>
-                                         <b>size_t</b> <i>start</i><b>);</b>
+       <b>char const *ss8_cstr(ss8str const *</b><i>str</i><b>);</b>
+       <b>char       *ss8_mutable_cstr(ss8str *</b><i>str</i><b>);</b>
+       <b>char const *ss8_cstr_suffix(ss8str const *</b><i>str</i><b>, size_t</b> <i>start</i><b>);</b>
+       <b>char       *ss8_mutable_cstr_suffix(ss8str *</b><i>str</i><b>, size_t</b> <i>start</i><b>);</b>
 
 <b>DESCRIPTION</b>
-       The <b>ss8_cstr</b>() family of functions provide direct access to the  inter‐
+       The  <b>ss8_cstr</b>() family of functions provide direct access to the inter‐
        nal buffer of the <b>ss8str</b> that <i>str</i> points to.
 
-       <b>ss8_cstr</b>()  and <b>ss8_const_cstr</b>() return the pointer to the beginning of
-       the string buffer.  A null terminator is always placed after the end of
-       the  buffer.   <b>ss8_cstr_suffix</b>()  and  <b>ss8_const_cstr_suffix</b>() return a
-       pointer offsetted by <i>start</i> bytes, corresponding  to  a  suffix  of  the
-       string.   Calling <b>ss8_cstr</b>() or <b>ss8_const_cstr</b>() is equivalent to call‐
-       ing <b>ss8_cstr_suffix</b>() or  <b>ss8_const_cstr_suffix</b>(),  respectively,  with
-       <i>start</i> set to zero.
+       <b>ss8_cstr</b>() and <b>ss8_mutable_cstr</b>() return the pointer to  the  beginning
+       of the string buffer.  A null terminator is always placed after the end
+       of the buffer.  <b>ss8_cstr_suffix</b>() and <b>ss8_mutable_cstr_suffix</b>()  return
+       a  pointer  offsetted  by <i>start</i> bytes, corresponding to a suffix of the
+       string.  Calling <b>ss8_cstr</b>()  or  <b>ss8_mutable_cstr</b>()  is  equivalent  to
+       calling  <b>ss8_cstr_suffix</b>()  or <b>ss8_mutable_cstr_suffix</b>(), respectively,
+       with <i>start</i> set to zero.
 
-       Behavior  is  undefined unless <i>str</i> points to a valid <b>ss8str</b> object, and
+       Behavior is undefined unless <i>str</i> points to a valid <b>ss8str</b>  object,  and
        <i>start</i> is less than or equal to the length of the string.
 
-       <b>ss8_const_cstr</b>() and <b>ss8_const_cstr_suffix</b>() are suitable  for  passing
-       the contents of an <b>ss8str</b> to a function expecting a read-only null-ter‐
-       minated byte string, or a read-only byte string  with  length  at  most
-       equal  to the length of <i>str</i> (as determined by <b>ss8_len</b>() and subtracting
-       <i>start</i> in the case of <b>ss8_const_cstr_suffix</b>()).
+       <b>ss8_cstr</b>()  and <b>ss8_cstr_suffix</b>() are suitable for passing the contents
+       of an <b>ss8str</b> to a function expecting a read-only  null-terminated  byte
+       string,  or  a  read-only  byte string with length at most equal to the
+       length of <i>str</i> (as determined by <b>ss8_len</b>() and subtracting <i>start</i> in  the
+       case of <b>ss8_cstr_suffix</b>()).
 
-       <b>ss8_cstr</b>() and <b>ss8_cstr_suffix</b>() allow the use of an <b>ss8str</b> as the des‐
-       tination  when  calling  a function that fills a caller-provided buffer
-       with a null-terminated or bound-length byte string.  The available buf‐
-       fer  size  can  be adjusted with <b>ss8_set_len</b>() beforehand, and the same
-       function, or <b>ss8_set_len_to_cstrlen</b>(), can be used afterwards  to  crop
-       the  string  to  the  desired  length,  if  necessary.   In the case of
-       <b>ss8_cstr_suffix</b>(), <i>start</i> must be subtracted from the available length.
+       <b>ss8_mutable_cstr</b>()  and  <b>ss8_mutable_cstr_suffix</b>()  allow the use of an
+       <b>ss8str</b> as the destination when calling a function that fills a  caller-
+       provided  buffer  with  a  null-terminated or bound-length byte string.
+       The available buffer size can be adjusted  with  <b>ss8_set_len</b>()  before‐
+       hand,  and  the same function, or <b>ss8_set_len_to_cstrlen</b>(), can be used
+       afterwards to crop the string to the desired length, if necessary.   In
+       the  case  of  <b>ss8_mutable_cstr_suffix</b>(), <i>start</i> must be subtracted from
+       the available length.
 
        It is permissible to write 1 byte more than the available length,  pro‐
        vided that the last byte written is always a null byte.
