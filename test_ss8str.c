@@ -2245,8 +2245,11 @@ void test_cat_sprintf(void) {
     ss8str s;
     ss8_init(&s);
 
-    TEST_ASSERT_EXACT_SS8STR("", ss8_cat_sprintf(&s, ""));
-    TEST_ASSERT_EXACT_SS8STR("", ss8_cat_snprintf(&s, 0, ""));
+    TEST_ASSERT_EXACT_SS8STR("x", ss8_cat_sprintf(&s, "x"));
+
+    ss8_clear(&s);
+    TEST_ASSERT_EXACT_SS8STR("", ss8_cat_snprintf(&s, 0, "x"));
+    TEST_ASSERT_EXACT_SS8STR("x", ss8_cat_snprintf(&s, 1, "x"));
 
     ss8_copy_cstr(&s, "-->");
     TEST_ASSERT_EXACT_SS8STR("-->", ss8_cat_sprintf(&s, ""));
