@@ -22,14 +22,16 @@ arguments, environment variables, and configuration file entries.
 
 - Safer and simpler-to-use analogs of most of the C standard library `string.h`
   functions.
-- Additional conveneince functions similar to C++ `std::string` member
+- Additional convenience functions similar to C++ `std::string` member
   functions and more.
-- Move and swap support to minimize the need to copy strings.
 - Strings are **always null-terminated** and buffer size is managed
-  automatically, avoiding tricky edge cases.
+  automatically.
 - Byte strings containing **embedded null bytes** can be handled.
-- Convenient and efficient **interoperability with standard null-terminated
-  strings** and unterminated byte buffers.
+- **Move and swap** support to minimize the need to copy strings.
+- Focus on efficiency through a **narrow contract** API, but with the option of
+  enabling **extensive debug assertions**.
+- Convenient and efficient **interoperability** with standard null-terminated
+  strings and unterminated byte buffers.
 - Single-file **header-only library**.
 - **Small string optimization**: strings up to 31 bytes (on 64-bit platforms)
   or 15 bytes (32-bit) can be stored directly in the object (usually on the
@@ -48,8 +50,9 @@ arguments, environment variables, and configuration file entries.
 **Ssstr** is meant for simple byte string manipulation, with the interpretation
 of the bytes completely left to the user.
 
-- There is no explicit support for UTF-8 or any other specific character set
-  (although UTF-8 strings will work well with **Ssstr** if used correctly).
+- There is no explicit support for UTF-8 or any other specific character
+  encoding (although UTF-8 strings will work well with **Ssstr** when used
+  correctly).
 - There is no support for breaking natural language strings into words, glyphs,
   codepoints, etc.
 
@@ -62,7 +65,7 @@ Most of the **Ssstr** functions are safe for use with UTF-8 strings, but those
 that break up strings at arbitrary offsets (such as `ss8_copy_substr()`,
 `ss8_set_len()`, or `ss8_replace()`) need to be used with care so as not to end
 up with partial encoding sequences. Also, string search and comparison will not
-take into account possible Unicode canonical equivalents.
+take into account Unicode canonical equivalents.
 
 ## Usage
 
