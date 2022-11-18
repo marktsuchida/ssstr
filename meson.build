@@ -41,6 +41,12 @@ test(
 
 install_headers(public_headers)
 
+# Meson 'dependency' for use as subproject
+ssstr_dep = declare_dependency(
+    include_directories: public_inc,
+)
+meson.override_dependency('ssstr', ssstr_dep)
+
 pkgconfig = import('pkgconfig')
 pkgconfig.generate(
     filebase: 'ssstr',
