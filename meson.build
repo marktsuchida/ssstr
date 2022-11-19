@@ -17,6 +17,12 @@ project(
     ],
 )
 
+if meson.get_compiler('c').get_id() in ['gcc', 'clang']
+  extra_args = ['-Wconversion', '-Wshadow']
+else
+  extra_args = []
+endif
+
 python_prog = find_program('python3', 'python')
 
 public_inc = include_directories('.')
@@ -64,6 +70,7 @@ ssstr_test = executable(
     'test_ssstr',
     test_sources,
     c_args: [
+        extra_args,
         '-UNDEBUG',
     ],
     dependencies: [
@@ -76,6 +83,7 @@ ssstr_test_extra_asserts = executable(
     'test_ssstr_extra_asserts',
     test_sources,
     c_args: [
+        extra_args,
         '-UNDEBUG',
         '-DSSSTR_EXTRA_DEBUG',
     ],
@@ -89,6 +97,7 @@ ssstr_test_no_asserts = executable(
     'test_ssstr_no_asserts',
     test_sources,
     c_args: [
+        extra_args,
         '-DNDEBUG',
     ],
     dependencies: [
@@ -231,6 +240,7 @@ readme_snippet_test = executable(
     'test_readme_snippets',
     readme_snippet_test_source,
     c_args: [
+        extra_args,
         '-UNDEBUG',
         '-DSSSTR_EXTRA_DEBUG',
         '-D_CRT_SECURE_NO_WARNINGS',

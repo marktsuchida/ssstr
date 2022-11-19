@@ -36,7 +36,7 @@ int size_overflow_count;
 void perturb_unused_bytes(ss8str *s) {
     char lastbyte = s->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
     if (lastbyte != ss8iNtErNaL_longmode) {
-        size_t len = ss8iNtErNaL_shortcap - lastbyte;
+        size_t len = (size_t)(ss8iNtErNaL_shortcap - lastbyte);
         if (len < ss8iNtErNaL_shortcap)
             memset(s->iNtErNaL_S + len + 1, '*',
                    ss8iNtErNaL_shortcap - len - 1);

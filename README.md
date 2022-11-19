@@ -38,8 +38,8 @@ arguments, environment variables, and configuration file entries.
   stack), avoiding dynamic storage allocation.
 - Compatible with C99 and later.
 - Unit **tested** thoroughly.
-- Aims to compile without any warnings (including on MSVC _without_
-  `_CRT_SECURE_NO_WARNINGS` defined).
+- Compiles without warnings (including on MSVC _without_
+  `_CRT_SECURE_NO_WARNINGS`). `-Werror`/`/WX` used in CI.
 - [Documented](https://marktsuchida.github.io/ssstr/man7/ssstr.7.html)
   carefully.
 

@@ -502,7 +502,7 @@ SSSTR_INLINE_DEF size_t ss8_len(ss8str const *str) {
 
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
     if (lastbyte != ss8iNtErNaL_longmode)
-        return ss8iNtErNaL_shortcap - lastbyte;
+        return (size_t)(ss8iNtErNaL_shortcap - lastbyte);
     else
         return str->iNtErNaL_L.len;
 }
@@ -609,7 +609,7 @@ SSSTR_INLINE_DEF char *ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap) {
         char *p = SSSTR_CHARP_MALLOC(cap + 1);
         if (!p)
             SSSTR_OUT_OF_MEMORY(cap + 1);
-        size_t len = ss8iNtErNaL_shortcap - lastbyte;
+        size_t len = (size_t)(ss8iNtErNaL_shortcap - lastbyte);
         // Use fixed len so that compiler can inline memcpy().
         memcpy(p, str->iNtErNaL_S, ss8iNtErNaL_shortbufsiz);
 
@@ -1280,11 +1280,11 @@ SSSTR_INLINE_DEF size_t ss8_find_bytes(ss8str const *haystack, size_t start,
     char const *begin = h + start;
     char const *end = h + haystacklen - needlelen + 1;
     for (char const *p = begin; p < end; ++p) {
-        p = SSSTR_CHARP_MEMCHR(p, needle[0], end - p);
+        p = SSSTR_CHARP_MEMCHR(p, needle[0], (size_t)(end - p));
         if (!p)
             return SIZE_MAX;
         if (memcmp(p, needle, needlelen) == 0)
-            return p - h;
+            return (size_t)(p - h);
     }
     return SIZE_MAX;
 }
@@ -1318,7 +1318,7 @@ SSSTR_INLINE_DEF size_t ss8_find_not_ch(ss8str const *haystack, size_t start,
     char const *end = h + haystacklen;
     for (char const *p = begin; p < end; ++p) {
         if (*p != needle)
-            return p - h;
+            return (size_t)(p - h);
     }
     return SIZE_MAX;
 }
@@ -1345,7 +1345,7 @@ SSSTR_INLINE_DEF size_t ss8_rfind_bytes(ss8str const *haystack, size_t start,
         if (*p != needle[0])
             continue;
         if (memcmp(p, needle, needlelen) == 0)
-            return p - h;
+            return (size_t)(p - h);
     }
     return SIZE_MAX;
 }
@@ -1376,7 +1376,7 @@ SSSTR_INLINE_DEF size_t ss8_rfind_ch(ss8str const *haystack, size_t start,
 
     for (char const *p = rbegin; p > rend; --p) {
         if (*p == needle)
-            return p - h;
+            return (size_t)(p - h);
     }
     return SIZE_MAX;
 }
@@ -1394,7 +1394,7 @@ SSSTR_INLINE_DEF size_t ss8_rfind_not_ch(ss8str const *haystack, size_t start,
 
     for (char const *p = rbegin; p > rend; --p) {
         if (*p != needle)
-            return p - h;
+            return (size_t)(p - h);
     }
     return SIZE_MAX;
 }
@@ -1415,7 +1415,7 @@ SSSTR_INLINE_DEF size_t ss8_find_first_of_bytes(ss8str const *haystack,
         // and MSVC appear not to. Would it be faster if we use a plain loop
         // when needles is short?
         if (SSSTR_CHARP_MEMCHR(needles, *p, count))
-            return p - h;
+            return (size_t)(p - h);
     }
     return SIZE_MAX;
 }
@@ -1433,7 +1433,7 @@ SSSTR_INLINE_DEF size_t ss8_find_first_not_of_bytes(ss8str const *haystack,
     char const *end = h + haystacklen;
     for (char const *p = begin; p < end; ++p) {
         if (!SSSTR_CHARP_MEMCHR(needles, *p, count))
-            return p - h;
+            return (size_t)(p - h);
     }
     return SIZE_MAX;
 }
@@ -1455,7 +1455,7 @@ SSSTR_INLINE_DEF size_t ss8_find_last_of_bytes(ss8str const *haystack,
 
     for (char const *p = rbegin; p > rend; --p) {
         if (SSSTR_CHARP_MEMCHR(needles, *p, count))
-            return p - h;
+            return (size_t)(p - h);
     }
     return SIZE_MAX;
 }
@@ -1477,7 +1477,7 @@ SSSTR_INLINE_DEF size_t ss8_find_last_not_of_bytes(ss8str const *haystack,
 
     for (char const *p = rbegin; p > rend; --p) {
         if (!SSSTR_CHARP_MEMCHR(needles, *p, count))
-            return p - h;
+            return (size_t)(p - h);
     }
     return SIZE_MAX;
 }
@@ -1731,7 +1731,7 @@ SSSTR_INLINE_DEF ss8str *ss8_cat_vsprintf(ss8str *SSSTR_RESTRICT dest,
     va_end(args_copy);
     if (r1 < 0)
         SSSTR_PANIC_ERRNO("vsnprintf error");
-    size_t resultlen = r1;
+    size_t const resultlen = (size_t)r1;
     if (resultlen <= destcap - destlen) {
         ss8iNtErNaL_setlen(dest, destlen + resultlen);
         return dest;
@@ -1741,7 +1741,7 @@ SSSTR_INLINE_DEF ss8str *ss8_cat_vsprintf(ss8str *SSSTR_RESTRICT dest,
     // Second try with sufficient capacity.
     if (resultlen == INT_MAX) // Cannot handle this edge case.
         SSSTR_PANIC("vsnprintf result too large");
-    size_t totallen = ss8iNtErNaL_add_sizes(destlen, resultlen);
+    size_t const totallen = ss8iNtErNaL_add_sizes(destlen, resultlen);
     if (destlen == 0)
         ss8_reserve(dest, totallen);
     else
@@ -1787,9 +1787,7 @@ SSSTR_INLINE_DEF ss8str *ss8_cat_vsnprintf(ss8str *SSSTR_RESTRICT dest,
     va_end(args_copy);
     if (r1 < 0)
         SSSTR_PANIC_ERRNO("vsnprintf error");
-    size_t resultlen = r1;
-    if (resultlen > maxlen)
-        resultlen = maxlen;
+    size_t const resultlen = (size_t)r1 > maxlen ? maxlen : (size_t)r1;
     if (resultlen < maxformatsize) {
         ss8iNtErNaL_setlen(dest, destlen + resultlen);
         return dest;
@@ -1797,7 +1795,7 @@ SSSTR_INLINE_DEF ss8str *ss8_cat_vsnprintf(ss8str *SSSTR_RESTRICT dest,
     *p = '\0'; // Recover invariant (longjmp() safety)
 
     // Second try with sufficient capacity.
-    size_t totallen = ss8iNtErNaL_add_sizes(destlen, resultlen);
+    size_t const totallen = ss8iNtErNaL_add_sizes(destlen, resultlen);
     if (destlen == 0)
         ss8_reserve(dest, totallen);
     else
