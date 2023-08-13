@@ -13,8 +13,8 @@
 
 #include <unity.h>
 
-void setUp() {}
-void tearDown() {}
+void setUp(void) {}
+void tearDown(void) {}
 
 void test_example_fgets(void) {
     FILE *fp = tmpfile();
@@ -48,7 +48,7 @@ void test_example_fgets(void) {
 #undef SNIPPET
 }
 
-int main() {
+int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_example_fgets);
     return UNITY_END();
