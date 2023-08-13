@@ -139,7 +139,7 @@ void tearDown(void) {}
         )
         for func in funcs:
             outfile.write(f"\n{func}\n")
-        outfile.write("\nint main() { UNITY_BEGIN();\n")
+        outfile.write("\nint main(void) { UNITY_BEGIN();\n")
         for test in tests:
             outfile.write(f"RUN_TEST({test});\n")
         outfile.write("return UNITY_END(); }\n")

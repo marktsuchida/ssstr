@@ -12,8 +12,8 @@
 
 #include <unity.h>
 
-void setUp() {}
-void tearDown() {}
+void setUp(void) {}
+void tearDown(void) {}
 
 void test_example_strftime(void) {
 #define SNIPPET
@@ -38,7 +38,7 @@ void test_example_strftime(void) {
 #undef SNIPPET
 }
 
-int main() {
+int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_example_strftime);
     return UNITY_END();

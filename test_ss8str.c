@@ -2323,7 +2323,7 @@ void test_cat_sprintf(void) {
     ss8_destroy(&s);
 }
 
-int main() {
+int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_size);
     RUN_TEST(test_init);

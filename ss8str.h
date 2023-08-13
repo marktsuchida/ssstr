@@ -186,10 +186,10 @@ typedef union {
     // than short mode bufsiz, which is constant.
 
     struct ss8iNtErNaL_L {
-        char *ptr;     // Never NULL in long mode
-        size_t len;    // Always < bufsiz; >= 0
-        size_t bufsiz; // Always > ss8iNtErNaL_shortbufsiz
-        void *pad;     // Never accessed by this name
+        char *SSSTR_RESTRICT ptr; // Never NULL in long mode
+        size_t len;               // Always < bufsiz; >= 0
+        size_t bufsiz;            // Always > ss8iNtErNaL_shortbufsiz
+        void *pad;                // Never accessed by this name
     } iNtErNaL_L;
 
     char iNtErNaL_S[sizeof(struct ss8iNtErNaL_L)];
