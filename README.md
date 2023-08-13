@@ -38,7 +38,7 @@ arguments, environment variables, and configuration file entries.
   stack), avoiding dynamic storage allocation.
 - Compatible with C99 and later.
 - Unit **tested** thoroughly.
-- Compiles without warnings (including on MSVC _without_
+- Aims to compile without warnings (including on MSVC _without_
   `_CRT_SECURE_NO_WARNINGS`). `-Werror`/`/WX` used in CI.
 - [Documented](https://marktsuchida.github.io/ssstr/man7/ssstr.7.html)
   carefully.
@@ -247,25 +247,26 @@ If you adjusted the length of an `ss8str` using `ss8_set_len()`, you probably
 need to readjust it after the call to the string-producing function, unless you
 knew beforehand the exact length. For this, you can call `ss8_set_len()` again
 (if the function returned the number of bytes written), or use
-`ss8_set_len_to_cstrlen()`, (if the written string is null-terminated).
+`ss8_set_len_to_cstrlen()` (if the written string is null-terminated and
+contains no embedded null bytes).
 
-Some (poorly-designed) APIs may not provide a way to determine the result
-length until you manage to pass a large-enough buffer. In this case, you can
-use `ss8_grow_len()` to progressively increase the length of the string being
-used as the destination buffer, calling the API function in a loop until you
-succeed. The `ss8_grow_len()` function is similar to `ss8_set_len()`, but will
-automatically chose a new length.
+Some APIs may not provide a way to determine the result length until you manage
+to pass a large-enough buffer. In this case, you can use `ss8_grow_len()` to
+progressively increase the length of the string being used as the destination
+buffer, calling the API function in a loop until you succeed. The
+`ss8_grow_len()` function is similar to `ss8_set_len()`, but will automatically
+chose a new length.
 
 Also depending on the API, you may be required to pass either the _maximum
 string length_ (not including any null terminator) or _destination buffer size_
 (including the null terminator). In the latter case, it is safe to pass
 `length + 1`, provided that the function will only ever write `\0` to the byte
 just beyond the length of the `ss8str`. (But make sure to check that this is
-the case; some functions, such as `strncpy()`, violate the condition.)
+the case; some functions, such as `strncpy()`, violate this requirement.)
 
 **Note:** Be sure not to confuse length and capacity. It is illegal to write
-beyond the _length_ of an `ss8str` when using `ss8_mutable_cstr()` (with the
-null terminator exception mentioned above), however large its current
+beyond the _length_ of an `ss8str` when using `ss8_mutable_cstr()` (aside from
+the null terminator exception mentioned above), however large its current
 _capacity_ may be.
 
 #### Example: Calling `strftime()`
@@ -823,8 +824,8 @@ behavior by defining the macro `SSSTR_ASSERT(condition)`.
 To disable assertions, you should define `NDEBUG`; there is no need to define
 `SSSTR_ASSERT` just for this purpose.
 
-`SSSTR_ASSERT()` must not return. It is _not_ safe to call `longjmp()` from
-inside `SSSTR_ASSERT()`.
+`SSSTR_ASSERT()` must not return when the condition is false. It is _not_ safe
+to call `longjmp()` from inside `SSSTR_ASSERT()`.
 
 ### Enabling more thorough run-time checks
 
@@ -869,8 +870,8 @@ equal to `INT_MAX` bytes, or `vs[n]printf()` returning a negative number for
 some other reason. Handling of these is not customizable. Programs that want
 water-tight (and strictly platform-independent) string formatting should
 probably use a specialized library rather than depending on these convenience
-functions which are meant to prevent the more common mistakes when calling
-`s[n]printf()` but inherit some of the limitations of the latter.
+functions whose main intent is to prevent the more common mistakes when calling
+`s[n]printf()` but do not hide all of the limitations of the latter.
 
 ## Memory layout
 
@@ -919,10 +920,11 @@ or longer than the small string capacity.
 
 A design with 3-pointer-sized string objects requires one of two compromises to
 be made: either the small string buffer needs to be limited to the size of 2
-pointers, or complicated (and platform-dependent) techniques need to be used to
-encode the long/short distinction into one of the 3 pointer/size fields. The
-former approach is typical in C++ `std::string` implementations, and the latter
-is used by the above-mentioned `folly::fbstring`.
+pointers, or complicated techniques need to be used to encode the long/short
+distinction into one of the 3 pointer/size fields (especially in the case of
+32-bit architectures). The former approach is typical in C++ `std::string`
+implementations, and the latter is used by the above-mentioned
+`folly::fbstring`.
 
 The 4-pointer size of `ss8str` was chosen because it is the smallest that can
 be achieved while having a single, simple implementation supporting little- and
