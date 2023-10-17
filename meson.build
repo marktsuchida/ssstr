@@ -17,10 +17,21 @@ project(
     ],
 )
 
-if meson.get_compiler('c').get_id() in ['gcc', 'clang']
-  extra_args = ['-Wconversion', '-Wshadow']
+cc = meson.get_compiler('c')
+
+if cc.get_id() in ['gcc', 'clang']
+    extra_args = ['-Wconversion', '-Wshadow']
 else
-  extra_args = []
+    extra_args = []
+endif
+
+# MinGW GCC 12 reports warnings that appear to be spurious. Disable only for 12
+# because these _may_ go away in GCC 13
+# (https://github.com/msys2/MINGW-packages/issues/13104).
+if host_machine.system() == 'windows' and cc.get_id() == 'gcc'
+    if cc.version().startswith('12.')
+        extra_args += ['-Wno-array-bounds', '-Wno-stringop-overflow']
+    endif
 endif
 
 python_prog = find_program('python3', 'python')
