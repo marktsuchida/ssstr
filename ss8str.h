@@ -444,6 +444,16 @@ enum { ss8iNtErNaL_shortcap = ss8iNtErNaL_shortbufsiz - 1 };
 
 SSSTR_INLINE void ss8iNtErNaL_extra_assert_invariants(ss8str const *str);
 SSSTR_INLINE_DEF void ss8iNtErNaL_extra_assert_invariants(ss8str const *str) {
+    // GCC may generate maybe-unused warnings (seen with GCC 12), which may or
+    // may not be false positives. But for the following assertions we don't
+    // care if the fields are initialized or not (that is part of what we are
+    // checking).
+#if !defined(__clang__) &&                                                    \
+    (__GNUC__ > 4 || (__GNUC__ == 4 && (__GNUC_MINOR__ >= 7)))
+#define SSSTR_DISABLED_GCC_MAYBE_UNINITIALIZED
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
     if (lastbyte != ss8iNtErNaL_longmode) {
         SSSTR_EXTRA_ASSERT_MSG("short string invariant",
@@ -462,6 +472,10 @@ SSSTR_INLINE_DEF void ss8iNtErNaL_extra_assert_invariants(ss8str const *str) {
                                str->iNtErNaL_L.ptr[str->iNtErNaL_L.len] ==
                                    '\0');
     }
+#ifdef SSSTR_DISABLED_GCC_MAYBE_UNINITIALIZED
+#pragma GCC diagnostic pop
+#undef SSSTR_DISABLED_GCC_MAYBE_UNINITIALIZED
+#endif
 }
 
 SSSTR_INLINE_DEF ss8str *ss8_init(ss8str *str) {
