@@ -66,8 +66,8 @@ jobs:
           - os: macos
             compiler: gcc
             # macOS has gcc/g++ pointing to clang/clang++
-            cc: gcc-11
-            cxx: g++-11
+            cc: gcc-12
+            cxx: g++-12
     name: test-${{ matrix.os }}-${{ matrix.compiler }}
     runs-on: ${{ matrix.runner }}
     env:
