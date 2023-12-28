@@ -13,15 +13,19 @@ SPDX-License-Identifier: MIT
 ```
 
 **Ssstr** is intended to be used when you need a little more string handling
-capability than can be easily (and safely!) achieved with the standard library,
+capability than can be easily (and safely) achieved with the standard library,
 but not enough to warrant introducing a heavyweight framework (such as GLib) or
-switching to C++. This may include manipulating path names, command line
-arguments, environment variables, and configuration file entries.
+switching to another programming language. Such scenarios may include
+manipulating path names, command line arguments, environment variables, and
+configuration file entries.
+
+See the [usage introduction](#usage) below and the
+[reference documentation](https://marktsuchida.github.io/ssstr/man7/ssstr.7.html).
 
 ## Features and Design
 
-- Safer and simpler-to-use analogs of most of the C standard library `string.h`
-  functions.
+- Safer and simpler-to-use analogues of most of the C standard library
+  `string.h` functions.
 - Additional convenience functions similar to C++ `std::string` member
   functions and more.
 - Strings are **always null-terminated** and buffer size is managed
@@ -90,11 +94,11 @@ ss8_init(&s);
 %SNIPPET_EPILOGUE ss8_destroy(&s);
 -->
 
-Note that directly assgning to, or initializing, an already initialized
+Note that directly assgning to, or initializing, an already-initialized
 `ss8str` results in undefined behavior.
 
-An `ss8str` is intended to be allocated on the stack as a local variable unless
-it is part of a larger data structure.
+An `ss8str` (which is the size of 4 pointers) is intended to be allocated on
+the stack as a local variable unless it is part of a larger data structure.
 
 After use, an `ss8str` must be destroyed in order to release any dynamically
 allocated memory it may have used:
@@ -227,9 +231,10 @@ ss8_destroy(&s);
 
 Many C APIs have functions that take a string buffer pointer and size (or
 maximum string length), and write a string into the buffer. These vary quite a
-bit in how they deal with the size limit: some return the number of bytes
-written, some return the number of bytes that would fit the whole result, and
-some provide no indication of whether the result fit in the buffer or not.
+bit in how they behave when the string to be returned doesn't fit in the
+provided buffer: some return the number of bytes written, some return the
+number of bytes that would fit the whole result, and some provide no indication
+of whether the result fit in the buffer or not.
 
 **Ssstr** provides functions that make it easy to deal with most of these
 functions.
@@ -254,8 +259,8 @@ Some APIs may not provide a way to determine the result length until you manage
 to pass a large-enough buffer. In this case, you can use `ss8_grow_len()` to
 progressively increase the length of the string being used as the destination
 buffer, calling the API function in a loop until you succeed. The
-`ss8_grow_len()` function is similar to `ss8_set_len()`, but will automatically
-chose a new length.
+`ss8_grow_len()` function is similar to `ss8_set_len()`, but automatically
+choses a new length.
 
 Also depending on the API, you may be required to pass either the _maximum
 string length_ (not including any null terminator) or _destination buffer size_
@@ -266,7 +271,7 @@ the case; some functions, such as `strncpy()`, violate this requirement.)
 
 **Note:** Be sure not to confuse length and capacity. It is illegal to write
 beyond the _length_ of an `ss8str` when using `ss8_mutable_cstr()` (aside from
-the null terminator exception mentioned above), however large its current
+the null terminator exception mentioned above), no matter how large its current
 _capacity_ may be.
 
 #### Example: Calling `strftime()`
@@ -672,19 +677,19 @@ ss8_find_last_not_of_bytes(&haystack, start, buf, len);
 -->
 
 ```c
-// Remove any chars in 'chars' from either end of s:
+// Remove any characters in 'chars' from either end of s:
 ss8_strip(&s, &chars);
 ss8_strip_cstr(&s, cstr);
 ss8_strip_bytes(&s, buf, len);
 ss8_strip_ch(&s, 'c');
 
-// Remove any chars in 'chars' from the beginning of s:
+// Remove any characters in 'chars' from the beginning of s:
 ss8_lstrip(&s, &chars);
 ss8_lstrip_cstr(&s, cstr);
 ss8_lstrip_bytes(&s, buf, len);
 ss8_lstrip_ch(&s, 'c');
 
-// Remove any chars in 'chars' from the end of s:
+// Remove any characters in 'chars' from the end of s:
 ss8_rstrip(&s, &chars);
 ss8_rstrip_cstr(&s, cstr);
 ss8_rstrip_bytes(&s, buf, len);
@@ -716,7 +721,7 @@ ss8_cat_vsnprintf(&dest, maxlen, "fmt", args);
 
 These functions internally call `vsnprintf()`, so the format string has the
 same meaning as the `printf()` family of functions provided by the standard
-library.
+library (and is therefore platform-dependent to some extent).
 
 In particular, any `"%s"` format specifier requires a corresponding standard
 null-terminated string, so you need to use `ss8_cstr()` if printing an
@@ -738,7 +743,8 @@ ss8_destroy(&warning);
 
 ## Building Ssstr
 
-If using as a header-only library, all you need is the file `ss8str.h`.
+If using as a library, there is nothing to build; all you need is the file
+`ss8str.h`.
 
 You can use the build system to build and run the unit tests, or install the
 header and manual pages locally.
@@ -791,12 +797,18 @@ from multiple translation units (source files), each will get their own copy of
 those **Ssstr** functions which the compiler chose not to inline. This may not
 be desirable in projects where small binary size is important.
 
+(Note that toolchain facilities such as GCC/Clang `-fipa-icf` (enabled as part
+of `-O2`; most effective when combined with link-time optimization) and MSVC
+identical COMDAT folding can alleviate this, but there may be cases where that
+is not good enough.)
+
 If the macro `SSSTR_USE_NONSTATIC_INLINE` is defined, **Ssstr** functions will
 be defined as plain `inline`, so that duplicate copies of the functions will
 not be generated. Because of the way
 [C inline functions](https://en.cppreference.com/w/c/language/inline) work
 (which differs from C++), the macro `SSSTR_DEFINE_EXTERN_INLINE` must also be
-defined in one (and only one) of the translation units.
+defined in exactly one translation unit; this provides `extern inline` function
+definitions.
 
 ### Customizing memory allocation
 
@@ -812,8 +824,8 @@ in any specific manner. Also, **Ssstr** always checks the return value for
 
 If you customize memory allocation, you are responsible for ensuring that
 compatible customizations are used throughout your program (or at least
-throughout a subsystem in which a given set of `ss8str` objects are passed
-around).
+throughout the subsystem within which a given set of `ss8str` objects are
+passed around).
 
 ### Customizing run-time assertions
 
@@ -824,8 +836,8 @@ behavior by defining the macro `SSSTR_ASSERT(condition)`.
 To disable assertions, you should define `NDEBUG`; there is no need to define
 `SSSTR_ASSERT` just for this purpose.
 
-`SSSTR_ASSERT()` must not return when the condition is false. It is _not_ safe
-to call `longjmp()` from inside `SSSTR_ASSERT()`.
+`SSSTR_ASSERT()` should not return when the condition is false. It is _not_
+safe to call `longjmp()` from inside `SSSTR_ASSERT()`.
 
 ### Enabling more thorough run-time checks
 
@@ -867,11 +879,11 @@ Note that the string formatting functions `ss8_[cat_][v]s[n]printf()` can (at
 least in theory) encounter additional errors that will lead to a call to
 `abort()`. These include the result of string formatting being greater than or
 equal to `INT_MAX` bytes, or `vs[n]printf()` returning a negative number for
-some other reason. Handling of these is not customizable. Programs that want
-water-tight (and strictly platform-independent) string formatting should
-probably use a specialized library rather than depending on these convenience
-functions whose main intent is to prevent the more common mistakes when calling
-`s[n]printf()` but do not hide all of the limitations of the latter.
+some other reason. Handling of these errors is not customizable. Programs that
+want water-tight (and strictly platform-independent) string formatting should
+probably use a specialized string formatting library rather than depending on
+these convenience functions that do not hide all of the limitations of the
+starnard functions.
 
 ## Memory layout
 
@@ -921,9 +933,9 @@ or longer than the small string capacity.
 A design with 3-pointer-sized string objects requires one of two compromises to
 be made: either the small string buffer needs to be limited to the size of 2
 pointers, or complicated techniques need to be used to encode the long/short
-distinction into one of the 3 pointer/size fields (especially in the case of
-32-bit architectures). The former approach is typical in C++ `std::string`
-implementations, and the latter is used by the above-mentioned
+distinction into one of the 3 pointer/size fields (this is especially tricky in
+the case of 32-bit architectures). The former approach is typical in C++
+`std::string` implementations, and the latter is used by the above-mentioned
 `folly::fbstring`.
 
 The 4-pointer size of `ss8str` was chosen because it is the smallest that can
@@ -933,7 +945,7 @@ small string buffer.
 
 The use cases for which **Ssstr** was designed are the handling of small
 numbers of short to moderate-length strings (path names, command line
-arguments, environment variables, configuration file entries) -- _not_ building
+arguments, environment variables, configuration file entries)—_not_ building
 databases or text editors. Applications that want to store large numbers of
 strings with high space efficiency may prefer other designs; see, for example,
 [SDS](https://github.com/antirez/sds).
@@ -968,6 +980,7 @@ allocation and deallocation is limited to one side of the boundary.)
   ([GitHub](https://github.com/websnarf/bstrlib)) (Better String Library)
 - utstring, part of [uthash](https://troydhanson.github.io/uthash/)
   ([GitHub](https://github.com/troydhanson/uthash))
+- [str](https://github.com/maxim2266/str)
 
 It is difficult to search for string libraries in C (too much noise), so I
 wouldn't be surprised if there are other good or notable ones that I am not
