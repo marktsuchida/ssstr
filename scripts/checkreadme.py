@@ -108,12 +108,12 @@ def assemble_snippets(parser):
 
 def write_snippet_tests(readme_path, test_source_path):
     with open(readme_path) as infile:
-        lines = infile.readlines()
+        all_lines = infile.readlines()
 
     funcs = []
     tests = []
     for i, compile_only, file_scope, lines in assemble_snippets(
-        parse_snippet_lines(lines)
+        parse_snippet_lines(all_lines)
     ):
         lineno = i + 1
         func = f"snippet_at_line_{lineno}"
