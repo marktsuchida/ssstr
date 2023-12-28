@@ -2,6 +2,9 @@
 # Copyright 2022 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-[tool.black]
+[tool.ruff]
 line-length = 79
-target-version = ['py39']
+
+[tool.ruff.lint]
+select = ["E", "F", "UP", "B", "SIM", "I"]
+ignore = ["B011", "E501"]

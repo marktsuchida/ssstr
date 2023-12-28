@@ -139,8 +139,8 @@ def check_RETURN_VALUE(page):
             pass
         else:
             n_nonvoid_func += 1
-    assert ("RETURN VALUE" in page) == (
-        n_nonvoid_func > 0
+    assert (
+        ("RETURN VALUE" in page) == (n_nonvoid_func > 0)
     ), f"page has {n_nonvoid_func} non-void functions, mismatched with presence of RETURN VALUE section"
     if n_nonvoid_func > 0:
         assert len(page["RETURN VALUE"])
@@ -482,19 +482,19 @@ def check_manpages(paths):
                 print(f"While checking {path}:", file=sys.stderr)
                 raise
 
-    for so in func_so_pages.keys():
+    for so in func_so_pages:
         check_so_target(func_so_pages[so], func_pages, "3")
-    for so in intro_so_pages.keys():
+    for so in intro_so_pages:
         check_so_target(intro_so_pages[so], intro_pages, "7")
 
     check_duplicate_items(func_pages)
     assert len(intro_pages) == 1
     intro_page = intro_pages["ssstr"]
 
-    for primary in func_pages.keys():
+    for primary in func_pages:
         check_nonprimaries_have_so(func_pages[primary], func_so_pages, "3")
         check_see_also_targets(func_pages[primary], func_pages, func_so_pages)
-    for primary in intro_pages.keys():
+    for primary in intro_pages:
         check_nonprimaries_have_so(intro_pages[primary], intro_so_pages, "7")
         # Do not check see also targets; on intro page they are external
 
