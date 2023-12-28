@@ -134,4 +134,6 @@ man7_links = files(
     'link7/ss8str.7',
 )
 
-install_man(man3_pages, man3_links, man7_pages, man7_links)
+if not get_option('docs').disabled()
+    install_man(man3_pages, man3_links, man7_pages, man7_links)
+endif

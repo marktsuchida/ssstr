@@ -84,11 +84,11 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
       - name: Build and test (debug)
         run: |
-          meson setup build-debug --buildtype debug
+          meson setup build-debug --buildtype debug -Dtest=enabled
           meson dist -C build-debug
       - name: Build and test (release)
         run: |
-          meson setup build-release --buildtype release
+          meson setup build-release --buildtype release -Dtest=enabled
           meson dist -C build-release
       - name: Run benchmarks
         # Exclude MinGW for now (crashes at runtime; needs investigation)
@@ -100,7 +100,7 @@ jobs:
       - name: Build with different GCC dialects
         if: matrix.compiler == 'gcc'
         run: |
-          meson setup dialects --buildtype debug
+          meson setup dialects --buildtype debug -Dtest=enabled
           cd dialects
           meson configure -Dc_std=c99 -Dcpp_std=c++03
           meson test
@@ -113,7 +113,7 @@ jobs:
       - name: Sanitize
         if: matrix.os == 'ubuntu' && matrix.compiler == 'clang'
         run: |
-          meson setup sanitize --buildtype debug -Db_lundef=false
+          meson setup sanitize --buildtype debug -Db_lundef=false -Dtest=enabled
           cd sanitize
           meson configure -Db_sanitize=address,undefined
           meson test
@@ -141,7 +141,7 @@ jobs:
           python -m pip install --upgrade pip meson ninja
       - name: Build man pages
         run: |
-          meson setup builddir
+          meson setup builddir -Ddocs=enabled
           cd builddir
           ninja htmlman
       - name: Publish to gh-pages

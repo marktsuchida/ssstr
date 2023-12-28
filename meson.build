@@ -34,7 +34,18 @@ if host_machine.system() == 'windows' and cc.get_id() == 'gcc'
     endif
 endif
 
-python_prog = find_program('python3', 'python')
+python_for_tests = find_program(
+    'python3',
+    'python',
+    required: get_option('test'),
+    disabler: true,
+)
+python_for_docs = find_program(
+    'python3',
+    'python',
+    required: get_option('docs'),
+    disabler: true,
+)
 
 public_inc = include_directories('.')
 
@@ -48,7 +59,7 @@ version_check_script = files(
 
 test(
     'version-check',
-    python_prog,
+    python_for_tests,
     args: [
         version_check_script,
         meson.project_version(),
@@ -71,7 +82,7 @@ pkgconfig.generate(
     description: 'Ssstr small-string-optimized string library',
 )
 
-unity_dep = dependency('unity')
+unity_dep = dependency('unity', required: get_option('test'), disabler: true)
 
 test_sources = files(
     'test_ss8str.c',
@@ -121,22 +132,24 @@ test_cpp_include_sources = files(
     'test_ss8str_include.cpp',
 )
 
-ssstr_cpp_include_test = executable(
-    'test_cpp_include',
-    test_cpp_include_sources,
-)
-test('ssstr-cpp-include-test', ssstr_cpp_include_test)
+if not get_option('test').disabled()
+    ssstr_cpp_include_test = executable(
+        'test_cpp_include',
+        test_cpp_include_sources,
+    )
+    test('ssstr-cpp-include-test', ssstr_cpp_include_test)
 
-# Make sure C++ build with C 'extern inline' works
-ssstr_cpp_include_nonstatic_test = executable(
-    'test_cpp_include_nonstatic',
-    test_cpp_include_sources,
-    cpp_args: [
-        '-DSSSTR_USE_NONSTATIC_INLINE',
-        '-DSSSTR_DEFINE_EXTERN_INLINE',
-    ],
-)
-test('ssstr-cpp-include-nonstatic-test', ssstr_cpp_include_nonstatic_test)
+    # Make sure C++ build with C 'extern inline' works
+    ssstr_cpp_include_nonstatic_test = executable(
+        'test_cpp_include_nonstatic',
+        test_cpp_include_sources,
+        cpp_args: [
+            '-DSSSTR_USE_NONSTATIC_INLINE',
+            '-DSSSTR_DEFINE_EXTERN_INLINE',
+        ],
+    )
+    test('ssstr-cpp-include-nonstatic-test', ssstr_cpp_include_nonstatic_test)
+endif
 
 google_benchmark_dep = dependency(
     'benchmark',
@@ -183,24 +196,26 @@ subdir('man')
 
 man_pages_check_script = files('scripts/checkmanpages.py')
 
-test(
-    'man-pages-check',
-    python_prog,
-    args: [
-        man_pages_check_script,
-        public_headers,
-        example_test_sources,
-        '--',
-        man3_pages,
-        man3_links,
-        man7_pages,
-        man7_links,
-    ],
-)
+if not get_option('docs').disabled()
+    test(
+        'man-pages-check',
+        python_for_tests,
+        args: [
+            man_pages_check_script,
+            public_headers,
+            example_test_sources,
+            '--',
+            man3_pages,
+            man3_links,
+            man7_pages,
+            man7_links,
+        ],
+    )
+endif
 
 groff_prog = find_program(
     'groff',
-    required: false,
+    required: get_option('docs'),
     disabler: true,
 )
 htmlman_script = files('scripts/htmlman.py')
@@ -215,7 +230,7 @@ htmlman = custom_target(
         man7_links,
     ],
     command: [
-        python_prog,
+        python_for_docs,
         htmlman_script,
         '@OUTPUT@',
         groff_prog,
@@ -240,7 +255,7 @@ readme_snippet_test_source = custom_target(
         man3_links,
     ],
     command: [
-        python_prog,
+        python_for_tests,
         readme_check_script,
         '@OUTPUT@',
         '@INPUT@',
