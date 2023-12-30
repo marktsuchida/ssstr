@@ -1,5 +1,5 @@
 /*
- * ss8str.h, version 0.1.0-dev
+ * ss8str.h, version 0.1.0
  *
  * This file is part of the Ssstr string library.
  * Copyright 2022-2023 Board of Regents of the University of Wisconsin System
