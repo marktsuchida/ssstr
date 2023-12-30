@@ -84,11 +84,11 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
       - name: Build and test (debug)
         run: |
-          meson setup build-debug --buildtype debug -Dtest=enabled
+          meson setup build-debug --buildtype debug -Dtest=enabled -Ddocs=auto
           meson dist -C build-debug
       - name: Build and test (release)
         run: |
-          meson setup build-release --buildtype release -Dtest=enabled
+          meson setup build-release --buildtype release -Dtest=enabled -Ddocs=auto
           meson dist -C build-release
       - name: Run benchmarks
         # Exclude MinGW for now (crashes at runtime; needs investigation)
