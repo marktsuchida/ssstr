@@ -1,6 +1,6 @@
 <!--
 This file is part of the Ssstr string library.
-Copyright 2022 Board of Regents of the University of Wisconsin System
+Copyright 2022-2023 Board of Regents of the University of Wisconsin System
 SPDX-License-Identifier: MIT
 -->
 
