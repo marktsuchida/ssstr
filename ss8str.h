@@ -636,7 +636,7 @@ SSSTR_INLINE_DEF char *ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap) {
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
     if (lastbyte != ss8iNtErNaL_longmode) {
         char *p = SSSTR_CHARP_MALLOC(cap + 1);
-        if (!p)
+        if (p == NULL)
             SSSTR_OUT_OF_MEMORY(cap + 1);
         size_t const len = (size_t)(ss8iNtErNaL_shortcap - lastbyte);
         // Use fixed len so that compiler can inline memcpy().
@@ -650,14 +650,14 @@ SSSTR_INLINE_DEF char *ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap) {
         char *p = str->iNtErNaL_L.ptr;
         if (str->iNtErNaL_L.len > 0) {
             p = SSSTR_CHARP_REALLOC(p, cap + 1);
-            if (!p)
+            if (p == NULL)
                 SSSTR_OUT_OF_MEMORY(cap + 1);
         } else {
             // When we don't need to copy the data, free+malloc is likely
             // faster (https://stackoverflow.com/a/39562813) (TODO: benchmark).
             SSSTR_FREE(p);
             p = SSSTR_CHARP_MALLOC(cap + 1);
-            if (!p) {
+            if (p == NULL) {
                 str->iNtErNaL_S[0] = '\0'; // longjmp() safety.
                 str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1] =
                     ss8iNtErNaL_shortcap;
@@ -761,7 +761,7 @@ SSSTR_INLINE_DEF ss8str *ss8_shrink_to_fit(ss8str *str) {
         *lastbyte = (char)(ss8iNtErNaL_shortcap - len);
     } else if (len + 1 < str->iNtErNaL_L.bufsiz) {
         char *p = SSSTR_CHARP_REALLOC(str->iNtErNaL_L.ptr, len + 1);
-        if (!p)
+        if (p == NULL)
             SSSTR_OUT_OF_MEMORY(len + 1);
         str->iNtErNaL_L.ptr = p;
         str->iNtErNaL_L.bufsiz = len + 1;
@@ -1395,7 +1395,7 @@ SSSTR_INLINE_DEF size_t ss8_find_bytes(ss8str const *haystack, size_t start,
     char const *end = h + haystacklen - needlelen + 1;
     for (char const *p = begin; p < end; ++p) {
         p = SSSTR_CHARP_MEMCHR(p, needle[0], (size_t)(end - p));
-        if (!p)
+        if (p == NULL)
             return SIZE_MAX;
         if (memcmp(p, needle, needlelen) == 0)
             return (size_t)(p - h);
@@ -1427,7 +1427,7 @@ SSSTR_INLINE_DEF size_t ss8_find_ch(ss8str const *haystack, size_t start,
     size_t const haystacklen = ss8_len(haystack);
     SSSTR_ASSERT(start <= haystacklen);
     char const *p = SSSTR_CHARP_MEMCHR(h + start, needle, haystacklen - start);
-    return p ? (size_t)(p - h) : SIZE_MAX;
+    return p != NULL ? (size_t)(p - h) : SIZE_MAX;
 }
 
 // Return the first position at which a character other than 'needle' appears
