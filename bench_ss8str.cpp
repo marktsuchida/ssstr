@@ -31,9 +31,10 @@ static void CppEmptyStringCreation(benchmark::State &state) {
 BENCHMARK(CppEmptyStringCreation);
 
 static void StringCreation(benchmark::State &state) {
+    auto const n = std::size_t(state.range(0));
     for (auto _ : state) {
         ss8str s;
-        ss8_init_copy_ch_n(&s, '*', state.range(0));
+        ss8_init_copy_ch_n(&s, '*', n);
         benchmark::DoNotOptimize(ss8_mutable_cstr(&s));
         benchmark::ClobberMemory();
         ss8_destroy(&s);
@@ -42,8 +43,9 @@ static void StringCreation(benchmark::State &state) {
 BENCHMARK(StringCreation)->RangeMultiplier(16)->Range(0, 256);
 
 static void CppStringCreation(benchmark::State &state) {
+    auto const n = std::size_t(state.range(0));
     for (auto _ : state) {
-        std::string s(state.range(0), '*');
+        std::string s(n, '*');
         benchmark::DoNotOptimize(s.c_str());
         benchmark::ClobberMemory();
     }
@@ -51,8 +53,9 @@ static void CppStringCreation(benchmark::State &state) {
 BENCHMARK(CppStringCreation)->RangeMultiplier(16)->Range(0, 256);
 
 static void StringCopy(benchmark::State &state) {
+    auto const n = std::size_t(state.range(0));
     ss8str x;
-    ss8_init_copy_ch_n(&x, '*', state.range(0));
+    ss8_init_copy_ch_n(&x, '*', n);
     ss8str s;
     ss8_init(&s);
     if (state.range(1)) {
@@ -73,7 +76,8 @@ static void StringCopy(benchmark::State &state) {
 BENCHMARK(StringCopy)->RangeMultiplier(16)->Ranges({{0, 256}, {0, 1}});
 
 static void CppStringCopy(benchmark::State &state) {
-    std::string x(state.range(0), '*');
+    auto const n = std::size_t(state.range(0));
+    std::string x(n, '*');
     std::string s;
     if (state.range(1)) {
         x.reserve(64);
@@ -91,8 +95,9 @@ static void CppStringCopy(benchmark::State &state) {
 BENCHMARK(CppStringCopy)->RangeMultiplier(16)->Ranges({{0, 256}, {0, 1}});
 
 static void StringMove(benchmark::State &state) {
+    auto const n = std::size_t(state.range(0));
     ss8str x;
-    ss8_init_copy_ch_n(&x, '*', state.range(0));
+    ss8_init_copy_ch_n(&x, '*', n);
     ss8str s;
     ss8_init(&s);
     if (state.range(1)) {
@@ -113,7 +118,8 @@ static void StringMove(benchmark::State &state) {
 BENCHMARK(StringMove)->RangeMultiplier(16)->Ranges({{0, 256}, {0, 1}});
 
 static void CppStringMove(benchmark::State &state) {
-    std::string x(state.range(0), '*');
+    auto const n = std::size_t(state.range(0));
+    std::string x(n, '*');
     std::string s;
     if (state.range(1)) {
         x.reserve(64);
@@ -131,8 +137,9 @@ static void CppStringMove(benchmark::State &state) {
 BENCHMARK(CppStringMove)->RangeMultiplier(16)->Ranges({{0, 256}, {0, 1}});
 
 static void StringSwap(benchmark::State &state) {
+    auto const n = std::size_t(state.range(0));
     ss8str x;
-    ss8_init_copy_ch_n(&x, '*', state.range(0));
+    ss8_init_copy_ch_n(&x, '*', n);
     for (auto _ : state) {
         ss8str s;
         ss8_init(&s);
@@ -148,7 +155,8 @@ static void StringSwap(benchmark::State &state) {
 BENCHMARK(StringSwap)->RangeMultiplier(16)->Range(0, 256);
 
 static void CppStringSwap(benchmark::State &state) {
-    std::string x(state.range(0), '*');
+    auto const n = std::size_t(state.range(0));
+    std::string x(n, '*');
     for (auto _ : state) {
         std::string s;
         s.swap(x);

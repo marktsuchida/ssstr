@@ -28,22 +28,32 @@ jobs:
           - ubuntu
           - macos
           - windows
+        arch:
+          - x86_64
+          - x86
         compiler:
           - gcc
           - clang
           - clang-cl
           - msvc
         exclude:
+          - arch: x86
+            compiler: clang-cl
           - os: ubuntu
             compiler: msvc
           - os: ubuntu
             compiler: clang-cl
+          - os: macos
+            arch: x86
           - os: macos
             compiler: msvc
           - os: macos
             compiler: clang-cl
           - os: windows
             compiler: clang
+          - os: windows
+            arch: x86
+            compiler: gcc
         include:
           - os: ubuntu
             runner: ubuntu-latest
@@ -51,6 +61,12 @@ jobs:
             runner: macos-latest
           - os: windows
             runner: windows-latest
+          - arch: x86_64
+            arch_flag: -m64
+            vsenv_arch: amd64
+          - arch: x86
+            arch_flag: -m32
+            vsenv_arch: amd64_x86
           - compiler: gcc
             cc: gcc
             cxx: g++
@@ -61,6 +77,7 @@ jobs:
             cc: clang-cl
             cxx: clang-cl
           - compiler: msvc
+            arch_flag: ""
             cc: cl
             cxx: cl
           - os: macos
@@ -68,11 +85,13 @@ jobs:
             # macOS has gcc/g++ pointing to clang/clang++
             cc: gcc-12
             cxx: g++-12
-    name: test-${{ matrix.os }}-${{ matrix.compiler }}
+    name: test-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.compiler }}
     runs-on: ${{ matrix.runner }}
-    env:
+    env: # These are recognized by meson
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
+      CFLAGS: ${{ matrix.arch_flag }}
+      CXXFLAGS: ${{ matrix.arch_flag }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -81,7 +100,11 @@ jobs:
       - name: Install tools
         run: |
           python -m pip install --upgrade pip meson ninja
+      - if: matrix.os == 'ubuntu' && matrix.arch == 'x86'
+        run: sudo apt-get install -y gcc-multilib g++-multilib
       - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.vsenv_arch }}
       - name: Build and test (debug)
         run: |
           meson setup build-debug --buildtype debug -Dtest=enabled -Ddocs=auto
@@ -110,13 +133,17 @@ jobs:
           meson test
           meson configure -Dc_std=gnu17 -Dcpp_std=gnu++20
           meson test
-      - name: Sanitize
+      - name: Sanitize address/undefined
         if: matrix.os == 'ubuntu' && matrix.compiler == 'clang'
         run: |
           meson setup sanitize --buildtype debug -Db_lundef=false -Dtest=enabled
           cd sanitize
           meson configure -Db_sanitize=address,undefined
           meson test
+      - name: Sanitize memory/leak
+        if: matrix.os == 'ubuntu' && matrix.arch == 'x86_64' && matrix.compiler == 'clang'
+        run: |
+          cd sanitize
           meson configure -Db_sanitize=memory
           meson test
           meson configure -Db_sanitize=leak
