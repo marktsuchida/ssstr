@@ -520,8 +520,7 @@ SSSTR_INLINE_DEF size_t ss8_len(ss8str const *str) {
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
     if (lastbyte != ss8iNtErNaL_longmode)
         return (size_t)(ss8iNtErNaL_shortcap - lastbyte);
-    else
-        return str->iNtErNaL_L.len;
+    return str->iNtErNaL_L.len;
 }
 
 // The newlen must be within current capacity. Caller is responsible for
@@ -543,8 +542,7 @@ SSSTR_INLINE_DEF bool ss8_is_empty(ss8str const *str) {
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
     if (lastbyte != ss8iNtErNaL_longmode)
         return lastbyte == ss8iNtErNaL_shortcap;
-    else
-        return str->iNtErNaL_L.len == 0;
+    return str->iNtErNaL_L.len == 0;
 }
 
 SSSTR_INLINE size_t ss8iNtErNaL_bufsize(ss8str const *str);
@@ -552,8 +550,7 @@ SSSTR_INLINE_DEF size_t ss8iNtErNaL_bufsize(ss8str const *str) {
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
     if (lastbyte != ss8iNtErNaL_longmode)
         return ss8iNtErNaL_shortbufsiz;
-    else
-        return str->iNtErNaL_L.bufsiz;
+    return str->iNtErNaL_L.bufsiz;
 }
 
 // Return the maximum length that *str can hold without internal reallocation.
@@ -570,8 +567,7 @@ SSSTR_INLINE_DEF char *ss8_mutable_cstr(ss8str *str) {
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
     if (lastbyte != ss8iNtErNaL_longmode)
         return str->iNtErNaL_S;
-    else
-        return str->iNtErNaL_L.ptr;
+    return str->iNtErNaL_L.ptr;
 }
 
 // Return a non-owning const pointer to the C string held by *str.
