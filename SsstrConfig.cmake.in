@@ -1,0 +1,13 @@
+# This file is part of the Ssstr string library.
+# Copyright 2022 Board of Regents of the University of Wisconsin System
+# SPDX-License-Identifier: MIT
+
+@PACKAGE_INIT@
+
+# PACKAGE_PREFIX_DIR expected to be defined by @PACKAGE_INIT@.
+
+add_library(Ssstr::ssstr INTERFACE IMPORTED)
+target_include_directories(Ssstr::ssstr
+  INTERFACE
+    "${PACKAGE_PREFIX_DIR}/include"
+)

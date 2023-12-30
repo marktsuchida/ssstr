@@ -82,6 +82,21 @@ pkgconfig.generate(
     description: 'Ssstr small-string-optimized string library',
 )
 
+if find_program('cmake', required: false).found()
+    cmake = import('cmake')
+    cmake.write_basic_package_version_file(
+        name: 'Ssstr',
+        version: meson.project_version(),
+        arch_independent: true,
+    )
+    cmake.configure_package_config_file(
+        name: 'Ssstr',
+        input: 'SsstrConfig.cmake.in',
+        configuration: configuration_data(),
+    )
+endif
+
+
 unity_dep = dependency('unity', required: get_option('test'), disabler: true)
 
 test_sources = files(
