@@ -1015,15 +1015,16 @@ strings with high space efficiency may prefer other designs; see, for example,
 
 **Ssstr** intends to use [Semantic Versioning](https://semver.org/). The API,
 for versioning purposes, consists of the functions and data types documented in
-the manual pages, plus the customization macros documented above.
+the [manual pages](https://marktsuchida.github.io/ssstr/man7/ssstr.7.html),
+plus the [customization macros](#customization) documented above.
 
 ABI compatibility will be maintained more strictly: the memory layout of the
 `ss8str` object will not change on a given platform (if it ever does, the type,
-header, and library will be renamed). This will apply to any version following
-the 0.1.0 release; until then, things might change.
+header, and library will be renamed). This will apply to any version starting
+with the 1.0.0 release; until then, things might change (though unlikely).
 
 (Note, however, that true binary compatibility requires that all copies of
-**Ssstr** code that exchange (mutable) `ss8str` objects are built with
+**Ssstr** code that exchange (mutable) `ss8str` objects be built with
 compatible C runtimes, use the same dynamic storage heap, and have mutually
 compatible malloc customizations, if any. For this reason, you might want to
 stick to traditional C string interfaces at your major module boundaries, or at
