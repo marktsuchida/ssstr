@@ -741,27 +741,88 @@ ss8_destroy(&dest);
 ss8_destroy(&warning);
 ```
 
-## Building Ssstr
+## Installing Ssstr
 
-If using as a library, there is nothing to build; all you need is the file
-`ss8str.h`.
+You do not need to install **Ssstr**; simply copy `ss8str.h` into your project.
+But installing into a system (or custom) location may be useful in some use
+cases.
 
-You can use the build system to build and run the unit tests, or install the
-header and manual pages locally.
+To install the header (along with pkg-config file and CMake config):
+
+Requirements: [Meson](https://mesonbuild.com) and
+[Ninja](https://ninja-build.org/).
+
+```sh
+meson setup builddir
+cd builddir
+ninja install
+```
+
+Notes:
+
+- Use `meson setup builddir --prefix=/path/to/install/root` to set the install
+  location (default: `/usr/local`, or `C:/` on Windows).
+- Use `meson setup builddir -Ddocs=enabled` to also build and install the man
+  pages (`groff` is required).
+- The CMake config is only installed if `cmake` is available.
+
+### Using from a Meson project
+
+To use **Ssstr** as a subproject, you can place the following in
+`subprojects/ssstr.wrap` (setting the `revision` to an appropriate commit
+hash):
+
+```ini
+[wrap-git]
+url = https://github.com/marktsuchida/ssstr.git
+revision = <your choice>
+depth = 1
+
+[provide]
+dependency_names = ssstr
+```
+
+Then, in your `meson.build`, use
+`ssstr_dep = dependency('ssstr', allow_fallback: true)`
+
+Alternatively, you could [install](#installing-ssstr) **Ssstr** and let Meson
+find the dependency via pkg-config.
+
+### Using from a CMake project
+
+First, [install](#installing-ssstr) **Ssstr**. This should install
+`${prefix}/lib/cmake/Ssstr/SsstrConfig.cmake`.
+
+Then, in your `CMakeLists.txt`, use something like the following:
+
+```cmake
+find_package(Ssstr REQUIRED)
+add_executable(my_program main.c)
+target_link_libraries(my_program PRIVATE Ssstr::ssstr)
+```
+
+(Despite the use of `target_link_libraries`, only the include directory is
+actually provided to `my_program`.)
+
+When running `cmake`, you can point it to the **Ssstr** installation by passing
+`-DSsstr_DIR=${prefix}/lib/cmake/Ssstr`.
+
+## Running the tests
 
 Requirements: [Python](https://python.org), [Meson](https://mesonbuild.com),
 and [Ninja](https://ninja-build.org/).
 
 ```sh
-meson setup builddir
+meson setup builddir -Dtest=enabled
 cd builddir
 ninja test
-ninja install  # Install ss8str.h and the manual pages
-ninja htmlman  # Generate the HTML manual pages (requires groff)
 ```
 
-See the [Meson documentation](https://mesonbuild.com/Commands.html) or
-`meson --help` for how to set the install location (prefix) and other details.
+Other build targets:
+
+- `ninja benchmark` (requires `meson configure -Dbenchmark=enabled`)
+- `ninja htmlman` (requires `groff` and `meson configure -Ddocs=enabled`)
+  generates the HTML manual pages
 
 ### Test coverage
 
