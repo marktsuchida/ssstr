@@ -478,6 +478,7 @@ SSSTR_INLINE_DEF void ss8iNtErNaL_extra_assert_invariants(ss8str const *str) {
 #endif
 }
 
+// Initialize the uninitialized *str to the empty string and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_init(ss8str *str) {
     SSSTR_EXTRA_ASSERT(str != NULL);
     str->iNtErNaL_S[0] = '\0';
@@ -497,6 +498,7 @@ SSSTR_INLINE_DEF void ss8iNtErNaL_deinit(ss8str *str) {
 #endif
 }
 
+// Destroy *str, which must be valid (initialized).
 SSSTR_INLINE_DEF void ss8_destroy(ss8str *str) {
     SSSTR_EXTRA_ASSERT(str != NULL);
     ss8iNtErNaL_extra_assert_invariants(str);
@@ -510,6 +512,7 @@ SSSTR_INLINE_DEF void ss8_destroy(ss8str *str) {
     ss8iNtErNaL_deinit(str);
 }
 
+// Return the length of *str.
 SSSTR_INLINE_DEF size_t ss8_len(ss8str const *str) {
     SSSTR_EXTRA_ASSERT(str != NULL);
     ss8iNtErNaL_extra_assert_invariants(str);
@@ -532,6 +535,7 @@ SSSTR_INLINE_DEF void ss8iNtErNaL_setlen(ss8str *str, size_t newlen) {
         str->iNtErNaL_L.len = newlen;
 }
 
+// Return whether the length of *str equals zero.
 SSSTR_INLINE_DEF bool ss8_is_empty(ss8str const *str) {
     SSSTR_EXTRA_ASSERT(str != NULL);
     ss8iNtErNaL_extra_assert_invariants(str);
@@ -552,12 +556,14 @@ SSSTR_INLINE_DEF size_t ss8iNtErNaL_bufsize(ss8str const *str) {
         return str->iNtErNaL_L.bufsiz;
 }
 
+// Return the maximum length that *str can hold without internal reallocation.
 SSSTR_INLINE_DEF size_t ss8_capacity(ss8str const *str) {
     SSSTR_EXTRA_ASSERT(str != NULL);
     ss8iNtErNaL_extra_assert_invariants(str);
     return ss8iNtErNaL_bufsize(str) - 1;
 }
 
+// Return a non-owning, non-const pointer to the C string held by *str.
 SSSTR_INLINE_DEF char *ss8_mutable_cstr(ss8str *str) {
     SSSTR_EXTRA_ASSERT(str != NULL);
     ss8iNtErNaL_extra_assert_invariants(str);
@@ -568,46 +574,55 @@ SSSTR_INLINE_DEF char *ss8_mutable_cstr(ss8str *str) {
         return str->iNtErNaL_L.ptr;
 }
 
+// Return a non-owning const pointer to the C string held by *str.
 SSSTR_INLINE_DEF char const *ss8_cstr(ss8str const *str) {
     return ss8_mutable_cstr((ss8str *)str);
 }
 
+// Return a non-owning, non-const pointer to *str's buffer, offset by 'start'.
 SSSTR_INLINE_DEF char *ss8_mutable_cstr_suffix(ss8str *str, size_t start) {
     SSSTR_ASSERT(start <= ss8_len(str));
     return ss8_mutable_cstr(str) + start;
 }
 
+// Return a non-owning const pointer to *str's buffer, offset by 'start'.
 SSSTR_INLINE_DEF char const *ss8_cstr_suffix(ss8str const *str, size_t start) {
     SSSTR_ASSERT(start <= ss8_len(str));
     return ss8_cstr(str) + start;
 }
 
+// Return the character at position 'pos' of *str.
 SSSTR_INLINE_DEF char ss8_at(ss8str const *str, size_t pos) {
     SSSTR_ASSERT(pos < ss8_len(str));
     return ss8_cstr(str)[pos];
 }
 
+// Set the character at position 'pos' of *str to 'ch' and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_set_at(ss8str *str, size_t pos, char ch) {
     SSSTR_ASSERT(pos < ss8_len(str));
     ss8_mutable_cstr(str)[pos] = ch;
     return str;
 }
 
+// Return the first character of non-empty *str.
 SSSTR_INLINE_DEF char ss8_front(ss8str const *str) {
     SSSTR_ASSERT(ss8_len(str) > 0);
     return ss8_at(str, 0);
 }
 
+// Set the first character of non-empty *str to 'ch' and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_set_front(ss8str *str, char ch) {
     SSSTR_ASSERT(ss8_len(str) > 0);
     return ss8_set_at(str, 0, ch);
 }
 
+// Return the last character of non-empty *str.
 SSSTR_INLINE_DEF char ss8_back(ss8str const *str) {
     SSSTR_ASSERT(ss8_len(str) > 0);
     return ss8_at(str, ss8_len(str) - 1);
 }
 
+// Set the last character of non-empty *str to 'ch' and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_set_back(ss8str *str, char ch) {
     SSSTR_ASSERT(ss8_len(str) > 0);
     return ss8_set_at(str, ss8_len(str) - 1, ch);
@@ -665,11 +680,15 @@ SSSTR_INLINE_DEF char *ss8iNtErNaL_reserve(ss8str *str, size_t capacity) {
     return ss8_mutable_cstr(str);
 }
 
+// Ensure that *str can hold a string of length up to 'capacity' without
+// further internal reallocation and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_reserve(ss8str *str, size_t capacity) {
     ss8iNtErNaL_reserve(str, capacity);
     return str;
 }
 
+// Set the length of *str to 'newlen', leaving any extended portion
+// uninitialized.
 SSSTR_INLINE_DEF void ss8_set_len(ss8str *str, size_t newlen) {
     char *buf = ss8iNtErNaL_reserve(str, newlen);
     buf[newlen] = '\0';
@@ -690,6 +709,9 @@ SSSTR_INLINE_DEF size_t ss8iNtErNaL_three_halves(size_t s, size_t max) {
     return half <= max / 3 ? half * 3 : max;
 }
 
+// Increase the length of *str by no more than 'maxdelta' to an automatically
+// chosen length of no more than 'maxlen', leaving the extended portion
+// uninitialized, and return the change in length.
 SSSTR_INLINE_DEF size_t ss8_grow_len(ss8str *str, size_t maxlen,
                                      size_t maxdelta) {
     size_t const len = ss8_len(str);
@@ -715,11 +737,13 @@ SSSTR_INLINE_DEF size_t ss8_grow_len(ss8str *str, size_t maxlen,
     return delta;
 }
 
+// Remove any suffix of *str beyond the first internal null byte.
 SSSTR_INLINE_DEF void ss8_set_len_to_cstrlen(ss8str *str) {
     size_t len = strlen(ss8_cstr(str));
     ss8iNtErNaL_setlen(str, len);
 }
 
+// Release any excess memory used by *str and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_shrink_to_fit(ss8str *str) {
     SSSTR_EXTRA_ASSERT(str != NULL);
     ss8iNtErNaL_extra_assert_invariants(str);
@@ -745,6 +769,7 @@ SSSTR_INLINE_DEF ss8str *ss8_shrink_to_fit(ss8str *str) {
     return str;
 }
 
+// Set *ss8 to the empty string and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_clear(ss8str *str) {
     SSSTR_EXTRA_ASSERT(str != NULL);
     ss8iNtErNaL_extra_assert_invariants(str);
@@ -789,6 +814,7 @@ SSSTR_INLINE_DEF void ss8iNtErNaL_extra_assert_no_overlap(ss8str const *str,
     (void)rend;
 }
 
+// Set *dest to the 'srclen' bytes at 'src' and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_copy_bytes(ss8str *SSSTR_RESTRICT dest,
                                         char const *SSSTR_RESTRICT src,
                                         size_t srclen) {
@@ -803,12 +829,14 @@ SSSTR_INLINE_DEF ss8str *ss8_copy_bytes(ss8str *SSSTR_RESTRICT dest,
     return dest;
 }
 
+// Set *dest to the null-terminated string at 'src' and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_copy_cstr(ss8str *SSSTR_RESTRICT dest,
                                        char const *SSSTR_RESTRICT src) {
     SSSTR_EXTRA_ASSERT(src != NULL);
     return ss8_copy_bytes(dest, src, strlen(src));
 }
 
+// Set *dest equal to *src and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_copy(ss8str *SSSTR_RESTRICT dest,
                                   ss8str const *SSSTR_RESTRICT src) {
     SSSTR_EXTRA_ASSERT(src != NULL);
@@ -843,6 +871,7 @@ SSSTR_INLINE_DEF ss8str *ss8_copy(ss8str *SSSTR_RESTRICT dest,
     return ss8_copy_bytes(dest, q, len);
 }
 
+// Set *dest to 'ch' repeated 'count' times and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_copy_ch_n(ss8str *dest, char ch, size_t count) {
     // TODO Short-string case (guaranteed capacity) can be optimized by fixed
     // memset().
@@ -855,36 +884,45 @@ SSSTR_INLINE_DEF ss8str *ss8_copy_ch_n(ss8str *dest, char ch, size_t count) {
     return dest;
 }
 
+// Set *dest to the single character 'ch' and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_copy_ch(ss8str *dest, char ch) {
     // TODO Compiler can't see the invariant (sufficient buffer size)
     return ss8_copy_ch_n(dest, ch, 1);
 }
 
+// Initialize *str and set it to the 'len' bytes at 'src'; return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_init_copy_bytes(ss8str *SSSTR_RESTRICT str,
                                              char const *SSSTR_RESTRICT src,
                                              size_t len) {
     return ss8_copy_bytes(ss8_init(str), src, len);
 }
 
+// Initialize *str and set it to the null-terminated string at 'src'; return
+// 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_init_copy_cstr(ss8str *SSSTR_RESTRICT str,
                                             char const *SSSTR_RESTRICT src) {
     return ss8_copy_cstr(ss8_init(str), src);
 }
 
+// Initialize *str and set it equal to *src; return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_init_copy(ss8str *SSSTR_RESTRICT str,
                                        ss8str const *SSSTR_RESTRICT src) {
     return ss8_copy(ss8_init(str), src);
 }
 
+// Initialize *str and set it to 'ch' repeated 'count' times; return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_init_copy_ch_n(ss8str *str, char ch,
                                             size_t count) {
     return ss8_copy_ch_n(ss8_init(str), ch, count);
 }
 
+// Initialize *str and set it to the single character 'ch'; return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_init_copy_ch(ss8str *str, char ch) {
     return ss8_copy_ch(ss8_init(str), ch);
 }
 
+// Copy up to 'bufsize' bytes from *str to the buffer at 'buf' and return
+// whether all bytes of *str were copied.
 SSSTR_INLINE_DEF bool ss8_copy_to_bytes(ss8str const *SSSTR_RESTRICT str,
                                         char *SSSTR_RESTRICT buf,
                                         size_t bufsize) {
@@ -902,6 +940,8 @@ SSSTR_INLINE_DEF bool ss8_copy_to_bytes(ss8str const *SSSTR_RESTRICT str,
     return did_fit;
 }
 
+// Copy up to 'bufsize' - 1 bytes from *str to the buffer at 'buf' and append a
+// null byte; return whether all bytes of *str were copied.
 SSSTR_INLINE_DEF bool ss8_copy_to_cstr(ss8str const *SSSTR_RESTRICT str,
                                        char *SSSTR_RESTRICT buf,
                                        size_t bufsize) {
@@ -925,6 +965,8 @@ SSSTR_INLINE_DEF bool ss8_copy_to_cstr(ss8str const *SSSTR_RESTRICT str,
     return did_fit;
 }
 
+// Swap the contents of *str1 and *str2, which must both be valid
+// (initialized). 'str1' and 'str2' must not point to the same ss8str.
 SSSTR_INLINE_DEF void ss8_swap(ss8str *SSSTR_RESTRICT str1,
                                ss8str *SSSTR_RESTRICT str2) {
     SSSTR_EXTRA_ASSERT(str1 != NULL);
@@ -949,6 +991,8 @@ SSSTR_INLINE_DEF void ss8iNtErNaL_mark_moved_from(ss8str *s) {
 #endif
 }
 
+// Move the contents of *src to *dest and return 'dest'. 'src' remains valid
+// but indeterminate.
 SSSTR_INLINE_DEF ss8str *ss8_move(ss8str *SSSTR_RESTRICT dest,
                                   ss8str *SSSTR_RESTRICT src) {
     SSSTR_EXTRA_ASSERT(dest != NULL);
@@ -981,6 +1025,8 @@ SSSTR_INLINE_DEF ss8str *ss8_move(ss8str *SSSTR_RESTRICT dest,
     return dest;
 }
 
+// Move the contents of *src to *dest (which must be valid), destroy *src, and
+// return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_move_destroy(ss8str *SSSTR_RESTRICT dest,
                                           ss8str *SSSTR_RESTRICT src) {
     SSSTR_EXTRA_ASSERT(dest != NULL);
@@ -995,6 +1041,8 @@ SSSTR_INLINE_DEF ss8str *ss8_move_destroy(ss8str *SSSTR_RESTRICT dest,
     return dest;
 }
 
+// Initialize *str to the contents of *src and return 'str'. 'src' remains
+// valid but indeterminate.
 SSSTR_INLINE_DEF ss8str *ss8_init_move(ss8str *SSSTR_RESTRICT str,
                                        ss8str *SSSTR_RESTRICT src) {
     SSSTR_EXTRA_ASSERT(str != NULL);
@@ -1009,6 +1057,7 @@ SSSTR_INLINE_DEF ss8str *ss8_init_move(ss8str *SSSTR_RESTRICT str,
     return str;
 }
 
+// Initialize *str to the contents of *src, destroy *src, and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_init_move_destroy(ss8str *SSSTR_RESTRICT str,
                                                ss8str *SSSTR_RESTRICT src) {
     SSSTR_EXTRA_ASSERT(str != NULL);
@@ -1021,6 +1070,8 @@ SSSTR_INLINE_DEF ss8str *ss8_init_move_destroy(ss8str *SSSTR_RESTRICT str,
     return str;
 }
 
+// Set *dest to the substring of *src starting at 'start' (which must be in
+// range) and having length at most 'len'; return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_copy_substr(ss8str *SSSTR_RESTRICT dest,
                                          ss8str const *SSSTR_RESTRICT src,
                                          size_t start, size_t len) {
@@ -1034,6 +1085,8 @@ SSSTR_INLINE_DEF ss8str *ss8_copy_substr(ss8str *SSSTR_RESTRICT dest,
     return ss8_copy_bytes(dest, ss8_cstr(src) + start, len);
 }
 
+// Set *str to the substring of *str starting at 'start' (which must be in
+// range) and having length at most 'len'; return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_substr_inplace(ss8str *str, size_t start,
                                             size_t len) {
     size_t slen = ss8_len(str);
@@ -1077,6 +1130,8 @@ SSSTR_INLINE_DEF void ss8iNtErNaL_grow(ss8str *str, size_t mincap) {
     }
 }
 
+// Insert the 'srclen' bytes at 'src' at position 'pos' of *dest, shifting the
+// latter portion of *dest back; return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_insert_bytes(ss8str *SSSTR_RESTRICT dest,
                                           size_t pos,
                                           char const *SSSTR_RESTRICT src,
@@ -1096,6 +1151,8 @@ SSSTR_INLINE_DEF ss8str *ss8_insert_bytes(ss8str *SSSTR_RESTRICT dest,
     return dest;
 }
 
+// Insert the null-terminated string at 'src' at position 'pos' of *dest,
+// shifting the latter portion of *dest back; return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_insert_cstr(ss8str *SSSTR_RESTRICT dest,
                                          size_t pos,
                                          char const *SSSTR_RESTRICT src) {
@@ -1103,11 +1160,14 @@ SSSTR_INLINE_DEF ss8str *ss8_insert_cstr(ss8str *SSSTR_RESTRICT dest,
     return ss8_insert_bytes(dest, pos, src, strlen(src));
 }
 
+// Insert *src at position 'pos' of *dest, shifting the latter portion of *dest
+// back; return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_insert(ss8str *SSSTR_RESTRICT dest, size_t pos,
                                     ss8str const *SSSTR_RESTRICT src) {
     return ss8_insert_bytes(dest, pos, ss8_cstr(src), ss8_len(src));
 }
 
+// Append the 'srclen' bytes at 'src' at the end of *dest and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_cat_bytes(ss8str *SSSTR_RESTRICT dest,
                                        char const *SSSTR_RESTRICT src,
                                        size_t srclen) {
@@ -1115,17 +1175,22 @@ SSSTR_INLINE_DEF ss8str *ss8_cat_bytes(ss8str *SSSTR_RESTRICT dest,
     return ss8_insert_bytes(dest, ss8_len(dest), src, srclen);
 }
 
+// Append the null-terminated string at 'src' at the end of *dest and return
+// 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_cat_cstr(ss8str *SSSTR_RESTRICT dest,
                                       char const *SSSTR_RESTRICT src) {
     SSSTR_EXTRA_ASSERT(src != NULL);
     return ss8_cat_bytes(dest, src, strlen(src));
 }
 
+// Append *src at the end of *dest and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_cat(ss8str *SSSTR_RESTRICT dest,
                                  ss8str const *SSSTR_RESTRICT src) {
     return ss8_cat_bytes(dest, ss8_cstr(src), ss8_len(src));
 }
 
+// Remove at most 'len' bytes from *str starting at position 'pos', shifting
+// the latter portion of *str (if any) forward, and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_erase(ss8str *str, size_t pos, size_t len) {
     size_t slen = ss8_len(str);
     SSSTR_ASSERT(pos <= slen);
@@ -1138,6 +1203,9 @@ SSSTR_INLINE_DEF ss8str *ss8_erase(ss8str *str, size_t pos, size_t len) {
     return str;
 }
 
+// Replace at most 'len' bytes in *dest starting at position 'pos' with the
+// 'srclen' bytes at 'src', shifting the latter portion of the original string
+// (if any) as necessary; return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_replace_bytes(ss8str *SSSTR_RESTRICT dest,
                                            size_t pos, size_t len,
                                            char const *SSSTR_RESTRICT src,
@@ -1159,6 +1227,9 @@ SSSTR_INLINE_DEF ss8str *ss8_replace_bytes(ss8str *SSSTR_RESTRICT dest,
     return dest;
 }
 
+// Replace at most 'len' bytes in *dest starting at position 'pos' with the
+// null-terminated string at 'src', shifting the latter portion of the original
+// string (if any) as necessary; return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_replace_cstr(ss8str *SSSTR_RESTRICT dest,
                                           size_t pos, size_t len,
                                           char const *SSSTR_RESTRICT src) {
@@ -1166,12 +1237,17 @@ SSSTR_INLINE_DEF ss8str *ss8_replace_cstr(ss8str *SSSTR_RESTRICT dest,
     return ss8_replace_bytes(dest, pos, len, src, strlen(src));
 }
 
+// Replace at most 'len' bytes in *dest starting at position 'pos' with *src,
+// shifting the latter portion of the original string (if any) as necessary;
+// return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_replace(ss8str *SSSTR_RESTRICT dest, size_t pos,
                                      size_t len,
                                      ss8str const *SSSTR_RESTRICT src) {
     return ss8_replace_bytes(dest, pos, len, ss8_cstr(src), ss8_len(src));
 }
 
+// Insert 'count' copies of 'ch' at position 'pos' of *dest, shifting the
+// latter portion of *dest back; return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_insert_ch_n(ss8str *dest, size_t pos, char ch,
                                          size_t count) {
     size_t destlen = ss8_len(dest);
@@ -1186,11 +1262,15 @@ SSSTR_INLINE_DEF ss8str *ss8_insert_ch_n(ss8str *dest, size_t pos, char ch,
     return dest;
 }
 
+// Append 'count' copies of 'ch' at the end of *dest and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_cat_ch_n(ss8str *dest, char ch, size_t count) {
     // TODO Compiler may not inline; can elide memmove()
     return ss8_insert_ch_n(dest, ss8_len(dest), ch, count);
 }
 
+// Replace at most 'len' bytes in *dest starting at position 'pos' with 'count'
+// copies of 'ch', shifting the latter portion of the original string (if any)
+// as necessary; return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_replace_ch_n(ss8str *dest, size_t pos, size_t len,
                                           char ch, size_t count) {
     size_t destlen = ss8_len(dest);
@@ -1207,19 +1287,27 @@ SSSTR_INLINE_DEF ss8str *ss8_replace_ch_n(ss8str *dest, size_t pos, size_t len,
     return dest;
 }
 
+// Insert the character 'ch' at position 'pos' of *dest, shifting the latter
+// portion of *dest back; return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_insert_ch(ss8str *dest, size_t pos, char ch) {
     return ss8_insert_ch_n(dest, pos, ch, 1);
 }
 
+// Append the character 'ch' at the end of *dest and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_cat_ch(ss8str *dest, char ch) {
     return ss8_cat_ch_n(dest, ch, 1);
 }
 
+// Replace at most 'len' bytes in *dest at position 'pos' with the character
+// 'ch', shifting the latter portion of the original string (if any) as
+// necessary; return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_replace_ch(ss8str *dest, size_t pos, size_t len,
                                         char ch) {
     return ss8_replace_ch_n(dest, pos, len, ch, 1);
 }
 
+// Lexicographically compare *lhs with the 'rhslen' bytes at 'rhs' and return a
+// value >/==/< 0 when lhs >/==/< rhs.
 SSSTR_INLINE_DEF int ss8_cmp_bytes(ss8str const *lhs, char const *rhs,
                                    size_t rhslen) {
     SSSTR_EXTRA_ASSERT(rhs != NULL);
@@ -1237,18 +1325,24 @@ SSSTR_INLINE_DEF int ss8_cmp_bytes(ss8str const *lhs, char const *rhs,
     return 1;
 }
 
-// Note that this differs from strcmp(): if the lhs has embedded nulls, it will
-// compare greater than an rhs with the same byte sequence. In other words,
-// only the rhs is treated as a null-terminated string.
+// Lexicographically compare *lhs with the null-terminated string at 'rhs' and
+// return a value >/==/< 0 when lhs >/==/< rhs.
 SSSTR_INLINE_DEF int ss8_cmp_cstr(ss8str const *lhs, char const *rhs) {
+    // Note that this differs from strcmp(): if the lhs has embedded nulls, it
+    // will compare greater than an rhs with the same byte sequence. In other
+    // words, only the rhs is treated as a null-terminated string.
     SSSTR_EXTRA_ASSERT(rhs != NULL);
     return ss8_cmp_bytes(lhs, rhs, strlen(rhs));
 }
 
+// Lexicographically compare *lhs with *rhs and return a value >/==/< 0 when
+// lhs >/==/< rhs.
 SSSTR_INLINE_DEF int ss8_cmp(ss8str const *lhs, ss8str const *rhs) {
     return ss8_cmp_bytes(lhs, ss8_cstr(rhs), ss8_len(rhs));
 }
 
+// Lexicographically compare *lhs with the single character 'rhs' and return a
+// value >/==/< 0 when lhs >/==/< rhs.
 SSSTR_INLINE_DEF int ss8_cmp_ch(ss8str const *lhs, char rhs) {
     size_t llen = ss8_len(lhs);
     if (llen == 0)
@@ -1259,6 +1353,7 @@ SSSTR_INLINE_DEF int ss8_cmp_ch(ss8str const *lhs, char rhs) {
     return 1;
 }
 
+// Return whether *lhs equals the 'rhslen' bytes at 'rhs'.
 SSSTR_INLINE_DEF bool ss8_equals_bytes(ss8str const *lhs, char const *rhs,
                                        size_t rhslen) {
     SSSTR_EXTRA_ASSERT(rhs != NULL);
@@ -1269,19 +1364,24 @@ SSSTR_INLINE_DEF bool ss8_equals_bytes(ss8str const *lhs, char const *rhs,
     return memcmp(ss8_cstr(lhs), rhs, llen) == 0;
 }
 
+// Return whether *lhs equals the null-terminated string at 'rhs'.
 SSSTR_INLINE_DEF bool ss8_equals_cstr(ss8str const *lhs, char const *rhs) {
     SSSTR_EXTRA_ASSERT(rhs != NULL);
     return ss8_equals_bytes(lhs, rhs, strlen(rhs));
 }
 
+// Return whether *lhs equals *rhs.
 SSSTR_INLINE_DEF bool ss8_equals(ss8str const *lhs, ss8str const *rhs) {
     return ss8_equals_bytes(lhs, ss8_cstr(rhs), ss8_len(rhs));
 }
 
+// Return whether *lhs equals the single character 'rhs'.
 SSSTR_INLINE_DEF bool ss8_equals_ch(ss8str const *lhs, char rhs) {
     return ss8_len(lhs) == 1 && ss8_cstr(lhs)[0] == rhs;
 }
 
+// Return the first position at which the 'needlelen' bytes at 'needle' appears
+// in *haystack, starting the search at 'start'. Return SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_find_bytes(ss8str const *haystack, size_t start,
                                        char const *needle, size_t needlelen) {
     SSSTR_EXTRA_ASSERT(needle != NULL);
@@ -1303,17 +1403,24 @@ SSSTR_INLINE_DEF size_t ss8_find_bytes(ss8str const *haystack, size_t start,
     return SIZE_MAX;
 }
 
+// Return the first position at which the null-terminated string at 'needle'
+// appears in *haystack, starting the search at 'start'. Return SIZE_MAX if not
+// found.
 SSSTR_INLINE_DEF size_t ss8_find_cstr(ss8str const *haystack, size_t start,
                                       char const *needle) {
     SSSTR_EXTRA_ASSERT(needle != NULL);
     return ss8_find_bytes(haystack, start, needle, strlen(needle));
 }
 
+// Return the first position at which *needle appears in *haystack, starting
+// the search at 'start'. Return SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_find(ss8str const *haystack, size_t start,
                                  ss8str const *needle) {
     return ss8_find_bytes(haystack, start, ss8_cstr(needle), ss8_len(needle));
 }
 
+// Return the first position at which the character 'needle' appears in
+// *haystack, starting the search at 'start'. Return SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_find_ch(ss8str const *haystack, size_t start,
                                     char needle) {
     char const *h = ss8_cstr(haystack);
@@ -1323,6 +1430,8 @@ SSSTR_INLINE_DEF size_t ss8_find_ch(ss8str const *haystack, size_t start,
     return p ? (size_t)(p - h) : SIZE_MAX;
 }
 
+// Return the first position at which a character other than 'needle' appears
+// in *haystack, starting the search at 'start'. Return SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_find_not_ch(ss8str const *haystack, size_t start,
                                         char needle) {
     char const *h = ss8_cstr(haystack);
@@ -1337,6 +1446,9 @@ SSSTR_INLINE_DEF size_t ss8_find_not_ch(ss8str const *haystack, size_t start,
     return SIZE_MAX;
 }
 
+// Return the last position at which the 'needlelen' bytes at 'needle' appears
+// in *haystack, starting the backward search at 'start'. Return SIZE_MAX if
+// not found.
 SSSTR_INLINE_DEF size_t ss8_rfind_bytes(ss8str const *haystack, size_t start,
                                         char const *needle, size_t needlelen) {
     SSSTR_EXTRA_ASSERT(needle != NULL);
@@ -1364,17 +1476,25 @@ SSSTR_INLINE_DEF size_t ss8_rfind_bytes(ss8str const *haystack, size_t start,
     return SIZE_MAX;
 }
 
+// Return the last position at which the null-terminated string at 'needle'
+// appears in *haystack, starting the backward search at 'start'. Return
+// SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_rfind_cstr(ss8str const *haystack, size_t start,
                                        char const *needle) {
     SSSTR_EXTRA_ASSERT(needle != NULL);
     return ss8_rfind_bytes(haystack, start, needle, strlen(needle));
 }
 
+// Return the last position at which *needle appears in *haystack, starting the
+// backward search at 'start'. Return SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_rfind(ss8str const *haystack, size_t start,
                                   ss8str const *needle) {
     return ss8_rfind_bytes(haystack, start, ss8_cstr(needle), ss8_len(needle));
 }
 
+// Return the last position at which the character 'needle' appears in
+// *haystack, starting the backward search at 'start'. Return SIZE_MAX if not
+// found.
 SSSTR_INLINE_DEF size_t ss8_rfind_ch(ss8str const *haystack, size_t start,
                                      char needle) {
     char const *h = ss8_cstr(haystack);
@@ -1395,6 +1515,9 @@ SSSTR_INLINE_DEF size_t ss8_rfind_ch(ss8str const *haystack, size_t start,
     return SIZE_MAX;
 }
 
+// Return the last position at which a character other than 'needle' appears in
+// *haystack, starting the backward search at 'start'. Return SIZE_MAX if not
+// found.
 SSSTR_INLINE_DEF size_t ss8_rfind_not_ch(ss8str const *haystack, size_t start,
                                          char needle) {
     char const *h = ss8_cstr(haystack);
@@ -1413,6 +1536,9 @@ SSSTR_INLINE_DEF size_t ss8_rfind_not_ch(ss8str const *haystack, size_t start,
     return SIZE_MAX;
 }
 
+// Return the first position at which any one of the 'count' characters at
+// 'needles' appears in *haystack, starting the search at 'start'. Return
+// SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_find_first_of_bytes(ss8str const *haystack,
                                                 size_t start,
                                                 char const *needles,
@@ -1434,6 +1560,9 @@ SSSTR_INLINE_DEF size_t ss8_find_first_of_bytes(ss8str const *haystack,
     return SIZE_MAX;
 }
 
+// Return the first position at which a character that is not one of the
+// 'count' characters at 'needles' appears in *haystack, starting the search at
+// 'start'. Return SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_find_first_not_of_bytes(ss8str const *haystack,
                                                     size_t start,
                                                     char const *needles,
@@ -1452,6 +1581,9 @@ SSSTR_INLINE_DEF size_t ss8_find_first_not_of_bytes(ss8str const *haystack,
     return SIZE_MAX;
 }
 
+// Return the last position at which any one of the 'count' characters at
+// 'needles' appears in *haystack, starting the backward search at 'start'.
+// Return SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_find_last_of_bytes(ss8str const *haystack,
                                                size_t start,
                                                char const *needles,
@@ -1474,6 +1606,9 @@ SSSTR_INLINE_DEF size_t ss8_find_last_of_bytes(ss8str const *haystack,
     return SIZE_MAX;
 }
 
+// Return the last position at which a character that is not one of the
+// 'count' characters at 'needles' appears in *haystack, starting the backward
+// search at 'start'. Return SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_find_last_not_of_bytes(ss8str const *haystack,
                                                    size_t start,
                                                    char const *needles,
@@ -1496,6 +1631,9 @@ SSSTR_INLINE_DEF size_t ss8_find_last_not_of_bytes(ss8str const *haystack,
     return SIZE_MAX;
 }
 
+// Return the first position at which any one of the characters in the
+// null-terminated string at 'needles' appears in *haystack, starting the
+// search at 'start'. Return SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_find_first_of_cstr(ss8str const *haystack,
                                                size_t start,
                                                char const *needles) {
@@ -1503,6 +1641,9 @@ SSSTR_INLINE_DEF size_t ss8_find_first_of_cstr(ss8str const *haystack,
     return ss8_find_first_of_bytes(haystack, start, needles, strlen(needles));
 }
 
+// Return the first position at which a character that is not in the
+// null-terminated string at 'needles' appears in *haystack, starting the
+// search at 'start'. Return SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_find_first_not_of_cstr(ss8str const *haystack,
                                                    size_t start,
                                                    char const *needles) {
@@ -1511,6 +1652,9 @@ SSSTR_INLINE_DEF size_t ss8_find_first_not_of_cstr(ss8str const *haystack,
                                        strlen(needles));
 }
 
+// Return the last position at which any one of the characters in the
+// null-terminated string at 'needles' appears in *haystack, starting the
+// backward search at 'start'. Return SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_find_last_of_cstr(ss8str const *haystack,
                                               size_t start,
                                               char const *needles) {
@@ -1518,6 +1662,9 @@ SSSTR_INLINE_DEF size_t ss8_find_last_of_cstr(ss8str const *haystack,
     return ss8_find_last_of_bytes(haystack, start, needles, strlen(needles));
 }
 
+// Return the last position at which a character that is not in the
+// null-terminated string at 'needles' appears in *haystack, starting the
+// backward search at 'start'. Return SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_find_last_not_of_cstr(ss8str const *haystack,
                                                   size_t start,
                                                   char const *needles) {
@@ -1526,12 +1673,18 @@ SSSTR_INLINE_DEF size_t ss8_find_last_not_of_cstr(ss8str const *haystack,
                                       strlen(needles));
 }
 
+// Return the first position at which any one of the characters in *needles
+// appears in *haystack, starting the search at 'start'. Return SIZE_MAX if not
+// found.
 SSSTR_INLINE_DEF size_t ss8_find_first_of(ss8str const *haystack, size_t start,
                                           ss8str const *needles) {
     return ss8_find_first_of_bytes(haystack, start, ss8_cstr(needles),
                                    ss8_len(needles));
 }
 
+// Return the first position at which a character that is not in *needles
+// appears in *haystack, starting the search at 'start'. Return SIZE_MAX if not
+// found.
 SSSTR_INLINE_DEF size_t ss8_find_first_not_of(ss8str const *haystack,
                                               size_t start,
                                               ss8str const *needles) {
@@ -1539,12 +1692,18 @@ SSSTR_INLINE_DEF size_t ss8_find_first_not_of(ss8str const *haystack,
                                        ss8_len(needles));
 }
 
+// Return the last position at which any one of the characters in *needles
+// appears in *haystack, starting the backward search at 'start'. Return
+// SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_find_last_of(ss8str const *haystack, size_t start,
                                          ss8str const *needles) {
     return ss8_find_last_of_bytes(haystack, start, ss8_cstr(needles),
                                   ss8_len(needles));
 }
 
+// Return the last position at which a character that is not in *needles
+// appears in *haystack, starting the backward search at 'start'. Return
+// SIZE_MAX if not found.
 SSSTR_INLINE_DEF size_t ss8_find_last_not_of(ss8str const *haystack,
                                              size_t start,
                                              ss8str const *needles) {
@@ -1552,6 +1711,8 @@ SSSTR_INLINE_DEF size_t ss8_find_last_not_of(ss8str const *haystack,
                                       ss8_len(needles));
 }
 
+// Return whether the first bytes of *str match the 'prefixlen' bytes at
+// 'prefix'.
 SSSTR_INLINE_DEF bool ss8_starts_with_bytes(ss8str const *str,
                                             char const *prefix,
                                             size_t prefixlen) {
@@ -1562,21 +1723,27 @@ SSSTR_INLINE_DEF bool ss8_starts_with_bytes(ss8str const *str,
     return memcmp(ss8_cstr(str), prefix, prefixlen) == 0;
 }
 
+// Return whether the first bytes of *str match the null-terminated string at
+// 'prefix'.
 SSSTR_INLINE_DEF bool ss8_starts_with_cstr(ss8str const *str,
                                            char const *prefix) {
     SSSTR_EXTRA_ASSERT(prefix != NULL);
     return ss8_starts_with_bytes(str, prefix, strlen(prefix));
 }
 
+// Return whether the first bytes of *str match *prefix.
 SSSTR_INLINE_DEF bool ss8_starts_with(ss8str const *str,
                                       ss8str const *prefix) {
     return ss8_starts_with_bytes(str, ss8_cstr(prefix), ss8_len(prefix));
 }
 
+// Return whether the first byte of *str (if any) equals 'ch'.
 SSSTR_INLINE_DEF bool ss8_starts_with_ch(ss8str const *str, char ch) {
     return ss8_len(str) > 0 && ss8_front(str) == ch;
 }
 
+// Return whether the last bytes of *str match the 'suffixlen' bytes at
+// 'suffix'.
 SSSTR_INLINE_DEF bool
 ss8_ends_with_bytes(ss8str const *str, char const *suffix, size_t suffixlen) {
     SSSTR_EXTRA_ASSERT(suffix != NULL);
@@ -1588,38 +1755,48 @@ ss8_ends_with_bytes(ss8str const *str, char const *suffix, size_t suffixlen) {
     return memcmp(end - suffixlen, suffix, suffixlen) == 0;
 }
 
+// Return whether the last bytes of *str match the null-terminated string at
+// 'suffix'.
 SSSTR_INLINE_DEF bool ss8_ends_with_cstr(ss8str const *str,
                                          char const *suffix) {
     SSSTR_EXTRA_ASSERT(suffix != NULL);
     return ss8_ends_with_bytes(str, suffix, strlen(suffix));
 }
 
+// Return whether the last bytes of *str match *suffix.
 SSSTR_INLINE_DEF bool ss8_ends_with(ss8str const *str, ss8str const *suffix) {
     return ss8_ends_with_bytes(str, ss8_cstr(suffix), ss8_len(suffix));
 }
 
+// Return whether the last byte of *str (if any) equals 'ch'.
 SSSTR_INLINE_DEF bool ss8_ends_with_ch(ss8str const *str, char ch) {
     return ss8_len(str) > 0 && ss8_back(str) == ch;
 }
 
+// Return whether the 'infixlen' bytes at 'infix' are a substring of *str.
 SSSTR_INLINE_DEF bool ss8_contains_bytes(ss8str const *str, char const *infix,
                                          size_t infixlen) {
     return ss8_find_bytes(str, 0, infix, infixlen) != SIZE_MAX;
 }
 
+// Return whether the null-terminated string at 'infix' is a substring of *str.
 SSSTR_INLINE_DEF bool ss8_contains_cstr(ss8str const *str, char const *infix) {
     SSSTR_EXTRA_ASSERT(infix != NULL);
     return ss8_contains_bytes(str, infix, strlen(infix));
 }
 
+// Return whether *infix is a substring of *str.
 SSSTR_INLINE_DEF bool ss8_contains(ss8str const *str, ss8str const *infix) {
     return ss8_contains_bytes(str, ss8_cstr(infix), ss8_len(infix));
 }
 
+// Return whether the character 'ch' appears in *str.
 SSSTR_INLINE_DEF bool ss8_contains_ch(ss8str const *str, char ch) {
     return ss8_find_ch(str, 0, ch) != SIZE_MAX;
 }
 
+// Erase from the beginning of *str any consecutive characters that appear in
+// the 'count' bytes at 'chars' and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_lstrip_bytes(ss8str *SSSTR_RESTRICT str,
                                           char const *SSSTR_RESTRICT chars,
                                           size_t count) {
@@ -1629,6 +1806,8 @@ SSSTR_INLINE_DEF ss8str *ss8_lstrip_bytes(ss8str *SSSTR_RESTRICT str,
     return ss8_substr_inplace(str, b, SIZE_MAX);
 }
 
+// Erase from the end of *str any consecutive characters that appear in the
+// 'count' bytes at 'chars' and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_rstrip_bytes(ss8str *SSSTR_RESTRICT str,
                                           char const *SSSTR_RESTRICT chars,
                                           size_t count) {
@@ -1637,6 +1816,8 @@ SSSTR_INLINE_DEF ss8str *ss8_rstrip_bytes(ss8str *SSSTR_RESTRICT str,
     return ss8_substr_inplace(str, 0, n);
 }
 
+// Erase from the beginning and end of *str any consecutive characters that
+// appear in the 'count' bytes at 'chars' and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_strip_bytes(ss8str *SSSTR_RESTRICT str,
                                          char const *SSSTR_RESTRICT chars,
                                          size_t count) {
@@ -1652,39 +1833,53 @@ SSSTR_INLINE_DEF ss8str *ss8_strip_bytes(ss8str *SSSTR_RESTRICT str,
     return ss8_substr_inplace(str, b, n);
 }
 
+// Erase from the beginning of *str any consecutive characters that appear in
+// the null-terminated string at 'chars' and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_lstrip_cstr(ss8str *SSSTR_RESTRICT str,
                                          char const *SSSTR_RESTRICT chars) {
     SSSTR_EXTRA_ASSERT(chars != NULL);
     return ss8_lstrip_bytes(str, chars, strlen(chars));
 }
 
+// Erase from the end of *str any consecutive characters that appear in the
+// null-terminated string at 'chars' and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_rstrip_cstr(ss8str *SSSTR_RESTRICT str,
                                          char const *SSSTR_RESTRICT chars) {
     SSSTR_EXTRA_ASSERT(chars != NULL);
     return ss8_rstrip_bytes(str, chars, strlen(chars));
 }
 
+// Erase from the beginning and end of *str any consecutive characters that
+// appear in the null-terminated string at 'chars' and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_strip_cstr(ss8str *SSSTR_RESTRICT str,
                                         char const *SSSTR_RESTRICT chars) {
     SSSTR_EXTRA_ASSERT(chars != NULL);
     return ss8_strip_bytes(str, chars, strlen(chars));
 }
 
+// Erase from the beginning of *str any consecutive characters that appear in
+// *chars and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_lstrip(ss8str *SSSTR_RESTRICT str,
                                     ss8str const *SSSTR_RESTRICT chars) {
     return ss8_lstrip_bytes(str, ss8_cstr(chars), ss8_len(chars));
 }
 
+// Erase from the end of *str any consecutive characters that appear in *chars
+// and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_rstrip(ss8str *SSSTR_RESTRICT str,
                                     ss8str const *SSSTR_RESTRICT chars) {
     return ss8_rstrip_bytes(str, ss8_cstr(chars), ss8_len(chars));
 }
 
+// Erase from the beginning and end of *str any consecutive characters that
+// appear in *chars and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_strip(ss8str *SSSTR_RESTRICT str,
                                    ss8str const *SSSTR_RESTRICT chars) {
     return ss8_strip_bytes(str, ss8_cstr(chars), ss8_len(chars));
 }
 
+// Erase from the beginning of *str any consecutive occurences of 'ch' and
+// return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_lstrip_ch(ss8str *str, char ch) {
     size_t b = ss8_find_not_ch(str, 0, ch);
     if (b == SIZE_MAX)
@@ -1692,12 +1887,16 @@ SSSTR_INLINE_DEF ss8str *ss8_lstrip_ch(ss8str *str, char ch) {
     return ss8_substr_inplace(str, b, SIZE_MAX);
 }
 
+// Erase from the end of *str any consecutive occurrences of 'ch' and return
+// 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_rstrip_ch(ss8str *str, char ch) {
     size_t e = ss8_rfind_not_ch(str, ss8_len(str), ch);
     size_t n = e == SIZE_MAX ? 0 : e + 1;
     return ss8_substr_inplace(str, 0, n);
 }
 
+// Erase from the beginning and end of *str any consecutive occurrences of 'ch'
+// and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_strip_ch(ss8str *str, char ch) {
     size_t len = ss8_len(str);
     size_t n;
@@ -1715,8 +1914,8 @@ SSSTR_INLINE_DEF ss8str *ss8_strip_ch(ss8str *str, char ch) {
 // C++11. (Note that we do not disable the prototypes for these functions.)
 #if !defined(__cplusplus) || __cplusplus >= 201103L
 
-// Should not be used with unbounded input, because behavior is undefined if
-// the resulting string's length is not less than INT_MAX.
+// Append to the end of *dest the result of formatting 'args' according to
+// 'fmt' and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_cat_vsprintf(ss8str *SSSTR_RESTRICT dest,
                                           char const *SSSTR_RESTRICT fmt,
                                           va_list args) {
@@ -1769,13 +1968,16 @@ SSSTR_INLINE_DEF ss8str *ss8_cat_vsprintf(ss8str *SSSTR_RESTRICT dest,
     return dest;
 }
 
+// Set *dest to the result of formatting 'args' according to 'fmt' and return
+// 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_vsprintf(ss8str *SSSTR_RESTRICT dest,
                                       char const *SSSTR_RESTRICT fmt,
                                       va_list args) {
     return ss8_cat_vsprintf(ss8_clear(dest), fmt, args);
 }
 
-// Behavior is undefined if maxlen is not less than INT_MAX.
+// Append to the end of *dest the result of formatting 'args' according to
+// 'fmt', limited to 'maxlen', and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_cat_vsnprintf(ss8str *SSSTR_RESTRICT dest,
                                            size_t maxlen,
                                            char const *SSSTR_RESTRICT fmt,
@@ -1823,6 +2025,8 @@ SSSTR_INLINE_DEF ss8str *ss8_cat_vsnprintf(ss8str *SSSTR_RESTRICT dest,
     return dest;
 }
 
+// Set *dest to the result of formatting 'args' according to 'fmt', limited to
+// 'maxlen', and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_vsnprintf(ss8str *SSSTR_RESTRICT dest,
                                        size_t maxlen,
                                        char const *SSSTR_RESTRICT fmt,
@@ -1830,6 +2034,8 @@ SSSTR_INLINE_DEF ss8str *ss8_vsnprintf(ss8str *SSSTR_RESTRICT dest,
     return ss8_cat_vsnprintf(ss8_clear(dest), maxlen, fmt, args);
 }
 
+// Append to the end of *dest the result of formatting the variadic arguments
+// according to 'fmt' and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_cat_sprintf(ss8str *SSSTR_RESTRICT dest,
                                          char const *SSSTR_RESTRICT fmt, ...) {
     va_list args;
@@ -1839,6 +2045,8 @@ SSSTR_INLINE_DEF ss8str *ss8_cat_sprintf(ss8str *SSSTR_RESTRICT dest,
     return dest;
 }
 
+// Set *dest to the result of formatting the variadic arguments according to
+// 'fmt' and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_sprintf(ss8str *SSSTR_RESTRICT dest,
                                      char const *SSSTR_RESTRICT fmt, ...) {
     va_list args;
@@ -1848,6 +2056,8 @@ SSSTR_INLINE_DEF ss8str *ss8_sprintf(ss8str *SSSTR_RESTRICT dest,
     return dest;
 }
 
+// Append to the end of *dest the result of formatting the variadic arguments
+// according to 'fmt', limited to 'maxlen', and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_cat_snprintf(ss8str *SSSTR_RESTRICT dest,
                                           size_t maxlen,
                                           char const *SSSTR_RESTRICT fmt,
@@ -1859,6 +2069,8 @@ SSSTR_INLINE_DEF ss8str *ss8_cat_snprintf(ss8str *SSSTR_RESTRICT dest,
     return dest;
 }
 
+// Set *dest to the result of formatting the variadic arguments according to
+// 'fmt', limited to 'maxlen', and return 'dest'.
 SSSTR_INLINE_DEF ss8str *ss8_snprintf(ss8str *SSSTR_RESTRICT dest,
                                       size_t maxlen,
                                       char const *SSSTR_RESTRICT fmt, ...) {
