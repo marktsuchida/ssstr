@@ -629,6 +629,8 @@ SSSTR_INLINE_DEF ss8str *ss8_set_back(ss8str *str, char ch) {
 // Returns pointer to string buffer.
 SSSTR_INLINE char *ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap);
 SSSTR_INLINE_DEF char *ss8iNtErNaL_reserve_impl(ss8str *str, size_t cap) {
+    if (cap == SIZE_MAX) // bufsiz would overflow
+        SSSTR_OUT_OF_MEMORY(0);
     char const lastbyte = str->iNtErNaL_S[ss8iNtErNaL_shortbufsiz - 1];
     if (lastbyte != ss8iNtErNaL_longmode) {
         char *p = SSSTR_CHARP_MALLOC(cap + 1);
