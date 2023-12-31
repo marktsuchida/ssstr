@@ -1011,6 +1011,14 @@ databases or text editors. Applications that want to store large numbers of
 strings with high space efficiency may prefer other designs; see, for example,
 [SDS](https://github.com/antirez/sds).
 
+### Buffer alignment
+
+As a consequence of the memory layout, the beginning of the string buffer is
+always aligned to the size of a pointer. This means that `ss8str` can be used
+to store strings in multibyte encodings (including UTF-16, UTF-32), provided
+that special care is taken when manipulating (especially splitting) such
+strings.
+
 ## Versioning
 
 **Ssstr** intends to use [Semantic Versioning](https://semver.org/). The API,
