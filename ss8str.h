@@ -989,8 +989,8 @@ SSSTR_INLINE_DEF void ss8iNtErNaL_mark_moved_from(ss8str *s) {
 #endif
 }
 
-// Move the contents of *src to *dest and return 'dest'. 'src' remains valid
-// but indeterminate.
+// Move the contents of *src to *dest and return 'dest'. 'dest' and 'src' must
+// be valid and distinct; 'src' remains valid but indeterminate.
 SSSTR_INLINE_DEF ss8str *ss8_move(ss8str *SSSTR_RESTRICT dest,
                                   ss8str *SSSTR_RESTRICT src) {
     SSSTR_EXTRA_ASSERT(dest != NULL);
@@ -1023,8 +1023,8 @@ SSSTR_INLINE_DEF ss8str *ss8_move(ss8str *SSSTR_RESTRICT dest,
     return dest;
 }
 
-// Move the contents of *src to *dest (which must be valid), destroy *src, and
-// return 'dest'.
+// Move the contents of *src to *dest, destroy *src, and return 'dest'. 'dest'
+// and 'src' must be valid and distinct.
 SSSTR_INLINE_DEF ss8str *ss8_move_destroy(ss8str *SSSTR_RESTRICT dest,
                                           ss8str *SSSTR_RESTRICT src) {
     SSSTR_EXTRA_ASSERT(dest != NULL);
@@ -1039,8 +1039,8 @@ SSSTR_INLINE_DEF ss8str *ss8_move_destroy(ss8str *SSSTR_RESTRICT dest,
     return dest;
 }
 
-// Initialize *str to the contents of *src and return 'str'. 'src' remains
-// valid but indeterminate.
+// Initialize *str to the contents of *src (which must be valid) and return
+// 'str'. 'src' remains valid but indeterminate.
 SSSTR_INLINE_DEF ss8str *ss8_init_move(ss8str *SSSTR_RESTRICT str,
                                        ss8str *SSSTR_RESTRICT src) {
     SSSTR_EXTRA_ASSERT(str != NULL);
@@ -1055,7 +1055,8 @@ SSSTR_INLINE_DEF ss8str *ss8_init_move(ss8str *SSSTR_RESTRICT str,
     return str;
 }
 
-// Initialize *str to the contents of *src, destroy *src, and return 'str'.
+// Initialize *str to the contents of *src (which must be valid), destroy *src,
+// and return 'str'.
 SSSTR_INLINE_DEF ss8str *ss8_init_move_destroy(ss8str *SSSTR_RESTRICT str,
                                                ss8str *SSSTR_RESTRICT src) {
     SSSTR_EXTRA_ASSERT(str != NULL);
