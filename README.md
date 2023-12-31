@@ -743,9 +743,9 @@ ss8_destroy(&warning);
 
 ## Installing Ssstr
 
-You do not need to install **Ssstr**; simply copy `ss8str.h` into your project.
-But installing into a system (or custom) location may be useful in some use
-cases.
+You do not need to install **Ssstr**; simply copy `include/ss8str.h` into your
+project. But installing into a system (or custom) location may be useful in
+some use cases.
 
 To install the header (along with pkg-config file and CMake config):
 

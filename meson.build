@@ -47,10 +47,10 @@ python_for_docs = find_program(
     disabler: true,
 )
 
-public_inc = include_directories('.')
+public_inc = include_directories('include')
 
 public_headers = files(
-    'ss8str.h',
+    'include/ss8str.h',
 )
 
 version_check_script = files(
@@ -96,75 +96,7 @@ if find_program('cmake', required: false).found()
     )
 endif
 
-
 unity_dep = dependency('unity', required: get_option('test'), disabler: true)
-
-test_sources = files(
-    'test_ss8str.c',
-)
-
-ssstr_test = executable(
-    'test_ssstr',
-    test_sources,
-    c_args: [
-        extra_args,
-        '-UNDEBUG',
-    ],
-    dependencies: [
-        unity_dep,
-    ],
-)
-test('ssstr-test', ssstr_test)
-
-ssstr_test_extra_asserts = executable(
-    'test_ssstr_extra_asserts',
-    test_sources,
-    c_args: [
-        extra_args,
-        '-UNDEBUG',
-        '-DSSSTR_EXTRA_DEBUG',
-    ],
-    dependencies: [
-        unity_dep,
-    ],
-)
-test('ssstr-extra-asserts-test', ssstr_test_extra_asserts)
-
-ssstr_test_no_asserts = executable(
-    'test_ssstr_no_asserts',
-    test_sources,
-    c_args: [
-        extra_args,
-        '-DNDEBUG',
-    ],
-    dependencies: [
-        unity_dep,
-    ],
-)
-test('ssstr-no-asserts-test', ssstr_test_no_asserts)
-
-test_cpp_include_sources = files(
-    'test_ss8str_include.cpp',
-)
-
-if not get_option('test').disabled()
-    ssstr_cpp_include_test = executable(
-        'test_cpp_include',
-        test_cpp_include_sources,
-    )
-    test('ssstr-cpp-include-test', ssstr_cpp_include_test)
-
-    # Make sure C++ build with C 'extern inline' works
-    ssstr_cpp_include_nonstatic_test = executable(
-        'test_cpp_include_nonstatic',
-        test_cpp_include_sources,
-        cpp_args: [
-            '-DSSSTR_USE_NONSTATIC_INLINE',
-            '-DSSSTR_DEFINE_EXTERN_INLINE',
-        ],
-    )
-    test('ssstr-cpp-include-nonstatic-test', ssstr_cpp_include_nonstatic_test)
-endif
 
 google_benchmark_dep = dependency(
     'benchmark',
@@ -176,36 +108,7 @@ google_benchmark_dep = dependency(
     ],
 )
 
-bench_sources = files(
-    'bench_ss8str.cpp',
-)
-
-ssstr_bench = executable(
-    'bench_ssstr',
-    [
-        bench_sources,
-    ],
-    override_options: [
-        'cpp_std=c++14', # Avoid passing /std:c++11 to clang-cl
-        'optimization=3',
-    ],
-    cpp_args: [
-        '-DNDEBUG',
-    ],
-    c_args: [
-        '-DNDEBUG',
-    ],
-    dependencies: [
-        google_benchmark_dep,
-    ],
-)
-benchmark(
-    'ssstr-bench',
-    ssstr_bench,
-    timeout: 120,
-    verbose: true,
-)
-
+subdir('tests')
 subdir('examples')
 subdir('man')
 
@@ -287,6 +190,7 @@ readme_snippet_test = executable(
         '-D_CRT_SECURE_NO_WARNINGS',
     ],
     dependencies: [
+        ssstr_dep,
         unity_dep,
     ],
 )
