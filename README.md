@@ -824,25 +824,28 @@ Other build targets:
 - `ninja htmlman` (requires `groff` and `meson configure -Ddocs=enabled`)
   generates the HTML manual pages
 
-### Test coverage
+### Code coverage
 
-Coverage information can be generated as follows (requires gcovr or similar):
+Test coverage information can be generated as follows (requires gcovr or
+similar):
 
 ```sh
 cd builddir
 meson configure -Db_coverage=true
-ninja clean
-ninja
-./test_ssstr_no_asserts
+ninja clean  # Ensure no previous coverage data remains
+ninja test
 ninja coverage-html
 # Now open meson-logs/coveragereport/index.html
 ```
 
-I try to maintain near-perfect coverage for the functions in `ss8str.h`, with
-the exception of assertions, codepaths leading to panics, compile-time disabled
-code, and (very few) codepaths that cannot be tested without buffers sized near
-`INT_MAX` or larger. But unit tests should strive to test as many edge cases as
-possible, not merely exercise every line of code.
+Currently, some of the branch coverage is inaccurate because the definition of
+`SSSTR_ASSERT` differs between tests.
+
+I try to maintain near-perfect coverage for the functions and branches in
+`ss8str.h`, with the exception of codepaths leading to panics, compile-time
+disabled code, and (very few) codepaths that cannot be tested without buffers
+sized near `INT_MAX` or larger. However, unit tests should strive to test as
+many edge cases as possible, not merely exercise every line of code.
 
 ## Customization
 
@@ -897,8 +900,9 @@ behavior by defining the macro `SSSTR_ASSERT(condition)`.
 To disable assertions, you should define `NDEBUG`; there is no need to define
 `SSSTR_ASSERT` just for this purpose.
 
-`SSSTR_ASSERT()` should not return when the condition is false. It is _not_
-safe to call `longjmp()` from inside `SSSTR_ASSERT()`.
+`SSSTR_ASSERT()` should not return when the condition is false (if it checks
+the condition at all). It is safe to call `longjmp()` from `SSSTR_ASSERT()`
+when the condition is false.
 
 ### Enabling more thorough run-time checks
 
