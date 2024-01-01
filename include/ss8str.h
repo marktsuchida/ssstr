@@ -77,6 +77,12 @@ extern "C" {
 #define SSSTR_RESTRICT restrict
 #endif
 
+// Disable 'restrict' for assertion testing only.
+#ifdef SSSTR_TESTING_NO_RESTRICT
+#undef SSSTR_RESTRICT
+#define SSSTR_RESTRICT
+#endif
+
 // Panic is used for runtime errors other than assertions. Does not return.
 // All uses of panic other than those documented as undefined behavior can be
 // customized; see SSSTR_OUT_OF_MEMORY() and SSSTR_SIZE_OVERFLOW().
@@ -1074,14 +1080,14 @@ SSSTR_INLINE_DEF ss8str *ss8_init_move_destroy(ss8str *SSSTR_RESTRICT str,
 SSSTR_INLINE_DEF ss8str *ss8_copy_substr(ss8str *SSSTR_RESTRICT dest,
                                          ss8str const *SSSTR_RESTRICT src,
                                          size_t start, size_t len) {
-    ss8iNtErNaL_extra_assert_no_overlap(dest, ss8_cstr(src),
-                                        ss8iNtErNaL_bufsize(src));
+    char const *csrc = ss8_cstr(src);
+    ss8iNtErNaL_extra_assert_no_overlap(dest, csrc, ss8iNtErNaL_bufsize(src));
 
     size_t const srclen = ss8_len(src);
     SSSTR_ASSERT(start <= srclen);
     if (len >= srclen - start)
         len = srclen - start;
-    return ss8_copy_bytes(dest, ss8_cstr(src) + start, len);
+    return ss8_copy_bytes(dest, csrc + start, len);
 }
 
 // Set *str to the substring of *str starting at 'start' (which must be in
@@ -1498,10 +1504,10 @@ SSSTR_INLINE_DEF size_t ss8_rfind_ch(ss8str const *haystack, size_t start,
                                      char needle) {
     char const *h = ss8_cstr(haystack);
     size_t const haystacklen = ss8_len(haystack);
+    SSSTR_ASSERT(start <= haystacklen);
     if (haystacklen == 0)
         return SIZE_MAX;
     char const *end = h + haystacklen - 1 + 1;
-    SSSTR_ASSERT(start <= haystacklen);
     char const *rbegin = h + start;
     if (rbegin >= end)
         rbegin = end - 1;
@@ -1715,7 +1721,7 @@ SSSTR_INLINE_DEF size_t ss8_find_last_not_of(ss8str const *haystack,
 SSSTR_INLINE_DEF bool ss8_starts_with_bytes(ss8str const *str,
                                             char const *prefix,
                                             size_t prefixlen) {
-    SSSTR_EXTRA_ASSERT(prefix != NULL || prefixlen == 0);
+    SSSTR_EXTRA_ASSERT(prefix != NULL);
 
     if (ss8_len(str) < prefixlen)
         return false;

@@ -49,6 +49,37 @@ ssstr_test_no_asserts = executable(
 )
 test('ssstr-no-asserts-test', ssstr_test_no_asserts)
 
+test_assertions_sources = files(
+    'test_ss8str_assertions.c',
+)
+
+ssstr_assertion_test = executable(
+    'test_assertions',
+    test_assertions_sources,
+    c_args: [
+        extra_args,
+    ],
+    dependencies: [
+        ssstr_dep,
+        unity_dep,
+    ],
+)
+test('ssstr-assertion-test', ssstr_assertion_test)
+
+ssstr_assertion_test_extra_asserts = executable(
+    'test_assertions_extra_asserts',
+    test_assertions_sources,
+    c_args: [
+        extra_args,
+        '-DSSSTR_EXTRA_DEBUG',
+    ],
+    dependencies: [
+        ssstr_dep,
+        unity_dep,
+    ],
+)
+test('ssstr-assertion-extra-asserts-test', ssstr_assertion_test_extra_asserts)
+
 test_cpp_include_sources = files(
     'test_ss8str_include.cpp',
 )
