@@ -14,6 +14,7 @@ project(
         'cpp_std=c++11', # Supports c++03 but va_list functions require 11+
         'warning_level=3',
         'werror=true',
+        'c_args=-DUNITY_USE_FLUSH_STDOUT', # Doesn't work as subproject default
     ],
 )
 
