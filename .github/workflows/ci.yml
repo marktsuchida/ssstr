@@ -83,8 +83,8 @@ jobs:
           - os: macos
             compiler: gcc
             # macOS has gcc/g++ pointing to clang/clang++
-            cc: gcc-12
-            cxx: g++-12
+            cc: gcc-13
+            cxx: g++-13
     name: test-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.compiler }}
     runs-on: ${{ matrix.runner }}
     env: # These are recognized by meson
