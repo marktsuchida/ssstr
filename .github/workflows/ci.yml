@@ -98,29 +98,37 @@ jobs:
         with:
           python-version: "3.x"
       - name: Install tools
-        run: |
-          python -m pip install --upgrade pip meson ninja
-      - if: matrix.os == 'ubuntu' && matrix.arch == 'x86'
+        run: python -m pip install --upgrade pip meson ninja
+      - name: Install 32-bit toolchain
+        if: matrix.os == 'ubuntu' && matrix.arch == 'x86'
         run: sudo apt-get install -y gcc-multilib g++-multilib
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.vsenv_arch }}
-      - name: Build and test (debug)
-        run: |
-          meson setup build-debug --buildtype debug -Dtest=enabled -Ddocs=auto
-          meson dist -C build-debug
-      - name: Build and test (release)
+      - name: Test release build
         run: |
           meson setup build-release --buildtype release -Dtest=enabled -Ddocs=auto
           meson dist -C build-release
-      - name: Run benchmarks
-        # Exclude MinGW for now (crashes at runtime; needs investigation)
-        if: matrix.os != 'windows' || matrix.compiler != 'gcc'
+      - name: Test with ASan/UBSan
+        if: matrix.os == 'ubuntu' && matrix.compiler == 'clang'
         run: |
-          cd build-release
-          meson configure -Dbenchmark=enabled
-          ninja benchmark
-      - name: Build with different GCC dialects
+          meson setup sanitize --buildtype debug -Db_lundef=false -Dtest=enabled
+          cd sanitize
+          meson configure -Db_sanitize=address,undefined
+          meson test
+      - name: Test with MSan/LSan
+        if: matrix.os == 'ubuntu' && matrix.arch == 'x86_64' && matrix.compiler == 'clang'
+        run: |
+          cd sanitize
+          meson configure -Db_sanitize=memory
+          meson test
+          meson configure -Db_sanitize=leak
+          meson test
+      - name: Test debug build
+        run: |
+          meson setup build-debug --buildtype debug -Dtest=enabled -Ddocs=auto
+          meson dist -C build-debug
+      - name: Test with different GCC dialects
         if: matrix.compiler == 'gcc'
         run: |
           meson setup dialects --buildtype debug -Dtest=enabled
@@ -133,21 +141,13 @@ jobs:
           meson test
           meson configure -Dc_std=gnu17 -Dcpp_std=gnu++20
           meson test
-      - name: Sanitize address/undefined
-        if: matrix.os == 'ubuntu' && matrix.compiler == 'clang'
+      - name: Run benchmarks
+        # Exclude MinGW for now (crashes at runtime; needs investigation)
+        if: matrix.os != 'windows' || matrix.compiler != 'gcc'
         run: |
-          meson setup sanitize --buildtype debug -Db_lundef=false -Dtest=enabled
-          cd sanitize
-          meson configure -Db_sanitize=address,undefined
-          meson test
-      - name: Sanitize memory/leak
-        if: matrix.os == 'ubuntu' && matrix.arch == 'x86_64' && matrix.compiler == 'clang'
-        run: |
-          cd sanitize
-          meson configure -Db_sanitize=memory
-          meson test
-          meson configure -Db_sanitize=leak
-          meson test
+          cd build-release
+          meson configure -Dbenchmark=enabled
+          ninja benchmark
 
   docs:
     needs:
