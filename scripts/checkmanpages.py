@@ -101,7 +101,7 @@ def check_SYNOPSIS(page):
         proto_lines.append(line[len(".BI ") :].rstrip())
     prototypes = []
     for line in proto_lines:
-        if "SS8_STATIC_INITIALIZER" in line:  # Grandfathered
+        if "SS8_STATIC_INITIALIZER" in line:  # Special case
             continue
         tokens = shlex.split(line.rstrip(), posix=False)
         assert len(tokens) % 2 == 1
