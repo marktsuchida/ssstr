@@ -209,6 +209,13 @@ typedef union {
             [sizeof(ss8str) - 1] = sizeof(ss8str) - 1                         \
         }                                                                     \
     }
+#elif __cplusplus >= 201103L // C++ >= 11
+#define SS8_STATIC_INITIALIZER                                                \
+    ([] {                                                                     \
+        ss8str ret{};                                                         \
+        ret.iNtErNaL_S[sizeof(ss8str) - 1] = sizeof(ss8str) - 1;              \
+        return ret;                                                           \
+    }())
 #endif
 
 // All public functions have their prototypes listed below, and this list is
