@@ -9,7 +9,7 @@
 #include <cassert>
 #include <cstdio>
 
-#if __cplusplus >= 201103L
+#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSVC_LANG >= 201103L)
 namespace {
 
 ss8str const static_test_var = SS8_STATIC_INITIALIZER;
@@ -27,7 +27,7 @@ int main() {
     ss8_init_copy_cstr(&s, "Hello, World!");
     printf("Here is a string: %s\n", ss8_cstr(&s));
 
-#if __cplusplus >= 201103L
+#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSVC_LANG >= 201103L)
     // Test static initializer because it has a different implementation in
     // C++.
     check_static_initializer();

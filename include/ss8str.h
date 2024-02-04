@@ -44,6 +44,13 @@
 
 #ifdef __cplusplus
 extern "C" {
+
+#ifdef _MSC_VER
+// MSVC always defines __cplusplus to 199711L, unless /Zc:__cplusplus is given.
+#define SSSTR_CPLUSPLUS_11 (_MSVC_LANG >= 201103L)
+#else
+#define SSSTR_CPLUSPLUS_11 (__cplusplus >= 201103L)
+#endif
 #endif
 
 // By default, functions are static inline.
@@ -209,7 +216,7 @@ typedef union {
             [sizeof(ss8str) - 1] = sizeof(ss8str) - 1                         \
         }                                                                     \
     }
-#elif __cplusplus >= 201103L // C++ >= 11
+#elif SSSTR_CPLUSPLUS_11
 #define SS8_STATIC_INITIALIZER                                                \
     ([] {                                                                     \
         ss8str ret{};                                                         \
@@ -416,7 +423,7 @@ SSSTR_INLINE ss8str *ss8_strip(ss8str *SSSTR_RESTRICT str,
 SSSTR_INLINE ss8str *ss8_lstrip_ch(ss8str *str, char ch);
 SSSTR_INLINE ss8str *ss8_rstrip_ch(ss8str *str, char ch);
 SSSTR_INLINE ss8str *ss8_strip_ch(ss8str *str, char ch);
-#if !defined(__cplusplus) || __cplusplus >= 201103L // C++ >= 11
+#if !defined(__cplusplus) || SSSTR_CPLUSPLUS_11
 SSSTR_ATTRIBUTE_VPRINTF(2)
 SSSTR_INLINE ss8str *ss8_cat_vsprintf(ss8str *SSSTR_RESTRICT dest,
                                       char const *SSSTR_RESTRICT fmt,
@@ -447,7 +454,7 @@ SSSTR_INLINE ss8str *ss8_cat_snprintf(ss8str *SSSTR_RESTRICT dest,
 SSSTR_ATTRIBUTE_PRINTF(3, 4)
 SSSTR_INLINE ss8str *ss8_snprintf(ss8str *SSSTR_RESTRICT dest, size_t maxlen,
                                   char const *SSSTR_RESTRICT fmt, ...);
-#endif // C++ >= 11
+#endif // C or SSSTR_CPLUSPLUS_11
 
 ///// END_DOCUMENTED_PROTOTYPES
 
@@ -1925,7 +1932,7 @@ SSSTR_INLINE_DEF ss8str *ss8_strip_ch(ss8str *str, char ch) {
 
 // We need va_copy() for the [v]s[n]printf functions; va_copy requires (C99 or)
 // C++11. (Note that we do not disable the prototypes for these functions.)
-#if !defined(__cplusplus) || __cplusplus >= 201103L
+#if !defined(__cplusplus) || SSSTR_CPLUSPLUS_11
 
 // Append to the end of *dest the result of formatting 'args' according to
 // 'fmt' and return 'dest'.
@@ -2094,7 +2101,7 @@ SSSTR_INLINE_DEF ss8str *ss8_snprintf(ss8str *SSSTR_RESTRICT dest,
     return dest;
 }
 
-#endif // C++ >= 11
+#endif // C or SSSTR_CPLUSPLUS_11
 
 // Avoid leaking internal macros
 #ifndef SSSTR_TESTING
@@ -2136,6 +2143,7 @@ SSSTR_INLINE_DEF ss8str *ss8_snprintf(ss8str *SSSTR_RESTRICT dest,
 #endif // SSSTR_TESTING
 
 #ifdef __cplusplus
+#undef SSSTR_CPLUSPLUS_11
 } // extern "C"
 #endif
 
