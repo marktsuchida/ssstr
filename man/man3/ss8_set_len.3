@@ -45,7 +45,7 @@ by a constant factor, or equal to the current capacity, whichever is larger.
 Because the capacity is never zero, an appropriate length greater than zero is
 chosen if the current length is zero.
 .PP
-The amount by which the lengh is increased is limited to no more than
+The amount by which the length is increased is limited to no more than
 .IR maxdelta ,
 and the final length is limited to no more than
 .IR maxlen .
@@ -75,7 +75,7 @@ is equivalent to
 .PP
 .in +4
 .EX
-.BI "ss8_set_len(" str ", strlen(ss8_cstr(" str "));"
+.BI "ss8_set_len(" str ", strlen(ss8_cstr(" str ")));"
 .EE
 .in
 .PP
@@ -199,7 +199,7 @@ ss8_destroy(&line);
 .fi
 .in
 .PP
-The last example is inteded for text input that does not contain null bytes.
+The last example is intended for text input that does not contain null bytes.
 If null bytes do occur, the read line will be silently corrupted but the
 program will not crash or leak memory.
 Other edge cases occur if the line is longer than
