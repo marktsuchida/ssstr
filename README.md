@@ -12,64 +12,38 @@ SPDX-License-Identifier: MIT
 #include <ss8str.h>
 ```
 
-**Ssstr** is intended to be used when you need a little more string handling
-capability than can be easily (and safely) achieved with the standard library,
-but not enough to warrant introducing a heavyweight framework (such as GLib) or
-switching to another programming language. Such scenarios may include
-manipulating path names, command line arguments, environment variables, and
-configuration file entries.
+**Ssstr** fills the gap between raw `string.h` and heavyweight frameworks like
+GLib. It is useful for simple string processing: path names, command line
+arguments, environment variables, and protocol messages.
 
-See the [usage introduction](#usage) below and the
+See the [usage introduction](#usage) and
 [reference documentation](https://marktsuchida.github.io/ssstr/man7/ssstr.7.html).
 
-## Features and Design
+## Features
 
-- Safer and simpler-to-use analogues of most of the C standard library
-  `string.h` functions.
-- Additional convenience functions similar to C++ `std::string` member
-  functions and more.
-- Strings are **always null-terminated** and buffer size is managed
-  automatically.
-- Byte strings containing **embedded null bytes** can be handled.
-- **Move and swap** support to minimize the need to copy strings.
-- Focus on efficiency through a **narrow contract** API, but with the option of
-  enabling **extensive debug assertions**.
-- Convenient and efficient **interoperability** with standard null-terminated
-  strings and unterminated byte buffers.
-- Single-file **header-only library**.
-- **Small string optimization**: strings up to 31 bytes (on 64-bit platforms)
-  or 15 bytes (32-bit) can be stored directly in the object (usually on the
-  stack), avoiding dynamic storage allocation.
-- Compatible with C99 and later.
-- Unit **tested** thoroughly.
-- Aims to compile without warnings (including on MSVC _without_
-  `_CRT_SECURE_NO_WARNINGS`). `-Werror`/`/WX` used in CI.
-- [Documented](https://marktsuchida.github.io/ssstr/man7/ssstr.7.html)
-  carefully.
+- Analogues of `string.h` functions, plus C++ `std::string`-style conveniences,
+  all with automatic buffer management
+- Smooth interop with raw null-terminated strings and sized byte buffers;
+  supports embedded null bytes
+- Small string optimization (SSO): up to 31 bytes (64-bit) or 15 bytes (32-bit)
+  stored without heap allocation
+- Move and swap to minimize copying
+- Narrow contract API with optional debug assertions
+- Header-only, C99+, extensively tested, thoroughly
+  [documented](https://marktsuchida.github.io/ssstr/man7/ssstr.7.html)
+- Compiles without warnings (including MSVC without `_CRT_SECURE_NO_WARNINGS`)
 
 ## Non-features
 
-**Ssstr** does not implement reference-counted or copy-on-write strings.
+**Ssstr** handles byte strings only: no character encoding support. UTF-8 works
+well, but functions that split strings at arbitrary offsets (e.g.,
+`ss8_copy_substr()`, `ss8_replace()`) can break multi-byte sequences. Libraries
+like [utf8proc](https://github.com/JuliaStrings/utf8proc) or
+[ICU](https://icu.unicode.org/) can complement **Ssstr** for Unicode
+processing.
 
-**Ssstr** is meant for simple byte string manipulation, with the interpretation
-of the bytes completely left to the user.
-
-- There is no explicit support for UTF-8 or any other specific character
-  encoding (although UTF-8 strings will work well with **Ssstr** when used
-  correctly).
-- There is no support for breaking natural language strings into words, glyphs,
-  codepoints, etc.
-
-There are many C libraries (such as
-[utf8proc](https://github.com/juliastrings/utf8proc) or
-[ICU](https://icu.unicode.org/)) that provide these capabilities, and **Ssstr**
-should be able to interoperate with them.
-
-Most of the **Ssstr** functions are safe for use with UTF-8 strings, but those
-that break up strings at arbitrary offsets (such as `ss8_copy_substr()`,
-`ss8_set_len()`, or `ss8_replace()`) need to be used with care so as not to end
-up with partial encoding sequences. Also, string search and comparison will not
-take into account Unicode canonical equivalents.
+Reference counting and copy-on-write are non-goals; each string is completely
+independent.
 
 ## Usage
 
@@ -94,7 +68,7 @@ ss8_init(&s);
 %SNIPPET_EPILOGUE ss8_destroy(&s);
 -->
 
-Note that directly assgning to, or initializing, an already-initialized
+Note that directly assigning to, or initializing, an already-initialized
 `ss8str` results in undefined behavior.
 
 An `ss8str` (which is the size of 4 pointers) is intended to be allocated on
@@ -229,15 +203,9 @@ ss8_destroy(&s);
 
 ### Calling C APIs that produce a string
 
-Many C APIs have functions that take a string buffer pointer and size (or
-maximum string length), and write a string into the buffer. These vary quite a
-bit in how they behave when the string to be returned doesn't fit in the
-provided buffer: some return the number of bytes written, some return the
-number of bytes that would fit the whole result, and some provide no indication
-of whether the result fit in the buffer or not.
-
-**Ssstr** provides functions that make it easy to deal with most of these
-functions.
+Many C APIs write strings into caller-provided buffers, with varying
+conventions for signaling truncation. **Ssstr** provides functions to
+interoperate with most of these.
 
 The `ss8_set_len()` function adjusts the length of the string, leaving any new
 portion of the string uninitialized. This can be used to prepare a destination
@@ -260,7 +228,7 @@ to pass a large-enough buffer. In this case, you can use `ss8_grow_len()` to
 progressively increase the length of the string being used as the destination
 buffer, calling the API function in a loop until you succeed. The
 `ss8_grow_len()` function is similar to `ss8_set_len()`, but automatically
-choses a new length.
+chooses a new length.
 
 Also depending on the API, you may be required to pass either the _maximum
 string length_ (not including any null terminator) or _destination buffer size_
@@ -315,18 +283,15 @@ ss8_destroy(&datetime);
 %SNIPPET_EPILOGUE TEST_ASSERT_EQUAL_size_t(23, len);
 -->
 
-This example might be slightly superfluous because the format string used here
-results in a fixed 23-byte result, but it is meant as a demonstration for this
-common pattern (and other formats can generate results whose length depends on
-the current locale). And the use of `ss8_grow_len()` starting with an empty
-`ss8str` ensures that the first iteration will try the maximum length available
-without dynamic storage allocation (so the example above will not call
-`malloc()` on 64-bit platforms, unless `strftime()` does so internally).
+This format produces a fixed 23-byte result, but the pattern applies to
+locale-dependent formats too. `ss8_grow_len()`, starting with an empty
+`ss8str`, ensures the first iteration tries the maximum SSO length, avoiding
+`malloc()` on 64-bit platforms.
 
 ### Copying to a plain C buffer
 
-Conversely, you may have an `ss8str` and wish to write an API function for
-regular C string users. This is even easier:
+Conversely, you may have an `ss8str` and wish to write an API function for raw
+C string users. This is even easier:
 
 <!--
 %TEST_SNIPPET COMPILE_ONLY FILE_SCOPE
@@ -466,7 +431,7 @@ ss8_swap(&s1, &s2);
 
 For `ss8_swap()`, the two strings must not be the same `ss8str` object, or else
 undefined behavior will result. Also, the two `ss8str` objects must be valid
-(initialized); use `ss8_init_move_destroy()` to swap an unititialized `ss8str`
+(initialized); use `ss8_init_move_destroy()` to swap an uninitialized `ss8str`
 with an initialized one.
 
 When the operation is asymmetric, i.e., you want to move the value of `s2` into
@@ -940,15 +905,9 @@ than `SIZE_MAX - 1`.
 It is meant to be safe to call `longjmp()` from inside these 2 macros, but this
 has not been tested.
 
-Note that the string formatting functions `ss8_[cat_][v]s[n]printf()` can (at
-least in theory) encounter additional errors that will lead to a call to
-`abort()`. These include the result of string formatting being greater than or
-equal to `INT_MAX` bytes, or `vs[n]printf()` returning a negative number for
-some other reason. Handling of these errors is not customizable. Programs that
-want water-tight (and strictly platform-independent) string formatting should
-probably use a specialized string formatting library rather than depending on
-these convenience functions that do not hide all of the limitations of the
-starnard functions.
+Note that `ss8_[cat_][v]s[n]printf()` will call `abort()` if the result exceeds
+`INT_MAX` bytes or `vs[n]printf()` returns a negative value. These errors are
+not customizable. For robust string formatting, consider a dedicated library.
 
 ## Memory layout
 
@@ -1009,8 +968,7 @@ big-endian, 32- and 64-bit architectures and with maximum utilization of the
 small string buffer.
 
 The use cases for which **Ssstr** was designed are the handling of small
-numbers of short to moderate-length strings (path names, command line
-arguments, environment variables, configuration file entries)—_not_ building
+numbers (at a time) of short- to moderate-length strings—_not_ building
 databases or text editors. Applications that want to store large numbers of
 strings with high space efficiency may prefer other designs; see, for example,
 [SDS](https://github.com/antirez/sds).
