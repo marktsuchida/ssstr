@@ -6,71 +6,69 @@
 </head>
 <body>
 <pre>
-SS8_SET_LEN(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>                   SS8_SET_LEN(3)
+[4mSS8_SET_LEN[24m(3)                   Ssstr Manual                   [4mSS8_SET_LEN[24m(3)
 
-
-
-<b>NAME</b>
+[1mNAME[0m
        ss8_set_len, ss8_grow_len, ss8_set_len_to_cstrlen - set length of ssstr
        byte string
 
-<b>SYNOPSIS</b>
-       <b>#include &lt;ss8str.h&gt;</b>
+[1mSYNOPSIS[0m
+       [1m#include &lt;ss8str.h&gt;[0m
 
-       <b>void ss8_set_len(ss8str *</b><i>str</i><b>, size_t</b> <i>newlen</i><b>);</b>
-       <b>size_t ss8_grow_len(ss8str *</b><i>str</i><b>, size_t</b> <i>maxlen</i><b>,</b>
-                           <b>size_t</b> <i>maxdelta</i><b>);</b>
-       <b>void ss8_set_len_to_cstrlen(ss8str *</b><i>str</i><b>);</b>
+       [1mvoid ss8_set_len(ss8str *[4m[22mstr[24m[1m, size_t [4m[22mnewlen[24m[1m);[0m
+       [1msize_t ss8_grow_len(ss8str *[4m[22mstr[24m[1m, size_t [4m[22mmaxlen[24m[1m,[0m
+                           [1msize_t [4m[22mmaxdelta[24m[1m);[0m
+       [1mvoid ss8_set_len_to_cstrlen(ss8str *[4m[22mstr[24m[1m);[0m
 
-<b>DESCRIPTION</b>
-       <b>ss8_set_len</b>() forcefully sets the  length  of  the  <b>ss8str</b>  at  <i>str</i>  to
-       <i>newlen</i>.  If <i>newlen</i> is less than the current length, the string is trun‐
-       cated.  If <i>newlen</i> is greater than the current length, the  new  portion
+[1mDESCRIPTION[0m
+       [1mss8_set_len[22m()  forcefully  sets  the  length  of  the  [1mss8str [22mat [4mstr[24m to
+       [4mnewlen[24m.  If [4mnewlen[24m is less than the current length, the string is trun‐
+       cated.  If [4mnewlen[24m is greater than the current length, the  new  portion
        of  the string is filled with indeterminate bytes, except that the byte
        after the former last byte is guaranteed to contain a null byte.
 
-       If the capacity of the <b>ss8str</b> is not sufficient to hold the new length,
-       it  is  increased to match the new length; otherwise, no memory alloca‐
+       If the capacity of the [1mss8str [22mis not sufficient to hold the new length,
+       it is increased to match the new length; otherwise, no  memory  alloca‐
        tion or deallocation is performed.
 
-       <b>ss8_grow_len</b>() is like <b>ss8_set_len</b>(), but automatically chooses  a  new
+       [1mss8_grow_len[22m()  is  like [1mss8_set_len[22m(), but automatically chooses a new
        length that is greater than the current length by a constant factor, or
        equal to the current capacity, whichever is larger.  Because the capac‐
        ity is never zero, an appropriate length greater than zero is chosen if
        the current length is zero.
 
        The amount by which the lengh is increased is limited to no  more  than
-       <i>maxdelta</i>,  and  the  final  length  is  limited to no more than <i>maxlen</i>.
-       These two parameters can be set to <b>SIZE_MAX</b> to request the maximum  al‐
+       [4mmaxdelta[24m,  and  the  final  length  is  limited to no more than [4mmaxlen[24m.
+       These two parameters can be set to [1mSIZE_MAX [22mto request the maximum  al‐
        lowed limits.
 
-       If  the  current  length  exceeds <i>maxlen</i>, no change is made (the caller
+       If  the  current  length  exceeds [4mmaxlen[24m, no change is made (the caller
        should avoid this case in typical usage).
 
-       <b>ss8_set_len_to_cstrlen</b>() truncates the <b>ss8str</b> at <i>str</i> to its length when
+       [1mss8_set_len_to_cstrlen[22m() truncates the [1mss8str [22mat [4mstr[24m to its length when
        viewed as a null-terminated byte string.  That is,
 
-           <b>ss8_set_len_to_cstrlen(</b><i>str</i><b>);</b>
+           [1mss8_set_len_to_cstrlen([4m[22mstr[24m[1m);[0m
 
        is equivalent to
 
-           <b>ss8_set_len(</b><i>str</i><b>, strlen(ss8_cstr(</b><i>str</i><b>));</b>
+           [1mss8_set_len([4m[22mstr[24m[1m, strlen(ss8_cstr([4m[22mstr[24m[1m));[0m
 
        No memory allocation or deallocation is performed.
 
-       These  functions  are  intended for the purpose of using an <b>ss8str</b> as a
-       destination when calling functions that fill a  caller-provided  buffer
-       with  a string.  <b>ss8_grow_len</b>() is useful when it is necessary to retry
+       These functions are intended for the purpose of using an  [1mss8str  [22mas  a
+       destination  when  calling functions that fill a caller-provided buffer
+       with a string.  [1mss8_grow_len[22m() is useful when it is necessary to  retry
        such a function call with successively larger buffers.
 
-<b>RETURN VALUE</b>
-       <b>ss8_grow_len</b>() returns the amount (in bytes) by which the length of <i>str</i>
-       was  increased.   A  zero return value indicates that the length of <i>str</i>
-       was already greater than or equal to <i>maxlen</i>, or that <i>maxdelta</i>  was  set
+[1mRETURN VALUE[0m
+       [1mss8_grow_len[22m() returns the amount (in bytes) by which the length of [4mstr[0m
+       was  increased.   A  zero return value indicates that the length of [4mstr[0m
+       was already greater than or equal to [4mmaxlen[24m, or that [4mmaxdelta[24m  was  set
        to zero.
 
-<b>EXAMPLES</b>
-       To read at most 1024 bytes from the file <i>fp</i>:
+[1mEXAMPLES[0m
+       To read at most 1024 bytes from the file [4mfp[24m:
 
            #include &lt;ss8str.h&gt;
            #include &lt;stdio.h&gt;
@@ -115,7 +113,7 @@ SS8_SET_LEN(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
 
            ss8_destroy(&amp;timestr);
 
-       To read a whole line from the file <i>fp</i>:
+       To read a whole line from the file [4mfp[24m:
 
            #include &lt;ss8str.h&gt;
            #include &lt;limits.h&gt;
@@ -151,16 +149,14 @@ SS8_SET_LEN(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>
        The  last  example is inteded for text input that does not contain null
        bytes.  If null bytes do occur, the read line  will  be  silently  cor‐
        rupted but the program will not crash or leak memory.  Other edge cases
-       occur if the line is longer than  <b>SIZE_MAX  -  1</b>  bytes  or  the  input
+       occur  if  the  line  is  longer  than  [1mSIZE_MAX - 1 [22mbytes or the input
        reaches end-of-file before a newline.
 
-<b>SEE ALSO</b>
-       <a href="../man3/ss8_len.3.html"><b>ss8_len</b>(3)</a>,  <a href="../man3/ss8_cstr.3.html"><b>ss8_mutable_cstr</b>(3)</a>, <a href="../man3/ss8_capacity.3.html"><b>ss8_reserve</b>(3)</a>, <a href="../man3/ss8_capacity.3.html"><b>ss8_shrink_to_fit</b>(3)</a>,
-       <a href="../man3/ss8_copy_substr.3.html"><b>ss8_substr_inplace</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+[1mSEE ALSO[0m
+       [1mss8_len[22m(3), [1mss8_mutable_cstr[22m(3), [1mss8_reserve[22m(3),  [1mss8_shrink_to_fit[22m(3),
+       [1mss8_substr_inplace[22m(3), [1mssstr[22m(7)
 
-
-
-SSSTR                             2023-12-30                    SS8_SET_LEN(3)
+SSSTR                             2023-12-30                    [4mSS8_SET_LEN[24m(3)
 </pre>
 </body>
 </html>

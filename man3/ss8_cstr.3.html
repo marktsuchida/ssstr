@@ -6,70 +6,66 @@
 </head>
 <body>
 <pre>
-SS8_CSTR(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>                      SS8_CSTR(3)
+[4mSS8_CSTR[24m(3)                      Ssstr Manual                      [4mSS8_CSTR[24m(3)
 
-
-
-<b>NAME</b>
+[1mNAME[0m
        ss8_cstr,  ss8_mutable_cstr, ss8_cstr_suffix, ss8_mutable_cstr_suffix -
        access the bytes of an ssstr byte  string  as  a  null-terminated  byte
        string
 
-<b>SYNOPSIS</b>
-       <b>#include &lt;ss8str.h&gt;</b>
+[1mSYNOPSIS[0m
+       [1m#include &lt;ss8str.h&gt;[0m
 
-       <b>char const *ss8_cstr(ss8str const *</b><i>str</i><b>);</b>
-       <b>char       *ss8_mutable_cstr(ss8str *</b><i>str</i><b>);</b>
-       <b>char const *ss8_cstr_suffix(ss8str const *</b><i>str</i><b>, size_t</b> <i>start</i><b>);</b>
-       <b>char       *ss8_mutable_cstr_suffix(ss8str *</b><i>str</i><b>, size_t</b> <i>start</i><b>);</b>
+       [1mchar const *ss8_cstr(ss8str const *[4m[22mstr[24m[1m);[0m
+       [1mchar       *ss8_mutable_cstr(ss8str *[4m[22mstr[24m[1m);[0m
+       [1mchar const *ss8_cstr_suffix(ss8str const *[4m[22mstr[24m[1m, size_t [4m[22mstart[24m[1m);[0m
+       [1mchar       *ss8_mutable_cstr_suffix(ss8str *[4m[22mstr[24m[1m, size_t [4m[22mstart[24m[1m);[0m
 
-<b>DESCRIPTION</b>
-       The  <b>ss8_cstr</b>() family of functions provide direct access to the inter‐
-       nal buffer of the <b>ss8str</b> that <i>str</i> points to.
+[1mDESCRIPTION[0m
+       The  [1mss8_cstr[22m() family of functions provide direct access to the inter‐
+       nal buffer of the [1mss8str [22mthat [4mstr[24m points to.
 
-       <b>ss8_cstr</b>() and <b>ss8_mutable_cstr</b>() return the pointer to  the  beginning
+       [1mss8_cstr[22m() and [1mss8_mutable_cstr[22m() return the pointer to  the  beginning
        of the string buffer.  A null terminator is always placed after the end
-       of the buffer.  <b>ss8_cstr_suffix</b>() and <b>ss8_mutable_cstr_suffix</b>()  return
-       a  pointer  offsetted  by <i>start</i> bytes, corresponding to a suffix of the
-       string.  Calling <b>ss8_cstr</b>()  or  <b>ss8_mutable_cstr</b>()  is  equivalent  to
-       calling  <b>ss8_cstr_suffix</b>()  or <b>ss8_mutable_cstr_suffix</b>(), respectively,
-       with <i>start</i> set to zero.
+       of  the buffer.  [1mss8_cstr_suffix[22m() and [1mss8_mutable_cstr_suffix[22m() return
+       a pointer offsetted by [4mstart[24m bytes, corresponding to a  suffix  of  the
+       string.   Calling  [1mss8_cstr[22m()  or  [1mss8_mutable_cstr[22m()  is equivalent to
+       calling [1mss8_cstr_suffix[22m() or  [1mss8_mutable_cstr_suffix[22m(),  respectively,
+       with [4mstart[24m set to zero.
 
-       Behavior is undefined unless <i>str</i> points to a valid <b>ss8str</b>  object,  and
-       <i>start</i> is less than or equal to the length of the string.
+       Behavior  is  undefined unless [4mstr[24m points to a valid [1mss8str [22mobject, and
+       [4mstart[24m is less than or equal to the length of the string.
 
-       <b>ss8_cstr</b>()  and <b>ss8_cstr_suffix</b>() are suitable for passing the contents
-       of an <b>ss8str</b> to a function expecting a read-only  null-terminated  byte
-       string,  or  a  read-only  byte string with length at most equal to the
-       length of <i>str</i> (as determined by <b>ss8_len</b>() and subtracting <i>start</i> in  the
-       case of <b>ss8_cstr_suffix</b>()).
+       [1mss8_cstr[22m() and [1mss8_cstr_suffix[22m() are suitable for passing the  contents
+       of  an  [1mss8str [22mto a function expecting a read-only null-terminated byte
+       string, or a read-only byte string with length at  most  equal  to  the
+       length  of [4mstr[24m (as determined by [1mss8_len[22m() and subtracting [4mstart[24m in the
+       case of [1mss8_cstr_suffix[22m()).
 
-       <b>ss8_mutable_cstr</b>()  and  <b>ss8_mutable_cstr_suffix</b>()  allow the use of an
-       <b>ss8str</b> as the destination when calling a function that fills a  caller-
-       provided  buffer  with  a  null-terminated or bound-length byte string.
-       The available buffer size can be adjusted  with  <b>ss8_set_len</b>()  before‐
-       hand,  and  the same function, or <b>ss8_set_len_to_cstrlen</b>(), can be used
-       afterwards to crop the string to the desired length, if necessary.   In
-       the  case  of  <b>ss8_mutable_cstr_suffix</b>(), <i>start</i> must be subtracted from
+       [1mss8_mutable_cstr[22m() and [1mss8_mutable_cstr_suffix[22m() allow the  use  of  an
+       [1mss8str  [22mas the destination when calling a function that fills a caller-
+       provided buffer with a null-terminated  or  bound-length  byte  string.
+       The  available  buffer  size can be adjusted with [1mss8_set_len[22m() before‐
+       hand, and the same function, or [1mss8_set_len_to_cstrlen[22m(), can  be  used
+       afterwards  to crop the string to the desired length, if necessary.  In
+       the case of [1mss8_mutable_cstr_suffix[22m(), [4mstart[24m must  be  subtracted  from
        the available length.
 
-       It is permissible to write 1 byte more than the available length,  pro‐
+       It  is permissible to write 1 byte more than the available length, pro‐
        vided that the last byte written is always a null byte.
 
-       See <a href="../man3/ss8_set_len.3.html"><b>ss8_set_len</b>(3)</a> for examples.
+       See [1mss8_set_len[22m(3) for examples.
 
-<b>RETURN VALUE</b>
-       All  4  functions return a pointer to the internal string buffer of the
-       <b>ss8str</b> pointed to by <i>str</i>, offset by <i>start</i> if applicable.  The  returned
-       pointer  remains  valid  as long as the <b>ss8str</b> at <i>str</i> remains valid and
+[1mRETURN VALUE[0m
+       All 4 functions return a pointer to the internal string buffer  of  the
+       [1mss8str  [22mpointed to by [4mstr[24m, offset by [4mstart[24m if applicable.  The returned
+       pointer remains valid as long as the [1mss8str [22mat [4mstr[24m  remains  valid  and
        unmodified.
 
-<b>SEE ALSO</b>
-       <a href="../man3/ss8_len.3.html"><b>ss8_len</b>(3)</a>, <a href="../man3/ss8_set_len.3.html"><b>ss8_set_len</b>(3)</a>, <a href="../man3/ss8_set_len.3.html"><b>ss8_set_len_to_cstrlen</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+[1mSEE ALSO[0m
+       [1mss8_len[22m(3), [1mss8_set_len[22m(3), [1mss8_set_len_to_cstrlen[22m(3), [1mssstr[22m(7)
 
-
-
-SSSTR                             2023-12-30                       SS8_CSTR(3)
+SSSTR                             2023-12-30                       [4mSS8_CSTR[24m(3)
 </pre>
 </body>
 </html>

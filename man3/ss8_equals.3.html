@@ -6,62 +6,58 @@
 </head>
 <body>
 <pre>
-SS8_EQUALS(3)                    <a href="../man7/ssstr.7.html">Ssstr Manual</a>                    SS8_EQUALS(3)
+[4mSS8_EQUALS[24m(3)                    Ssstr Manual                    [4mSS8_EQUALS[24m(3)
 
-
-
-<b>NAME</b>
+[1mNAME[0m
        ss8_equals,  ss8_equals_cstr,  ss8_equals_bytes, ss8_equals_ch - deter‐
        mine if an ssstr byte string is equal to a string or character
 
-<b>SYNOPSIS</b>
-       <b>#include &lt;ss8str.h&gt;</b>
+[1mSYNOPSIS[0m
+       [1m#include &lt;ss8str.h&gt;[0m
 
-       <b>bool ss8_equals(ss8str const *</b><i>lhs</i><b>, ss8str const *</b><i>rhs</i><b>);</b>
-       <b>bool ss8_equals_cstr(ss8str const *</b><i>lhs</i><b>, char const *</b><i>rhs</i><b>);</b>
-       <b>bool ss8_equals_bytes(ss8str const *</b><i>lhs</i><b>, char const *</b><i>rhs</i><b>,</b>
-                             <b>size_t</b> <i>rhslen</i><b>);</b>
-       <b>bool ss8_equals_ch(ss8str const *</b><i>lhs</i><b>, char</b> <i>rhs</i><b>);</b>
+       [1mbool ss8_equals(ss8str const *[4m[22mlhs[24m[1m, ss8str const *[4m[22mrhs[24m[1m);[0m
+       [1mbool ss8_equals_cstr(ss8str const *[4m[22mlhs[24m[1m, char const *[4m[22mrhs[24m[1m);[0m
+       [1mbool ss8_equals_bytes(ss8str const *[4m[22mlhs[24m[1m, char const *[4m[22mrhs[24m[1m,[0m
+                             [1msize_t [4m[22mrhslen[24m[1m);[0m
+       [1mbool ss8_equals_ch(ss8str const *[4m[22mlhs[24m[1m, char [4m[22mrhs[24m[1m);[0m
 
-<b>DESCRIPTION</b>
-       <b>ss8_equals</b>() tests whether the <b>ss8str</b> at <i>lhs</i> is equal to the <b>ss8str</b>  at
-       <i>rhs</i>.   Behavior  is  undefined  unless  <i>lhs</i> and <i>rhs</i> both point to valid
-       <b>ss8str</b> objects.
+[1mDESCRIPTION[0m
+       [1mss8_equals[22m() tests whether the [1mss8str [22mat [4mlhs[24m is equal to the [1mss8str  [22mat
+       [4mrhs[24m.   Behavior  is  undefined  unless  [4mlhs[24m and [4mrhs[24m both point to valid
+       [1mss8str [22mobjects.
 
-       <b>ss8_equals_cstr</b>() tests whether the <b>ss8str</b> at <i>lhs</i> is equal to the null-
-       terminated byte string <i>rhs</i>.  Behavior is undefined unless <i>lhs</i> points to
-       a valid <b>ss8str</b> object and <i>rhs</i> is a null-terminated byte string.
+       [1mss8_equals_cstr[22m() tests whether the [1mss8str [22mat [4mlhs[24m is equal to the null-
+       terminated byte string [4mrhs[24m.  Behavior is undefined unless [4mlhs[24m points to
+       a valid [1mss8str [22mobject and [4mrhs[24m is a null-terminated byte string.
 
-       <b>ss8_equals_bytes</b>() tests whether the <b>ss8str</b> at <i>lhs</i> is equal to the byte
-       string with length <i>rhslen</i> located at <i>rhs</i>.  Behavior is undefined unless
-       <i>lhs</i> points to a valid <b>ss8str</b> object and <i>rhs</i> is not NULL and  points  to
-       an array of at least <i>rhslen</i> bytes.
+       [1mss8_equals_bytes[22m() tests whether the [1mss8str [22mat [4mlhs[24m is equal to the byte
+       string with length [4mrhslen[24m located at [4mrhs[24m.  Behavior is undefined unless
+       [4mlhs[24m points to a valid [1mss8str [22mobject and [4mrhs[24m is not NULL and  points  to
+       an array of at least [4mrhslen[24m bytes.
 
-       <b>ss8_equals_ch</b>()  tests  whether  the <b>ss8str</b> at <i>lhs</i> is equal to the byte
-       string consisting of the single byte <i>rhs</i>.  Behavior is undefined unless
-       <i>lhs</i> points to a valid <b>ss8str</b> object.
+       [1mss8_equals_ch[22m()  tests  whether  the [1mss8str [22mat [4mlhs[24m is equal to the byte
+       string consisting of the single byte [4mrhs[24m.  Behavior is undefined unless
+       [4mlhs[24m points to a valid [1mss8str [22mobject.
 
-       Two  byte  strings  are considered equal when they have the same length
+       Two byte strings are considered equal when they have  the  same  length
        and are byte-wise equal.
 
-<b>RETURN VALUE</b>
-       All 4 functions return <b>true</b> if <i>lhs</i> is equal to <i>rhs</i>; otherwise they  re‐
-       turn <b>false</b>.
+[1mRETURN VALUE[0m
+       All  4 functions return [1mtrue [22mif [4mlhs[24m is equal to [4mrhs[24m; otherwise they re‐
+       turn [1mfalse[22m.
 
-<b>NOTES</b>
+[1mNOTES[0m
        The equality comparison performed by these functions does not take into
        account the possibility of different byte  sequences  representing  the
        same  character.  If the strings are UTF-8-encoded, canonically-equiva‐
        lent strings may not be considered equal by these functions unless  the
        strings are normalized ahead of time.
 
-<b>SEE ALSO</b>
-       <a href="../man3/ss8_cmp.3.html"><b>ss8_cmp</b>(3)</a>,   <a href="../man3/ss8_contains.3.html"><b>ss8_contains</b>(3)</a>,   <a href="../man3/ss8_starts_with.3.html"><b>ss8_ends_with</b>(3)</a>,  <a href="../man3/ss8_starts_with.3.html"><b>ss8_starts_with</b>(3)</a>,
-       <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+[1mSEE ALSO[0m
+       [1mss8_cmp[22m(3),   [1mss8_contains[22m(3),   [1mss8_ends_with[22m(3),  [1mss8_starts_with[22m(3),
+       [1mssstr[22m(7)
 
-
-
-SSSTR                             2023-12-30                     SS8_EQUALS(3)
+SSSTR                             2023-12-30                     [4mSS8_EQUALS[24m(3)
 </pre>
 </body>
 </html>

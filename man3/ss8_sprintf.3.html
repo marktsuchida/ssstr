@@ -6,87 +6,83 @@
 </head>
 <body>
 <pre>
-SS8_SPRINTF(3)                   <a href="../man7/ssstr.7.html">Ssstr Manual</a>                   SS8_SPRINTF(3)
+[4mSS8_SPRINTF[24m(3)                   Ssstr Manual                   [4mSS8_SPRINTF[24m(3)
 
-
-
-<b>NAME</b>
+[1mNAME[0m
        ss8_sprintf,     ss8_snprintf,    ss8_cat_sprintf,    ss8_cat_snprintf,
        ss8_vsprintf, ss8_vsnprintf, ss8_cat_vsprintf, ss8_cat_vsnprintf - for‐
        mat an ssstr byte string
 
-<b>SYNOPSIS</b>
-       <b>#include &lt;ss8str.h&gt;</b>
+[1mSYNOPSIS[0m
+       [1m#include &lt;ss8str.h&gt;[0m
 
-       <b>ss8str *ss8_sprintf(ss8str *restrict</b> <i>dest</i><b>,</b>
-                           <b>char const *restrict</b> <i>fmt</i><b>, ...);</b>
-       <b>ss8str *ss8_snprintf(ss8str *restrict</b> <i>dest</i><b>, size_t</b> <i>maxlen</i><b>,</b>
-                           <b>char const *restrict</b> <i>fmt</i><b>, ...);</b>
+       [1mss8str *ss8_sprintf(ss8str *restrict [4m[22mdest[24m[1m,[0m
+                           [1mchar const *restrict [4m[22mfmt[24m[1m, ...);[0m
+       [1mss8str *ss8_snprintf(ss8str *restrict [4m[22mdest[24m[1m, size_t [4m[22mmaxlen[24m[1m,[0m
+                           [1mchar const *restrict [4m[22mfmt[24m[1m, ...);[0m
 
-       <b>ss8str *ss8_cat_sprintf(ss8str *restrict</b> <i>dest</i><b>,</b>
-                           <b>char const *restrict</b> <i>fmt</i><b>, ...);</b>
-       <b>ss8str *ss8_cat_snprintf(ss8str *restrict</b> <i>dest</i><b>,</b>
-                           <b>size_t</b> <i>maxlen</i><b>, char const *restrict</b> <i>fmt</i><b>,</b>
-                           <b>...);</b>
+       [1mss8str *ss8_cat_sprintf(ss8str *restrict [4m[22mdest[24m[1m,[0m
+                           [1mchar const *restrict [4m[22mfmt[24m[1m, ...);[0m
+       [1mss8str *ss8_cat_snprintf(ss8str *restrict [4m[22mdest[24m[1m,[0m
+                           [1msize_t [4m[22mmaxlen[24m[1m, char const *restrict [4m[22mfmt[24m[1m,[0m
+                           [1m...);[0m
 
-       <b>ss8str *ss8_vsprintf(ss8str *restrict</b> <i>dest</i><b>,</b>
-                           <b>char const *restrict</b> <i>fmt</i><b>, va_list</b> <i>args</i><b>);</b>
-       <b>ss8str *ss8_vsnprintf(ss8str *restrict</b> <i>dest</i><b>, size_t</b> <i>maxlen</i><b>,</b>
-                           <b>char const *restrict</b> <i>fmt</i><b>, va_list</b> <i>args</i><b>);</b>
+       [1mss8str *ss8_vsprintf(ss8str *restrict [4m[22mdest[24m[1m,[0m
+                           [1mchar const *restrict [4m[22mfmt[24m[1m, va_list [4m[22margs[24m[1m);[0m
+       [1mss8str *ss8_vsnprintf(ss8str *restrict [4m[22mdest[24m[1m, size_t [4m[22mmaxlen[24m[1m,[0m
+                           [1mchar const *restrict [4m[22mfmt[24m[1m, va_list [4m[22margs[24m[1m);[0m
 
-       <b>ss8str *ss8_cat_vsprintf(ss8str *restrict</b> <i>dest</i><b>,</b>
-                           <b>char const *restrict</b> <i>fmt</i><b>, va_list</b> <i>args</i><b>);</b>
-       <b>ss8str *ss8_cat_vsnprintf(ss8str *restrict</b> <i>dest</i><b>,</b>
-                           <b>size_t</b> <i>maxlen</i><b>, char const *restrict</b> <i>fmt</i><b>,</b>
-                           <b>va_list</b> <i>args</i><b>);</b>
+       [1mss8str *ss8_cat_vsprintf(ss8str *restrict [4m[22mdest[24m[1m,[0m
+                           [1mchar const *restrict [4m[22mfmt[24m[1m, va_list [4m[22margs[24m[1m);[0m
+       [1mss8str *ss8_cat_vsnprintf(ss8str *restrict [4m[22mdest[24m[1m,[0m
+                           [1msize_t [4m[22mmaxlen[24m[1m, char const *restrict [4m[22mfmt[24m[1m,[0m
+                           [1mva_list [4m[22margs[24m[1m);[0m
 
-<b>DESCRIPTION</b>
-       <b>ss8_sprintf</b>()  sets the <b>ss8str</b> at <i>dest</i> to the formatted string produced
-       according to the format string <i>fmt</i>  and  the  arguments  following  it.
-       String formatting is performed by internally calling <a href="https://www.man7.org/linux/man-pages/man3/vsnprintf.3.html"><b>vsnprintf</b>(3)</a>.
+[1mDESCRIPTION[0m
+       [1mss8_sprintf[22m() sets the [1mss8str [22mat [4mdest[24m to the formatted string  produced
+       according  to  the  format  string  [4mfmt[24m and the arguments following it.
+       String formatting is performed by internally calling [1mvsnprintf[22m(3).
 
-       Behavior  is undefined unless <i>dest</i> points to a valid <b>ss8str</b> object, <i>fmt</i>
-       is a null-terminated string, the variable arguments  follow  the  rules
-       specified  by  <a href="https://www.man7.org/linux/man-pages/man3/snprintf.3.html"><b>sprintf</b>(3)</a>, the contents of <i>fmt</i> and any (wide) string or
-       character arguments are valid under the string  encoding  used  by  <a href="https://www.man7.org/linux/man-pages/man3/vsnprintf.3.html"><b>vs‐</a>
-       <a href="https://www.man7.org/linux/man-pages/man3/vsnprintf.3.html">nprintf</b>(3)</a>,  and  the  length of the resulting formatted string is less
-       than <b>INT_MAX</b>.
+       Behavior is undefined unless [4mdest[24m points to a valid [1mss8str [22mobject,  [4mfmt[0m
+       is  a  null-terminated  string, the variable arguments follow the rules
+       specified by [1msprintf[22m(3), the contents of [4mfmt[24m and any (wide)  string  or
+       character  arguments  are  valid  under the string encoding used by [1mvs‐[0m
+       [1mnprintf[22m(3), and the length of the resulting formatted  string  is  less
+       than [1mINT_MAX[22m.
 
-       <b>ss8_snprintf</b>() is like <b>ss8_sprintf</b>(), except that the resulting  string
-       is  truncated  at <i>maxlen</i> bytes.  Behavior is undefined unless, in addi‐
-       tion to  the  requirements  for  <b>ss8_sprintf</b>(),  <i>maxlen</i>  is  less  than
-       <b>INT_MAX</b>.
+       [1mss8_snprintf[22m()  is like [1mss8_sprintf[22m(), except that the resulting string
+       is truncated at [4mmaxlen[24m bytes.  Behavior is undefined unless,  in  addi‐
+       tion  to  the  requirements  for  [1mss8_sprintf[22m(),  [4mmaxlen[24m  is  less than
+       [1mINT_MAX[22m.
 
-       <b>ss8_cat_sprintf</b>()  and  <b>ss8_cat_snprintf</b>()  are  like <b>ss8_sprintf</b>() and
-       <b>ss8_snprintf</b>(), respectively, except that  rather  than  replacing  the
-       string  in  <i>dest</i>,  they append the formatted string to the end of <i>dest</i>.
-       The length limit (<i>maxlen</i> or, implicitly for correctness, <b>INT_MAX  -  1</b>)
-       applies  to  the  result of formatting, not the whole string after con‐
+       [1mss8_cat_sprintf[22m() and [1mss8_cat_snprintf[22m()  are  like  [1mss8_sprintf[22m()  and
+       [1mss8_snprintf[22m(),  respectively,  except  that  rather than replacing the
+       string in [4mdest[24m, they append the formatted string to the  end  of  [4mdest[24m.
+       The  length  limit ([4mmaxlen[24m or, implicitly for correctness, [1mINT_MAX - 1[22m)
+       applies to the result of formatting, not the whole  string  after  con‐
        catenation.
 
-       <b>ss8_vsprintf</b>(), <b>ss8_vsnprintf</b>(),  <b>ss8_cat_vsprintf</b>(),  and  <b>ss8_cat_vs‐</b>
-       <b>nprintf</b>()  are  like  the  corresponding functions without the <b>v</b> in the
-       name, except that they take a <b>va_list</b> <i>args</i> instead of the variable  ar‐
+       [1mss8_vsprintf[22m(),  [1mss8_vsnprintf[22m(),  [1mss8_cat_vsprintf[22m(),  and [1mss8_cat_vs‐[0m
+       [1mnprintf[22m() are like the corresponding functions without  the  [1mv  [22min  the
+       name,  except that they take a [1mva_list [4m[22margs[24m instead of the variable ar‐
        guments.
 
-<b>RETURN VALUE</b>
-       All 8 functions return <i>dest</i>.
+[1mRETURN VALUE[0m
+       All 8 functions return [4mdest[24m.
 
-<b>BUGS</b>
-       Calling  these  functions  with any combination of arguments that could
-       produce a string longer than <b>INT_MAX - 1</b> will result in  undefined  be‐
-       havior, regardless of the value of <i>maxlen</i>.  This is due to <a href="https://www.man7.org/linux/man-pages/man3/vsnprintf.3.html"><b>vsnprintf</b>(3)</a>
-       returning an <b>int</b> containing the formatted length.
+[1mBUGS[0m
+       Calling these functions with any combination of  arguments  that  could
+       produce  a  string longer than [1mINT_MAX - 1 [22mwill result in undefined be‐
+       havior, regardless of the value of [4mmaxlen[24m.  This is due to [1mvsnprintf[22m(3)
+       returning an [1mint [22mcontaining the formatted length.
 
-       Callers should avoid passing strings of unbound length for the <b>%s</b>  con‐
-       version specifier, and use great care if dynamically generating <i>fmt</i>.
+       Callers should avoid passing strings of unbound length for the [1m%s  [22mcon‐
+       version specifier, and use great care if dynamically generating [4mfmt[24m.
 
-<b>SEE ALSO</b>
-       <a href="../man3/ss8_cat.3.html"><b>ss8_cat</b>(3)</a>, <a href="../man3/ss8_copy.3.html"><b>ss8_copy</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+[1mSEE ALSO[0m
+       [1mss8_cat[22m(3), [1mss8_copy[22m(3), [1mssstr[22m(7)
 
-
-
-SSSTR                             2023-12-30                    SS8_SPRINTF(3)
+SSSTR                             2023-12-30                    [4mSS8_SPRINTF[24m(3)
 </pre>
 </body>
 </html>

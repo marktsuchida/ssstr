@@ -6,52 +6,49 @@
 </head>
 <body>
 <pre>
-SS8_COPY_TO_CSTR(3)              <a href="../man7/ssstr.7.html">Ssstr Manual</a>              SS8_COPY_TO_CSTR(3)
+[4mSS8_COPY_TO_CSTR[24m(3)              Ssstr Manual              [4mSS8_COPY_TO_CSTR[24m(3)
 
-
-
-<b>NAME</b>
+[1mNAME[0m
        ss8_copy_to_cstr,  ss8_copy_to_bytes  -  copy an ssstr byte string to a
        buffer
 
-<b>SYNOPSIS</b>
-       <b>#include &lt;ss8str.h&gt;</b>
+[1mSYNOPSIS[0m
+       [1m#include &lt;ss8str.h&gt;[0m
 
-       <b>bool ss8_copy_to_cstr(ss8str const *restrict</b> <i>str</i><b>,</b>
-                             <b>char *restrict</b> <i>buf</i><b>, size_t</b> <i>bufsize</i><b>);</b>
-       <b>bool ss8_copy_to_bytes(ss8str const *restrict</b> <i>str</i><b>,</b>
-                             <b>char *restrict</b> <i>buf</i><b>, size_t</b> <i>bufsize</i><b>);</b>
+       [1mbool ss8_copy_to_cstr(ss8str const *restrict [4m[22mstr[24m[1m,[0m
+                             [1mchar *restrict [4m[22mbuf[24m[1m, size_t [4m[22mbufsize[24m[1m);[0m
+       [1mbool ss8_copy_to_bytes(ss8str const *restrict [4m[22mstr[24m[1m,[0m
+                             [1mchar *restrict [4m[22mbuf[24m[1m, size_t [4m[22mbufsize[24m[1m);[0m
 
-<b>DESCRIPTION</b>
-       <b>ss8_copy_to_cstr</b>() copies the contents of the <b>ss8str</b> at <i>str</i> to the buf‐
-       fer located at <i>buf</i>, and appends a null byte.  At most <i>bufsize</i> bytes are
-       written, including the null terminator; if <i>bufsize</i> is not sufficient to
-       hold the string, the copied string is truncated at <i>bufsize</i> <b>- 1</b> bytes.
+[1mDESCRIPTION[0m
+       [1mss8_copy_to_cstr[22m() copies the contents of the  [1mss8str  [22mat  [4mstr[24m  to  the
+       buffer  located at [4mbuf[24m, and appends a null byte.  At most [4mbufsize[24m bytes
+       are written, including the null terminator; if [4mbufsize[24m  is  not  suffi‐
+       cient to hold the string, the copied string is truncated at [4mbufsize[24m [1m- 1[0m
+       bytes.
 
-       Behavior  is  undefined unless <i>str</i> is a valid <b>ss8str</b> object, <i>buf</i> points
-       to a buffer of at least <i>bufsize</i> bytes that does not  overlap  with  the
-       internal buffer of <i>str</i>, and <i>bufsize</i> is greater than or equal to 1.
+       Behavior  is  undefined unless [4mstr[24m is a valid [1mss8str [22mobject, [4mbuf[24m points
+       to a buffer of at least [4mbufsize[24m bytes that does not  overlap  with  the
+       internal buffer of [4mstr[24m, and [4mbufsize[24m is greater than or equal to 1.
 
-       <b>ss8_copy_to_bytes</b>()  copies  the  contents  of the <b>ss8str</b> at <i>str</i> to the
-       buffer located at <i>buf</i>.  No null terminator is appended.  At  most  <i>buf‐</i>
-       <i>size</i>  bytes  are  written;  if  <i>bufsize</i>  is  not sufficient to hold the
-       string, the copied string is truncated at <i>bufsize</i> bytes.
+       [1mss8_copy_to_bytes[22m()  copies  the  contents  of the [1mss8str [22mat [4mstr[24m to the
+       buffer located at [4mbuf[24m.  No null terminator is appended.  At  most  [4mbuf‐[0m
+       [4msize[24m  bytes  are  written;  if  [4mbufsize[24m  is  not sufficient to hold the
+       string, the copied string is truncated at [4mbufsize[24m bytes.
 
-       Behavior is undefined unless <i>str</i> is  a  valid  <b>ss8str</b>  object  and  <i>buf</i>
-       points to a buffer of at least <i>bufsize</i> bytes that does not overlap with
-       the internal buffer of <i>str</i>.
+       Behavior is undefined unless [4mstr[24m is  a  valid  [1mss8str  [22mobject  and  [4mbuf[0m
+       points to a buffer of at least [4mbufsize[24m bytes that does not overlap with
+       the internal buffer of [4mstr[24m.
 
-<b>RETURN VALUE</b>
-       <b>ss8_copy_to_cstr</b>() and <b>ss8_copy_to_bytes</b>() return <b>true</b> if the whole  of
-       the string <i>str</i> was copied.  If the string had to be truncated, they re‐
-       turn <b>false</b>.
+[1mRETURN VALUE[0m
+       [1mss8_copy_to_cstr[22m()  and [1mss8_copy_to_bytes[22m() return [1mtrue [22mif the whole of
+       the string [4mstr[24m was copied.  If the string had to be truncated, they re‐
+       turn [1mfalse[22m.
 
-<b>SEE ALSO</b>
-       <a href="../man3/ss8_copy.3.html"><b>ss8_copy_bytes</b>(3)</a>, <a href="../man3/ss8_copy.3.html"><b>ss8_copy_cstr</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+[1mSEE ALSO[0m
+       [1mss8_copy_bytes[22m(3), [1mss8_copy_cstr[22m(3), [1mssstr[22m(7)
 
-
-
-SSSTR                             2023-12-30               SS8_COPY_TO_CSTR(3)
+SSSTR                             2023-12-30               [4mSS8_COPY_TO_CSTR[24m(3)
 </pre>
 </body>
 </html>

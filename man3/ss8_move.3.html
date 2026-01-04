@@ -6,53 +6,49 @@
 </head>
 <body>
 <pre>
-SS8_MOVE(3)                      <a href="../man7/ssstr.7.html">Ssstr Manual</a>                      SS8_MOVE(3)
+[4mSS8_MOVE[24m(3)                      Ssstr Manual                      [4mSS8_MOVE[24m(3)
 
-
-
-<b>NAME</b>
+[1mNAME[0m
        ss8_move, ss8_move_destroy - move one ssstr byte string to another
 
-<b>SYNOPSIS</b>
-       <b>#include &lt;ss8str.h&gt;</b>
+[1mSYNOPSIS[0m
+       [1m#include &lt;ss8str.h&gt;[0m
 
-       <b>ss8str *ss8_move(ss8str *restrict</b> <i>dest</i><b>, ss8str *restrict</b> <i>src</i><b>);</b>
-       <b>ss8str *ss8_move_destroy(ss8str *restrict</b> <i>dest</i><b>,</b>
-                                <b>ss8str *restrict</b> <i>src</i><b>);</b>
+       [1mss8str *ss8_move(ss8str *restrict [4m[22mdest[24m[1m, ss8str *restrict [4m[22msrc[24m[1m);[0m
+       [1mss8str *ss8_move_destroy(ss8str *restrict [4m[22mdest[24m[1m,[0m
+                                [1mss8str *restrict [4m[22msrc[24m[1m);[0m
 
-<b>DESCRIPTION</b>
-       <b>ss8_move</b>() takes the value of the <b>ss8str</b> object at <i>src</i> and places it in
-       the <b>ss8str</b> object at <i>dest</i>.  After the move, the <b>ss8str</b>  object  at  <i>src</i>
+[1mDESCRIPTION[0m
+       [1mss8_move[22m() takes the value of the [1mss8str [22mobject at [4msrc[24m and places it in
+       the  [1mss8str  [22mobject  at [4mdest[24m.  After the move, the [1mss8str [22mobject at [4msrc[0m
        remains valid but its value becomes indeterminate.
 
-       <b>ss8_move_destroy</b>() is like <b>ss8_move</b>(), except that the <b>ss8str</b> object at
-       <i>src</i> becomes invalid (destroyed) after the move; that is,
+       [1mss8_move_destroy[22m() is like [1mss8_move[22m(), except that the [1mss8str [22mobject at
+       [4msrc[24m becomes invalid (destroyed) after the move; that is,
 
-           <b>ss8_move_destroy(</b><i>dest</i><b>,</b> <i>src</i><b>);</b>
+           [1mss8_move_destroy([4m[22mdest[24m[1m, [4m[22msrc[24m[1m);[0m
 
        is equivalent to
 
-           <b>ss8_move(</b><i>dest</i><b>,</b> <i>src</i><b>);</b>
-           <b>ss8_destroy(</b><i>src</i><b>);</b>
+           [1mss8_move([4m[22mdest[24m[1m, [4m[22msrc[24m[1m);[0m
+           [1mss8_destroy([4m[22msrc[24m[1m);[0m
 
-       For both functions, behavior is undefined unless <i>dest</i> and <i>src</i> point  to
-       valid and distinct <b>ss8str</b> objects.
+       For both functions, behavior is undefined unless [4mdest[24m and [4msrc[24m point  to
+       valid and distinct [1mss8str [22mobjects.
 
        No memory allocation is performed, but deallocation may be performed.
 
-<b>RETURN VALUE</b>
-       <b>ss8_move</b>() and <b>ss8_move_destroy</b>() return <i>dest</i>.
+[1mRETURN VALUE[0m
+       [1mss8_move[22m() and [1mss8_move_destroy[22m() return [4mdest[24m.
 
-<b>NOTES</b>
-       Care  should  be taken not to use the value of the <b>ss8str</b> object at <i>src</i>
-       after the move.  It must still be destroyed in the case of <b>ss8_move</b>().
+[1mNOTES[0m
+       Care  should  be taken not to use the value of the [1mss8str [22mobject at [4msrc[0m
+       after the move.  It must still be destroyed in the case of [1mss8_move[22m().
 
-<b>SEE ALSO</b>
-       <a href="../man3/ss8_copy.3.html"><b>ss8_copy</b>(3)</a>, <a href="../man3/ss8_init.3.html"><b>ss8_destroy</b>(3)</a>, <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move</b>(3)</a>, <a href="../man3/ss8_swap.3.html"><b>ss8_swap</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+[1mSEE ALSO[0m
+       [1mss8_copy[22m(3), [1mss8_destroy[22m(3), [1mss8_init_move[22m(3), [1mss8_swap[22m(3), [1mssstr[22m(7)
 
-
-
-SSSTR                             2023-12-30                       SS8_MOVE(3)
+SSSTR                             2023-12-30                       [4mSS8_MOVE[24m(3)
 </pre>
 </body>
 </html>

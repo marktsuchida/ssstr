@@ -6,65 +6,61 @@
 </head>
 <body>
 <pre>
-SS8_STARTS_WITH(3)               <a href="../man7/ssstr.7.html">Ssstr Manual</a>               SS8_STARTS_WITH(3)
+[4mSS8_STARTS_WITH[24m(3)               Ssstr Manual               [4mSS8_STARTS_WITH[24m(3)
 
-
-
-<b>NAME</b>
+[1mNAME[0m
        ss8_starts_with,      ss8_starts_with_cstr,      ss8_starts_with_bytes,
        ss8_starts_with_ch,         ss8_ends_with,          ss8_ends_with_cstr,
        ss8_ends_with_bytes,  ss8_ends_with_ch  - check if an ssstr byte string
        has a prefix or suffix
 
-<b>SYNOPSIS</b>
-       <b>#include &lt;ss8str.h&gt;</b>
+[1mSYNOPSIS[0m
+       [1m#include &lt;ss8str.h&gt;[0m
 
-       <b>bool ss8_starts_with(ss8str const *</b><i>str</i><b>, ss8str const *</b><i>prefix</i><b>);</b>
-       <b>bool ss8_starts_with_cstr(ss8str const *</b><i>str</i><b>, char const *</b><i>prefix</i><b>);</b>
-       <b>bool ss8_starts_with_bytes(ss8str const *</b><i>str</i><b>,</b>
-                                <b>char const *</b><i>prefix</i><b>, size_t</b> <i>prefixlen</i><b>);</b>
-       <b>bool ss8_starts_with_ch(ss8str const *</b><i>str</i><b>, char</b> <i>ch</i><b>);</b>
+       [1mbool ss8_starts_with(ss8str const *[4m[22mstr[24m[1m, ss8str const *[4m[22mprefix[24m[1m);[0m
+       [1mbool ss8_starts_with_cstr(ss8str const *[4m[22mstr[24m[1m, char const *[4m[22mprefix[24m[1m);[0m
+       [1mbool ss8_starts_with_bytes(ss8str const *[4m[22mstr[24m[1m,[0m
+                                [1mchar const *[4m[22mprefix[24m[1m, size_t [4m[22mprefixlen[24m[1m);[0m
+       [1mbool ss8_starts_with_ch(ss8str const *[4m[22mstr[24m[1m, char [4m[22mch[24m[1m);[0m
 
-       <b>bool ss8_ends_with(ss8str const *</b><i>str</i><b>, ss8str const *</b><i>suffix</i><b>);</b>
-       <b>bool ss8_ends_with_cstr(ss8str const *</b><i>str</i><b>, char const *</b><i>suffix</i><b>);</b>
-       <b>bool ss8_ends_with_bytes(ss8str const *</b><i>str</i><b>, char const *</b><i>suffix</i><b>,</b>
-                                <b>size_t</b> <i>suffixlen</i><b>);</b>
-       <b>bool ss8_ends_with_ch(ss8str const *</b><i>str</i><b>, char</b> <i>ch</i><b>);</b>
+       [1mbool ss8_ends_with(ss8str const *[4m[22mstr[24m[1m, ss8str const *[4m[22msuffix[24m[1m);[0m
+       [1mbool ss8_ends_with_cstr(ss8str const *[4m[22mstr[24m[1m, char const *[4m[22msuffix[24m[1m);[0m
+       [1mbool ss8_ends_with_bytes(ss8str const *[4m[22mstr[24m[1m, char const *[4m[22msuffix[24m[1m,[0m
+                                [1msize_t [4m[22msuffixlen[24m[1m);[0m
+       [1mbool ss8_ends_with_ch(ss8str const *[4m[22mstr[24m[1m, char [4m[22mch[24m[1m);[0m
 
-<b>DESCRIPTION</b>
-       <b>ss8_starts_with</b>() tests whether the <b>ss8str</b> at <i>str</i> contains  the  prefix
-       equal  to  the <b>ss8str</b> at <i>prefix</i>.  Behavior is undefined unless both <i>str</i>
-       and <i>prefix</i> point to valid <b>ss8str</b> objects.
+[1mDESCRIPTION[0m
+       [1mss8_starts_with[22m() tests whether the [1mss8str [22mat [4mstr[24m contains  the  prefix
+       equal  to  the [1mss8str [22mat [4mprefix[24m.  Behavior is undefined unless both [4mstr[0m
+       and [4mprefix[24m point to valid [1mss8str [22mobjects.
 
-       <b>ss8_starts_with_cstr</b>() tests whether the <b>ss8str</b>  at  <i>str</i>  contains  the
-       prefix  equal  to  the null-terminated byte string <i>prefix</i>.  Behavior is
-       undefined unless <i>str</i> points to a valid <b>ss8str</b> object and  <i>prefix</i>  is  a
+       [1mss8_starts_with_cstr[22m() tests whether the [1mss8str  [22mat  [4mstr[24m  contains  the
+       prefix  equal  to  the null-terminated byte string [4mprefix[24m.  Behavior is
+       undefined unless [4mstr[24m points to a valid [1mss8str [22mobject and  [4mprefix[24m  is  a
        null-terminated byte string.
 
-       <b>ss8_starts_with_bytes</b>()  tests  whether  the <b>ss8str</b> at <i>str</i> contains the
-       prefix equal to the byte string of length <i>prefixlen</i> located at  <i>prefix</i>.
-       Behavior  is  undefined  unless <i>str</i> points to a valid <b>ss8str</b> object and
-       <i>prefix</i> is not NULL and points to an array of at least <i>prefixlen</i> bytes.
+       [1mss8_starts_with_bytes[22m()  tests  whether  the [1mss8str [22mat [4mstr[24m contains the
+       prefix equal to the byte string of length [4mprefixlen[24m located at  [4mprefix[24m.
+       Behavior  is  undefined  unless [4mstr[24m points to a valid [1mss8str [22mobject and
+       [4mprefix[24m is not NULL and points to an array of at least [4mprefixlen[24m bytes.
 
-       <b>ss8_starts_with_ch</b>() tests whether the first byte of the <b>ss8str</b> at  <i>str</i>
-       is  equal  to  <i>ch</i>.   Behavior is undefined unless <i>str</i> points to a valid
-       <b>ss8str</b> object.
+       [1mss8_starts_with_ch[22m() tests whether the first byte of the [1mss8str [22mat  [4mstr[0m
+       is  equal  to  [4mch[24m.   Behavior is undefined unless [4mstr[24m points to a valid
+       [1mss8str [22mobject.
 
-       <b>ss8_ends_with</b>(),   <b>ss8_ends_with_cstr</b>(),   <b>ss8_ends_with_bytes</b>(),   and
-       <b>ss8_ends_with_ch</b>() are like the corresponding functions with <b>starts</b> in‐
-       stead of <b>ends</b> in the name, except that they  test  whether  the  string
+       [1mss8_ends_with[22m(),   [1mss8_ends_with_cstr[22m(),   [1mss8_ends_with_bytes[22m(),   and
+       [1mss8_ends_with_ch[22m() are like the corresponding functions with [1mstarts [22min‐
+       stead  of  [1mends  [22min  the name, except that they test whether the string
        contains the given suffix, rather than prefix.
 
-<b>RETURN VALUE</b>
-       All  8 functions return <b>true</b> if the prefix or suffix matches; otherwise
-       they return <b>false</b>.
+[1mRETURN VALUE[0m
+       All 8 functions return [1mtrue [22mif the prefix or suffix matches;  otherwise
+       they return [1mfalse[22m.
 
-<b>SEE ALSO</b>
-       <a href="../man3/ss8_contains.3.html"><b>ss8_contains</b>(3)</a>, <a href="../man3/ss8_equals.3.html"><b>ss8_equals</b>(3)</a>, <a href="../man3/ss8_find.3.html"><b>ss8_find</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
+[1mSEE ALSO[0m
+       [1mss8_contains[22m(3), [1mss8_equals[22m(3), [1mss8_find[22m(3), [1mssstr[22m(7)
 
-
-
-SSSTR                             2023-12-30                SS8_STARTS_WITH(3)
+SSSTR                             2023-12-30                [4mSS8_STARTS_WITH[24m(3)
 </pre>
 </body>
 </html>
