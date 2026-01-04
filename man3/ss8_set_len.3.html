@@ -37,7 +37,7 @@
        ity is never zero, an appropriate length greater than zero is chosen if
        the current length is zero.
 
-       The amount by which the lengh is increased is limited to no  more  than
+       The amount by which the length is increased is limited to no more  than
        [4mmaxdelta[24m,  and  the  final  length  is  limited to no more than [4mmaxlen[24m.
        These two parameters can be set to [1mSIZE_MAX [22mto request the maximum  al‐
        lowed limits.
@@ -52,7 +52,7 @@
 
        is equivalent to
 
-           [1mss8_set_len([4m[22mstr[24m[1m, strlen(ss8_cstr([4m[22mstr[24m[1m));[0m
+           [1mss8_set_len([4m[22mstr[24m[1m, strlen(ss8_cstr([4m[22mstr[24m[1m)));[0m
 
        No memory allocation or deallocation is performed.
 
@@ -146,7 +146,7 @@
 
            ss8_destroy(&amp;line);
 
-       The  last  example is inteded for text input that does not contain null
+       The  last example is intended for text input that does not contain null
        bytes.  If null bytes do occur, the read line  will  be  silently  cor‐
        rupted but the program will not crash or leak memory.  Other edge cases
        occur  if  the  line  is  longer  than  [1mSIZE_MAX - 1 [22mbytes or the input

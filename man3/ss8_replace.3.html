@@ -30,21 +30,21 @@
 
 [1mDESCRIPTION[0m
        [1mss8_replace[22m()  replaces the substring of the [1mss8str [22mat [4mdest[24m starting at
-       byte position [4mstart[24m and having length up to [4mlen[24m (limited by the  length
-       of the destination string) with the contents of the [1mss8str [22mat [4msrc[24m.  Be‐
-       havior  is  undefined  unless  [4mdest[24m and [4msrc[24m point to valid and distinct
-       [1mss8str [22mobjects and [4mpos[24m is less than or equal to the length of the  des‐
-       tination string.
+       byte position [4mpos[24m and having length up to [4mlen[24m (limited by the length of
+       the destination string) with the contents of the [1mss8str [22mat [4msrc[24m.  Behav‐
+       ior is undefined unless [4mdest[24m and [4msrc[24m point to valid and distinct [1mss8str[0m
+       objects and [4mpos[24m is less than or equal to the length of the  destination
+       string.
 
        [1mss8_replace_cstr[22m()  replaces the substring of the [1mss8str [22mat [4mdest[24m start‐
-       ing at byte position [4mstart[24m and having length up to [4mlen[24m with  the  null-
-       terminated  byte  string [4msrc[24m.  Behavior is undefined unless [4mdest[24m points
-       to a valid [1mss8str [22mobject, [4mpos[24m is less than or equal to  the  length  of
-       the  destination  string, and [4msrc[24m is a null-terminated byte string that
-       does not overlap with the internal buffer of [4mdest[24m.
+       ing at byte position [4mpos[24m and having length up to [4mlen[24m with the null-ter‐
+       minated byte string [4msrc[24m.  Behavior is undefined unless [4mdest[24m points to a
+       valid [1mss8str [22mobject, [4mpos[24m is less than or equal to  the  length  of  the
+       destination  string, and [4msrc[24m is a null-terminated byte string that does
+       not overlap with the internal buffer of [4mdest[24m.
 
        [1mss8_replace_bytes[22m() replaces the substring of the [1mss8str [22mat [4mdest[24m start‐
-       ing at byte position [4mstart[24m and having length up to [4mlen[24m  with  the  byte
+       ing at byte position [4mpos[24m and having length up  to  [4mlen[24m  with  the  byte
        string  of  length [4msrclen[24m located at [4msrc[24m.  Behavior is undefined unless
        [4mdest[24m points to a valid [1mss8str [22mobject, [4mpos[24m is less than or equal to  the
        length  of the destination string, and [4msrc[24m is not NULL and points to an
@@ -52,15 +52,15 @@
        buffer of [4mdest[24m.
 
        [1mss8_replace_ch[22m()  replaces the substring of the [1mss8str [22mat [4mdest[24m starting
-       at byte position [4mstart[24m and having length up to [4mlen[24m with the single byte
-       [4mch[24m.  Behavior is undefined unless [4mdest[24m points to a valid [1mss8str  [22mobject
+       at byte position [4mpos[24m and having length up to [4mlen[24m with the  single  byte
+       [4mch[24m.   Behavior is undefined unless [4mdest[24m points to a valid [1mss8str [22mobject
        and [4mpos[24m is less than or equal to the length of the destination string.
 
-       [1mss8_replace_ch_n[22m()  replaces the substring of the [1mss8str [22mat [4mdest[24m start‐
-       ing at byte position [4mstart[24m and having  length  up  to  [4mlen[24m  with  [4mcount[0m
-       copies  of  the byte [4mch[24m.  Behavior is undefined unless [4mdest[24m points to a
-       valid [1mss8str [22mobject and [4mpos[24m is less than or equal to the length of  the
-       destination string.
+       [1mss8_replace_ch_n[22m() replaces the substring of the [1mss8str [22mat [4mdest[24m  start‐
+       ing  at byte position [4mpos[24m and having length up to [4mlen[24m with [4mcount[24m copies
+       of the byte [4mch[24m.  Behavior is undefined unless [4mdest[24m points  to  a  valid
+       [1mss8str [22mobject and [4mpos[24m is less than or equal to the length of the desti‐
+       nation string.
 
 [1mRETURN VALUE[0m
        All 5 functions return [4mdest[24m.
