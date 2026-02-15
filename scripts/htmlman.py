@@ -215,6 +215,7 @@ def add_html_header_footer(src, text):
 <head>
   <meta charset="utf-8">
   <title>{title}</title>
+  <style>pre {{ width: fit-content; margin: 0 auto; }}</style>
 </head>
 <body>
 {text}
