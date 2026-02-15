@@ -6,11 +6,57 @@
 # of examples with test sources.
 # Run `python checkmanpages.py` to see usage.
 
+from __future__ import annotations
+
 import difflib
 import hashlib
 import os.path
 import shlex
 import sys
+from dataclasses import dataclass, field
+
+
+@dataclass
+class SoPage:
+    path: str
+    primary: str
+    section: str
+    so: str
+
+
+@dataclass
+class ParsedPage:
+    path: str
+    primary: str
+    section: str
+    header_title: str
+    header_section: str
+    header_date: str
+    header_source: str
+    header_manual: str
+    sections: list[tuple[str, list[str]]]
+
+
+@dataclass
+class CheckedPage:
+    path: str
+    primary: str
+    section: str
+    header_date: str
+    name_items: list[str]
+    name_brief: str
+    see_also: list[tuple[str, str]]
+
+
+@dataclass
+class CheckedFuncPage(CheckedPage):
+    prototypes: list[str] = field(default_factory=list)
+    snippets: list[str] | None = None
+
+
+@dataclass
+class CheckedIntroPage(CheckedPage):
+    functions: set[str] = field(default_factory=set)
 
 
 def unescape_roff(s):
@@ -33,11 +79,11 @@ def split_sections(lines, request=".SH"):
     return sections
 
 
-def read_page(path):
-    page = dict(path=path)
+def read_page(path: str) -> SoPage | ParsedPage:
+    filename = os.path.basename(path)
+    primary, section = filename.split(".")
     with open(path) as f:
         lines = f.readlines()
-        page["lines"] = lines
         assert len(lines), f"{path} has no lines"
         assert lines[-1].endswith(
             "\n"
@@ -51,44 +97,86 @@ def read_page(path):
             assert (
                 len(firstline.split()) == 2
             ), ".so must be followed by one word"
-            page["so"] = firstline.split()[1]
             assert (
                 len(lines) == i + 1
             ), "file with .so must not have additional lines"
-            return page
+            return SoPage(
+                path=path,
+                primary=primary,
+                section=section,
+                so=firstline.split()[1],
+            )
 
         assert firstline.startswith(".TH "), "first line must be .so or .TH"
         items = shlex.split(firstline, posix=False)
         assert (
             len(items) == 6
         ), ".TH must be followed by 5 possibly-quoted words"
-        page["header_title"] = items[1]
-        page["header_section"] = items[2]
-        page["header_date"] = items[3]
-        page["header_source"] = items[4]
-        page["header_manual"] = items[5]
-        page["sections"] = split_sections(lines[i + 1 :])
-    return page
+        return ParsedPage(
+            path=path,
+            primary=primary,
+            section=section,
+            header_title=items[1],
+            header_section=items[2],
+            header_date=items[3],
+            header_source=items[4],
+            header_manual=items[5],
+            sections=split_sections(lines[i + 1 :]),
+        )
 
 
-def check_NAME(page):
-    oneline = " ".join(line.strip() for line in page["NAME"])
+def _validate_header(page: ParsedPage) -> None:
+    assert page.section == page.header_section
+    assert page.primary.upper() == page.header_title
+    assert page.header_source == "SSSTR"
+    assert page.header_manual == '"Ssstr Manual"'
+
+
+def _extract_sections(
+    sections: list[tuple[str, list[str]]],
+    required_first: list[str],
+    required_last: list[str],
+    optional_order: list[str],
+) -> dict[str, list[str]]:
+    sections = sections[:]
+    result: dict[str, list[str]] = {}
+    for name in required_first:
+        heading, lines = sections.pop(0)
+        assert heading == name, f"expected section {name}, found {heading}"
+        result[name] = lines
+    for name in reversed(required_last):
+        heading, lines = sections.pop()
+        assert heading == name
+        result[name] = lines
+    for name in optional_order:
+        if sections and sections[0][0] == name:
+            result[name] = sections.pop(0)[1]
+    section_names = [s[0] for s in sections]
+    if section_names:
+        print(f"Unrecognized sections: {section_names}")
+    assert not section_names
+    return result
+
+
+def _check_name(
+    lines: list[str], primary: str, section: str
+) -> tuple[list[str], str]:
+    oneline = " ".join(line.strip() for line in lines)
     assert len(oneline.split(" \\- ")) == 2
     items, brief = oneline.split(" \\- ")
     items = items.split(", ")
     for item in items:
         assert " " not in item
         assert "," not in item
-        if page["section"] == "3":
+        if section == "3":
             assert item.startswith("ss8_")
     assert len(items)
-    assert items[0] == page["primary"]
-    page["NAME_brief"] = brief
-    page["NAME_items"] = items
+    assert items[0] == primary
+    return items, brief
 
 
-def check_SYNOPSIS(page):
-    lines = page["SYNOPSIS"][:]
+def _check_synopsis(lines: list[str], name_items: list[str]) -> list[str]:
+    lines = lines[:]
     assert lines.pop(0).rstrip() == ".nf"
     assert lines.pop().rstrip() == ".fi"
     assert lines.pop(0).rstrip() == ".B #include <ss8str.h>"
@@ -116,7 +204,6 @@ def check_SYNOPSIS(page):
         else:
             prototypes.append(unquoted)
     prototypes = [" ".join(proto.split()) for proto in prototypes]
-    page["prototypes"] = prototypes
     proto_names = []
     for proto in prototypes:
         assert proto.endswith(";")
@@ -125,42 +212,45 @@ def check_SYNOPSIS(page):
                 name = word.split("(", 1)[0].lstrip("*")
                 proto_names.append(name)
                 break
-    assert proto_names == page["NAME_items"]
+    assert proto_names == name_items
+    return prototypes
 
 
-def check_DESCRIPTION(page):
-    assert len(page["DESCRIPTION"])
+def _check_description(lines: list[str]) -> None:
+    assert len(lines)
 
 
-def check_RETURN_VALUE(page):
+def _check_return_value(
+    lines: list[str] | None, prototypes: list[str]
+) -> None:
     n_nonvoid_func = 0
-    for proto in page["prototypes"]:
+    for proto in prototypes:
         if proto.startswith("void ") and not proto.startswith("void *"):
             pass
         else:
             n_nonvoid_func += 1
     assert (
-        ("RETURN VALUE" in page) == (n_nonvoid_func > 0)
+        (lines is not None) == (n_nonvoid_func > 0)
     ), f"page has {n_nonvoid_func} non-void functions, mismatched with presence of RETURN VALUE section"
-    if n_nonvoid_func > 0:
-        assert len(page["RETURN VALUE"])
+    if lines is not None:
+        assert len(lines)
 
 
-def check_ERRORS(page):
-    if "ERRORS" in page:
-        assert len(page["ERRORS"])
+def _check_errors(lines: list[str] | None) -> None:
+    if lines is not None:
+        assert len(lines)
 
 
-def check_NOTES(page):
-    if "NOTES" in page:
-        assert len(page["NOTES"])
+def _check_notes(lines: list[str] | None) -> None:
+    if lines is not None:
+        assert len(lines)
 
 
-def check_EXAMPLES(page):
-    if "EXAMPLES" not in page:
-        return
-    assert len(page["EXAMPLES"])
-    lines = [line.rstrip() for line in page["EXAMPLES"]]
+def _check_examples(lines: list[str] | None) -> list[str] | None:
+    if lines is None:
+        return None
+    assert len(lines)
+    lines = [line.rstrip() for line in lines]
     snippets = []
     while True:
         try:
@@ -176,12 +266,12 @@ def check_EXAMPLES(page):
         )
         lines = lines[ee_lineno + 1 :]
     assert len(snippets)
-    page["snippets"] = snippets
+    return snippets
 
 
-def check_SEE_ALSO(page):
+def _check_see_also(lines: list[str], section: str) -> list[tuple[str, str]]:
     items = []
-    for line in page["SEE ALSO"]:
+    for line in lines:
         assert line.startswith(".BR ")
         items.append(line[len(".BR ") :].rstrip())
     assert len(items)
@@ -192,12 +282,12 @@ def check_SEE_ALSO(page):
     item_sect = []
     for item in items:
         assert len(item.split()) == 2, f"{item}"
-        name, section = item.split()
-        assert section.startswith("(") and section.endswith(")")
-        section = section[1:-1]
-        assert section in [str(i) for i in range(1, 9)]
-        item_sect.append((name, section))
-    if page["section"] == "3":
+        name, sect = item.split()
+        assert sect.startswith("(") and sect.endswith(")")
+        sect = sect[1:-1]
+        assert sect in [str(i) for i in range(1, 9)]
+        item_sect.append((name, sect))
+    if section == "3":
         assert item_sect[-1] == (
             "ssstr",
             "7",
@@ -210,7 +300,7 @@ def check_SEE_ALSO(page):
     assert (
         item_sect == sorted_item_sect
     ), f"found SEE ALSO items {item_sect}; should be sorted {sorted_item_sect}"
-    page["see_also"] = item_sect
+    return item_sect
 
 
 def parse_function_variant_suffixes(lines):
@@ -337,63 +427,74 @@ def parse_function_lines(lines):
     return funcs
 
 
-def check_FUNCTIONS(page):
-    functions = parse_function_lines(page["FUNCTIONS"])
-    page["functions"] = functions
+def _check_functions(lines: list[str]) -> set[str]:
+    return parse_function_lines(lines)
 
 
-def check_page_internally_common(page):
-    assert page["section"] == page["header_section"]
-    assert page["primary"].upper() == page["header_title"]
-    assert page["header_source"] == "SSSTR"
-    assert page["header_manual"] == '"Ssstr Manual"'
-    sections = page["sections"][:]
-    for required in ("NAME", "SYNOPSIS", "DESCRIPTION"):
-        heading, lines = sections.pop(0)
-        assert (
-            heading == required
-        ), f"expected section {required}, found {heading}"
-        page[heading] = lines
-    for required_last in ("SEE ALSO",):
-        heading, lines = sections.pop()
-        assert heading == required_last
-        page[heading] = lines
-    return sections
+def check_func_page(page: ParsedPage) -> CheckedFuncPage:
+    _validate_header(page)
+    assert page.primary.startswith("ss8_")
+    sects = _extract_sections(
+        page.sections,
+        required_first=["NAME", "SYNOPSIS", "DESCRIPTION"],
+        required_last=["SEE ALSO"],
+        optional_order=["RETURN VALUE", "ERRORS", "NOTES", "BUGS", "EXAMPLES"],
+    )
+    name_items, name_brief = _check_name(
+        sects["NAME"], page.primary, page.section
+    )
+    prototypes = _check_synopsis(sects["SYNOPSIS"], name_items)
+    _check_description(sects["DESCRIPTION"])
+    _check_return_value(sects.get("RETURN VALUE"), prototypes)
+    _check_errors(sects.get("ERRORS"))
+    _check_notes(sects.get("NOTES"))
+    snippets = _check_examples(sects.get("EXAMPLES"))
+    see_also = _check_see_also(sects["SEE ALSO"], page.section)
+    return CheckedFuncPage(
+        path=page.path,
+        primary=page.primary,
+        section=page.section,
+        header_date=page.header_date,
+        name_items=name_items,
+        name_brief=name_brief,
+        see_also=see_also,
+        prototypes=prototypes,
+        snippets=snippets,
+    )
 
 
-def check_func_page_internally(page):
-    sections = check_page_internally_common(page)
-    assert page["primary"].startswith("ss8_")
-    for optional in ("RETURN VALUE", "ERRORS", "NOTES", "BUGS", "EXAMPLES"):
-        if len(sections) and sections[0][0] == optional:
-            page[optional] = sections.pop(0)[1]
-    section_names = [s[0] for s in sections]
-    if len(section_names):
-        print(f"Unrecognized sections: {section_names}")
-    assert not len(section_names)
-    check_NAME(page)
-    check_SYNOPSIS(page)
-    check_DESCRIPTION(page)
-    check_RETURN_VALUE(page)
-    check_ERRORS(page)
-    check_NOTES(page)
-    check_EXAMPLES(page)
-    check_SEE_ALSO(page)
+def check_intro_page(page: ParsedPage) -> CheckedIntroPage:
+    _validate_header(page)
+    assert page.primary == "ssstr"
+    sects = _extract_sections(
+        page.sections,
+        required_first=["NAME", "SYNOPSIS", "DESCRIPTION"],
+        required_last=["SEE ALSO"],
+        optional_order=["FUNCTIONS"],
+    )
+    assert "FUNCTIONS" in sects
+    name_items, name_brief = _check_name(
+        sects["NAME"], page.primary, page.section
+    )
+    _check_description(sects["DESCRIPTION"])
+    functions = _check_functions(sects["FUNCTIONS"])
+    see_also = _check_see_also(sects["SEE ALSO"], page.section)
+    return CheckedIntroPage(
+        path=page.path,
+        primary=page.primary,
+        section=page.section,
+        header_date=page.header_date,
+        name_items=name_items,
+        name_brief=name_brief,
+        see_also=see_also,
+        functions=functions,
+    )
 
 
-def check_intro_page_internally(page):
-    sections = check_page_internally_common(page)
-    assert page["primary"] == "ssstr"
-    assert len(sections) == 1 and sections[0][0] == "FUNCTIONS"
-    page["FUNCTIONS"] = sections[0][1]
-    check_NAME(page)
-    check_DESCRIPTION(page)
-    check_FUNCTIONS(page)
-    check_SEE_ALSO(page)
-
-
-def check_so_target(so_page, pages, section):
-    target = so_page["so"]
+def check_so_target(
+    so_page: SoPage, pages: dict[str, CheckedPage], section: str
+) -> None:
+    target = so_page.so
     dir, name = target.split("/")
     assert dir == f"man{section}"
     suffix = f".{section}"
@@ -401,45 +502,51 @@ def check_so_target(so_page, pages, section):
     name = name[: -len(suffix)]
     assert name in pages
     target_page = pages[name]
-    assert name in target_page["NAME_items"]
+    assert name in target_page.name_items
 
 
-def check_nonprimaries_have_so(page, so_pages, section):
-    primary = page["NAME_items"][0]
+def check_nonprimaries_have_so(
+    page: CheckedPage, so_pages: dict[str, SoPage], section: str
+) -> None:
+    primary = page.name_items[0]
     so_target = f"man{section}/{primary}.{section}"
-    nonprimaries = page["NAME_items"][1:]
+    nonprimaries = page.name_items[1:]
     for nonp in nonprimaries:
         assert (
             nonp in so_pages
         ), f"need .so page for {nonp} with target {so_target}"
-        assert so_pages[nonp]["so"] == so_target
+        assert so_pages[nonp].so == so_target
 
 
-def check_see_also_targets(page, pages, so_pages):
-    for item, section in page["see_also"]:
+def check_see_also_targets(
+    page: CheckedPage,
+    pages: dict[str, CheckedFuncPage],
+    so_pages: dict[str, SoPage],
+) -> None:
+    for item, section in page.see_also:
         if item.startswith("ss8_") and section == "3":
-            path = page["path"]
+            path = page.path
             assert (
                 item in pages or item in so_pages
             ), f"page not found for {item} listed in SEE ALSO of {path}"
 
 
-def check_dates_equal(pages):
+def check_dates_equal(pages: list[CheckedPage]) -> None:
     date = None
     for page in pages:
         if date is None:
-            date = page["header_date"]
+            date = page.header_date
         else:
-            path = page["path"]
+            path = page.path
             assert (
-                page["header_date"] == date
+                page.header_date == date
             ), f"date in {path} differs from other pages"
 
 
-def check_duplicate_items(pages):
+def check_duplicate_items(pages: dict[str, CheckedFuncPage]) -> None:
     all_items = set()
     for page in pages.values():
-        for item in page["NAME_items"]:
+        for item in page.name_items:
             assert (
                 item not in all_items
             ), f"{item} appears more than once in manual pages"
@@ -447,58 +554,50 @@ def check_duplicate_items(pages):
 
 
 def check_manpages(paths):
-    func_pages = {}
-    func_so_pages = {}
-    intro_pages = {}
-    intro_so_pages = {}
+    func_pages: dict[str, CheckedFuncPage] = {}
+    func_so_pages: dict[str, SoPage] = {}
+    intro_so_pages: dict[str, SoPage] = {}
+    intro_page: CheckedIntroPage | None = None
     for path in paths:
-        filename = os.path.basename(path)
-        primary, section = filename.split(".")
-        if section == "3":
-            pages = func_pages
-            so_pages = func_so_pages
-            check_internally = check_func_page_internally
-        elif section == "7":
-            pages = intro_pages
-            so_pages = intro_so_pages
-            check_internally = check_intro_page_internally
-        else:
-            assert False, f"unrecognized manual section {section}"
-
         try:
-            page = read_page(path)
+            raw = read_page(path)
         except BaseException:
             print(f"While reading {path}:", file=sys.stderr)
             raise
-        page["primary"] = primary
-        page["section"] = section
-        if "so" in page:
-            so_pages[primary] = page
+        if isinstance(raw, SoPage):
+            if raw.section == "3":
+                func_so_pages[raw.primary] = raw
+            elif raw.section == "7":
+                intro_so_pages[raw.primary] = raw
+            else:
+                assert False, f"unrecognized manual section {raw.section}"
         else:
             try:
-                check_internally(page)
-                pages[primary] = page
+                if raw.section == "3":
+                    func_pages[raw.primary] = check_func_page(raw)
+                elif raw.section == "7":
+                    assert intro_page is None
+                    intro_page = check_intro_page(raw)
+                else:
+                    assert False, f"unrecognized manual section {raw.section}"
             except BaseException:
                 print(f"While checking {path}:", file=sys.stderr)
                 raise
 
     for so in func_so_pages:
         check_so_target(func_so_pages[so], func_pages, "3")
+    assert intro_page is not None
     for so in intro_so_pages:
-        check_so_target(intro_so_pages[so], intro_pages, "7")
+        check_so_target(intro_so_pages[so], {"ssstr": intro_page}, "7")
 
     check_duplicate_items(func_pages)
-    assert len(intro_pages) == 1
-    intro_page = intro_pages["ssstr"]
 
     for primary in func_pages:
         check_nonprimaries_have_so(func_pages[primary], func_so_pages, "3")
         check_see_also_targets(func_pages[primary], func_pages, func_so_pages)
-    for primary in intro_pages:
-        check_nonprimaries_have_so(intro_pages[primary], intro_so_pages, "7")
-        # Do not check see also targets; on intro page they are external
+    check_nonprimaries_have_so(intro_page, intro_so_pages, "7")
 
-    all_pages = list(pages.values()) + [intro_page]
+    all_pages: list[CheckedPage] = list(func_pages.values()) + [intro_page]
     check_dates_equal(all_pages)
 
     return func_pages, intro_page
@@ -526,9 +625,11 @@ def read_header(header_path):
     return set(prototypes)
 
 
-def check_prototypes(pages, header_prototypes):
+def check_prototypes(
+    pages: dict[str, CheckedFuncPage], header_prototypes: set[str]
+) -> None:
     man_prototypes = {
-        proto for page in pages.values() for proto in page["prototypes"]
+        proto for page in pages.values() for proto in page.prototypes
     }
 
     not_in_man = header_prototypes - man_prototypes
@@ -562,8 +663,10 @@ def get_prototype_func_name(prototype):
     assert False, "failed to parse prototype"
 
 
-def check_intro_listing(intro_page, header_prototypes):
-    intro_funcs = intro_page["functions"]
+def check_intro_listing(
+    intro_page: CheckedIntroPage, header_prototypes: set[str]
+) -> None:
+    intro_funcs = intro_page.functions
     header_funcs = {get_prototype_func_name(p) for p in header_prototypes}
 
     not_in_intro = header_funcs - intro_funcs
@@ -627,16 +730,18 @@ def snippet_checksum(snippet):
     return hasher.digest()
 
 
-def check_examples(pages, example_test_paths):
+def check_examples(
+    pages: dict[str, CheckedFuncPage], example_test_paths: list[str]
+) -> None:
     test_cksums = {
         snippet_checksum(s): s for s in read_test_snippets(example_test_paths)
     }
     for page in pages.values():
-        if "snippets" not in page:
+        if page.snippets is None:
             continue
-        for snippet in page["snippets"]:
+        for snippet in page.snippets:
             man_cksum = snippet_checksum(snippet)
-            title = page["path"]
+            title = page.path
             if man_cksum not in test_cksums:
                 normsnip = normalize_snippet(snippet)
                 print(f"Snippet in {title} (normalized):", file=sys.stderr)
