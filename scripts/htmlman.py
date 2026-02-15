@@ -278,10 +278,11 @@ def generate_html(dest, src, groff, link_targets):
         if line.startswith(".so "):
             return generate_redirect(dest, src, link_targets)
 
-    # On macOS groff seems to use overprint whether we like it or not, so let's
-    # always use '-c'.
+    # grotty (groff's output post-processor) defaults to SGR escape sequences;
+    # use -P-c to get traditional overprint sequences that overprint_to_html()
+    # expects.
     nroff_result = subprocess.run(
-        [groff, "-Tutf8", "-c", "-man", src], check=True, capture_output=True
+        [groff, "-Tutf8", "-P-c", "-man", src], check=True, capture_output=True
     )
     text = nroff_result.stdout.decode()
     text = overprint_to_html(text)
