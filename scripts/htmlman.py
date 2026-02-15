@@ -2,6 +2,12 @@
 # Copyright 2022-2023 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
+# /// script
+# dependencies = [
+#     "pygments",
+# ]
+# ///
+
 # Generate static HTML pages from man pages
 
 import html
@@ -11,6 +17,10 @@ import re
 import shutil
 import subprocess
 import sys
+
+from pygments import highlight as pygmentize
+from pygments.formatters import HtmlFormatter
+from pygments.lexers import CLexer
 
 
 class CheckError(Exception):
@@ -206,30 +216,143 @@ def hyperlink_header(text, link_targets):
     return text
 
 
+def highlight_code_blocks(text):
+    tag_re = re.compile(r"</?[bia][ >]|</?[bia]$")
+    prefix = "<pre>\n"
+    suffix = "</pre>"
+    if not (text.startswith(prefix) and text.endswith(suffix)):
+        raise CheckError("expected pre-wrapped content")
+    inner = text[len(prefix) : -len(suffix)]
+    lines = inner.split("\n")
+
+    # Code in .EX blocks has no bold/italic tags and is indented 11 spaces
+    # (.SH body = 7 from groff's an macros, plus .in +4 in our sources).
+    def is_code_line(line):
+        return (
+            line
+            and not tag_re.search(line)
+            and len(line) - len(line.lstrip(" ")) >= 10
+        )
+
+    # Find maximal groups of consecutive code-or-blank lines.
+    groups = []
+    i = 0
+    while i < len(lines):
+        if is_code_line(lines[i]) or (not lines[i] and i + 1 < len(lines)):
+            start = i
+            while i < len(lines) and (is_code_line(lines[i]) or not lines[i]):
+                i += 1
+            groups.append((start, i))
+        else:
+            i += 1
+
+    # Require >= 2 code lines to skip isolated indented lines (e.g. .EX/.BI
+    # inline examples); trim surrounding blanks.
+    filtered = []
+    for start, end in groups:
+        code_count = sum(
+            1 for j in range(start, end) if is_code_line(lines[j])
+        )
+        if code_count < 2:
+            continue
+        while start < end and not lines[start]:
+            start += 1
+        while end > start and not lines[end - 1]:
+            end -= 1
+        filtered.append((start, end))
+
+    c_lexer = CLexer()
+    formatter = HtmlFormatter(nowrap=True)
+    for start, end in reversed(filtered):
+        block = "\n".join(lines[start:end])
+        plain = html.unescape(block)
+        highlighted = pygmentize(plain, c_lexer, formatter)
+        # Remove trailing newline that Pygments adds
+        if highlighted.endswith("\n"):
+            highlighted = highlighted[:-1]
+        hl_lines = highlighted.split("\n")
+        hl_lines[0] = '<code class="highlight">' + hl_lines[0]
+        hl_lines[-1] += "</code>"
+        lines[start:end] = hl_lines
+        # Merge </code> with the next line to avoid a blank line in <pre>
+        new_end = start + len(hl_lines)
+        if new_end < len(lines):
+            lines[new_end - 1] += lines[new_end]
+            del lines[new_end]
+
+    return prefix + "\n".join(lines) + suffix
+
+
+def _get_highlight_css(style, prefix):
+    css = HtmlFormatter(style=style).get_style_defs(prefix)
+    result = []
+    for line in css.splitlines():
+        if not line.startswith(prefix):
+            continue
+        line = re.sub(r"\s*/\*.*?\*/\s*$", "", line)
+        if f"{prefix} ." in line:
+            m = re.match(r"(.*\{)(.*?)(\})", line)
+            if m:
+                props = [
+                    p.strip()
+                    for p in m.group(2).split(";")
+                    if p.strip()
+                    and not p.strip().startswith("border:")
+                    and not p.strip().startswith("border ")
+                    and not p.strip().startswith("background-color:")
+                ]
+                if not props:
+                    continue
+                line = f"{m.group(1)} {'; '.join(props)} {m.group(3)}"
+        result.append(line)
+    return result
+
+
 def add_html_header_footer(src, text):
     dir, name = os.path.split(src)
     name, section = name.split(".")
     title = f"{name}({section}) &mdash; Ssstr Manual"
-    html = f"""<!DOCTYPE html>
+
+    sel = "pre code.highlight"
+    light_hl = _get_highlight_css("tango", sel)
+    dark_hl = _get_highlight_css("monokai", sel)
+
+    lines = [
+        "    body { background: #fff; color: #000; }",
+        "    pre { width: fit-content; margin: 0 auto; }",
+        "    pre b { color: #1a1a8a; }",
+        "    pre i { color: #8a1a1a; }",
+        "    pre a b, pre a i { color: inherit; }",
+        "    a { color: #0e6e6e; }",
+        "    a:visited { color: #551a8a; }",
+    ]
+    for hl in light_hl:
+        lines.append(f"    {hl}")
+    lines.append("    pre code.highlight { display: block; }")
+
+    dark_lines = [
+        "      body { background: #1a1a1a; color: #d4d4d4; }",
+        "      pre b { color: #7a9aef; }",
+        "      pre i { color: #ef7a7a; }",
+        "      a { color: #5ac8c8; }",
+        "      a:visited { color: #b07aef; }",
+    ]
+    for hl in dark_hl:
+        dark_lines.append(f"      {hl}")
+
+    lines.append("    @media (prefers-color-scheme: dark) {")
+    lines.extend(dark_lines)
+    lines.append("    }")
+
+    style = "\n".join(lines)
+
+    return f"""<!DOCTYPE html>
 <html lang="en-US">
 <head>
   <meta charset="utf-8">
   <title>{title}</title>
   <style>
-    body {{ background: #fff; color: #000; }}
-    pre {{ width: fit-content; margin: 0 auto; }}
-    pre b {{ color: #1a1a8a; }}
-    pre i {{ color: #8a1a1a; }}
-    pre a b, pre a i {{ color: inherit; }}
-    a {{ color: #0e6e6e; }}
-    a:visited {{ color: #551a8a; }}
-    @media (prefers-color-scheme: dark) {{
-      body {{ background: #1a1a1a; color: #d4d4d4; }}
-      pre b {{ color: #7a9aef; }}
-      pre i {{ color: #ef7a7a; }}
-      a {{ color: #5ac8c8; }}
-      a:visited {{ color: #b07aef; }}
-    }}
+{style}
   </style>
 </head>
 <body>
@@ -237,7 +360,6 @@ def add_html_header_footer(src, text):
 </body>
 </html>
 """
-    return html
 
 
 def generate_html(dest, src, groff, link_targets):
@@ -261,6 +383,7 @@ def generate_html(dest, src, groff, link_targets):
     text = hyperlink(text, link_targets)
     text = simplify_html_styling(text)
     text = hyperlink_header(text, link_targets)
+    text = highlight_code_blocks(text)
     text = add_html_header_footer(src, text)
     with open(dest, "w") as outfile:
         outfile.write(text)

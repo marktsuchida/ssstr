@@ -728,7 +728,7 @@ Notes:
 - Use `meson setup builddir --prefix=/path/to/install/root` to set the install
   location (default: `/usr/local`, or `C:/` on Windows).
 - Use `meson setup builddir -Ddocs=enabled` to also build and install the man
-  pages (`groff` is required).
+  pages (`groff` and [`uv`](https://docs.astral.sh/uv/) are required).
 - The CMake config is only installed if `cmake` is available.
 
 ### Using from a Meson project
@@ -786,8 +786,8 @@ ninja test
 Other build targets:
 
 - `ninja benchmark` (requires `meson configure -Dbenchmark=enabled`)
-- `ninja htmlman` (requires `groff` and `meson configure -Ddocs=enabled`)
-  generates the HTML manual pages
+- `ninja htmlman` (requires `groff`, [`uv`](https://docs.astral.sh/uv/), and
+  `meson configure -Ddocs=enabled`) generates the HTML manual pages
 
 ### Code coverage
 

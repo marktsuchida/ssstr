@@ -41,9 +41,8 @@ python_for_tests = find_program(
     required: get_option('test'),
     disabler: true,
 )
-python_for_docs = find_program(
-    'python3',
-    'python',
+uv_for_docs = find_program(
+    'uv',
     required: get_option('docs'),
     disabler: true,
 )
@@ -149,7 +148,8 @@ htmlman = custom_target(
         man7_links,
     ],
     command: [
-        python_for_docs,
+        uv_for_docs,
+        'run',
         htmlman_script,
         '@OUTPUT@',
         groff_prog,
