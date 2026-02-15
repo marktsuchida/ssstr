@@ -82,113 +82,57 @@ def generate_redirect(dest, src, link_targets):
     write_redirect(dest, target)
 
 
-def read_overprint_char(text, pos, end):
-    assert pos < end
-    assert text[pos] != "\b", f"unexpected backspace at {pos}"
-    if pos + 1 == end or text[pos + 1] != "\b":
-        return pos + 1, "R", text[pos]
-    else:
-        assert pos + 2 < end, "incomplete overprint sequence at end of text"
-        if text[pos] == "_":
-            if pos + 3 < end and text[pos + 3] == "\b":
-                assert (
-                    pos + 4 < end
-                ), "incomplete overprint sequence at end of text"
-                assert (
-                    text[pos + 2] == text[pos + 4]
-                ), f"incorrect overprint sequence at {pos}"
-                return pos + 5, "BI", text[pos + 2]
-            elif text[pos + 2] == "_":
-                return pos + 3, "B/I", "_"
-            else:
-                return pos + 3, "I", text[pos + 2]
+def sgr_to_html(text):
+    known_codes = {0, 1, 4, 22, 24}
+    parts = re.split(r"(\x1b\[[0-9;]*m)", text)
+    bold = False
+    italic = False
+    result = ["<pre>\n"]
+    for part in parts:
+        m = re.fullmatch(r"\x1b\[([0-9;]*)m", part)
+        if m:
+            codes = (
+                [int(c) for c in m.group(1).split(";") if c]
+                if m.group(1)
+                else [0]
+            )
+            for code in codes:
+                assert code in known_codes, f"unknown SGR code: {code}"
+                if code == 0:
+                    bold = False
+                    italic = False
+                elif code == 1:
+                    bold = True
+                elif code == 4:
+                    italic = True
+                elif code == 22:
+                    bold = False
+                elif code == 24:
+                    italic = False
         else:
-            assert text[pos] == text[pos + 2]
-            return pos + 3, "B", text[pos]
-
-
-def apply_html_style(style, text):
-    text = html.escape(text, quote=False)
-    ltag, rtag = {
-        "R": ("", ""),
-        "B": ("<b>", "</b>"),
-        "I": ("<i>", "</i>"),
-        "BI": ("<b><i>", "</b></i>"),
-    }[style]
-    return ltag + text + rtag
-
-
-def overprint_to_html(text):
-    # Replace streaks of '_\bx' and 'x\bx' with italic and bold, respectively
-    # (also '_\bx\bx' for bold italic).
-    # We also need to escape <, >, and &, but cannot do this first because they
-    # may be bold or italic. So we first make a list of styled chuncks, escape
-    # each chunk, and then combine.
-    # Also, '_\b_' is ambiguous (could be bold or italic). So we put
-    # underscores that are bold or italic (but not both) into their own chunk.
-    chunks = []  # (style, text) where style in ("R", "B", "I", "BI", "B/I")
-    end = len(text)
-    pos = 0
-    while pos < end:
-        pos, style, ch = read_overprint_char(text, pos, end)
-        if not chunks or chunks[-1][0] != style:
-            chunks.append((style, ch))
-        else:
-            chunks[-1] = (style, chunks[-1][1] + ch)
-
-    # Merge ambiguous chunks (bold or italic "_"s) of flanked by bold or italic
-    i = 0
-    while i < len(chunks):
-        style, text = chunks[i]
-        if style != "B/I":
-            i += 1
-            continue
-        left_style = None if i == 0 else chunks[i - 1][0]
-        right_style = None if i + 1 == len(chunks) else chunks[i + 1][0]
-        assert right_style != "B/I"
-        ambiguous = f"ambiguous underscoare style, flanked by {left_style} and {right_style}"
-        if left_style in (None, "R"):
-            if right_style in (None, "R"):
-                assert False, ambiguous
-            elif right_style in ("B", "I"):
-                underscores = chunks.pop(i)[1]
-                chunk_right = chunks[i]
-                chunks[i] = (right_style, underscores + chunk_right[1])
+            assert (
+                "\x1b" not in part
+            ), f"unexpected escape sequence in groff output: {part!r}"
+            escaped = html.escape(part, quote=False)
+            if bold and italic:
+                result.append(f"<b><i>{escaped}</i></b>")
+            elif bold:
+                result.append(f"<b>{escaped}</b>")
+            elif italic:
+                result.append(f"<i>{escaped}</i>")
             else:
-                assert False, ambiguous
-        elif right_style in (None, "R"):
-            if left_style in ("B", "I"):
-                underscores = chunks.pop(i)[1]
-                i -= 1
-                chunk_left = chunks[i]
-                chunks[i] = (left_style, chunk_left[1] + underscores)
-            else:
-                assert False, ambiguous
-        else:
-            if (left_style, right_style) in (("B", "B"), ("I", "I")):
-                underscores = chunks.pop(i)[1]
-                next_chunk = chunks.pop(i)
-                i -= 1
-                chunk_left = chunks[i]
-                chunks[i] = (
-                    left_style,
-                    chunk_left[1] + underscores + next_chunk[1],
-                )
-            else:
-                assert False, ambiguous
-        i += 1
-
-    return (
-        "<pre>\n"
-        + "".join(apply_html_style(s, t) for s, t in chunks)
-        + "</pre>"
-    )
+                result.append(escaped)
+    result.append("</pre>")
+    return "".join(result)
 
 
 def simplify_html_styling(text):
-    # This cannot undo all cases of excessive tags, but gets enough of them
+    text = re.sub(r"<b>( *)</b>", r"\1", text)
+    text = re.sub(r"<i>( *)</i>", r"\1", text)
     text = re.sub(r"</b>( *)<b>", r"\1", text)
     text = re.sub(r"</i>( *)<i>", r"\1", text)
+    text = re.sub(r"( *)</b>", r"</b>\1", text)
+    text = re.sub(r"( *)</i>", r"</i>\1", text)
     return text
 
 
@@ -278,14 +222,14 @@ def generate_html(dest, src, groff, link_targets):
         if line.startswith(".so "):
             return generate_redirect(dest, src, link_targets)
 
-    # grotty (groff's output post-processor) defaults to SGR escape sequences;
-    # use -P-c to get traditional overprint sequences that overprint_to_html()
-    # expects.
     nroff_result = subprocess.run(
-        [groff, "-Tutf8", "-P-c", "-man", src], check=True, capture_output=True
+        [groff, "-Tutf8", "-man", src], check=True, capture_output=True
     )
     text = nroff_result.stdout.decode()
-    text = overprint_to_html(text)
+    assert (
+        "\x08" not in text
+    ), "groff produced overprint (backspace) output; expected SGR sequences"
+    text = sgr_to_html(text)
     text = hyperlink(text, link_targets)
     text = simplify_html_styling(text)
     text = hyperlink_header(text, link_targets)
