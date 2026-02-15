@@ -6,9 +6,9 @@
 </head>
 <body>
 <pre>
-[4mSS8_FIND_FIRST_OF[24m(3)             Ssstr Manual             [4mSS8_FIND_FIRST_OF[24m(3)
+<i>SS8_FIND_FIRST_OF</i>(3)             Ssstr Manual             <i>SS8_FIND_FIRST_OF</i>(3)
 
-[1mNAME[0m
+<b>NAME</b>
        ss8_find_first_of,   ss8_find_first_of_cstr,   ss8_find_first_of_bytes,
        ss8_find_first_not_of,                      ss8_find_first_not_of_cstr,
        ss8_find_first_not_of_bytes,  ss8_find_last_of,  ss8_find_last_of_cstr,
@@ -16,85 +16,85 @@
        ss8_find_last_not_of_cstr,  ss8_find_last_not_of_bytes  -  find  in  an
        ssstr byte string an occurrence of a character in or not in a set
 
-[1mSYNOPSIS[0m
-       [1m#include &lt;ss8str.h&gt;[0m
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
 
-       [1msize_t ss8_find_first_of(ss8str const *[4m[22mhaystack[24m[1m, size_t [4m[22mstart[24m[1m,[0m
-                                [1mss8str const *[4m[22mneedles[24m[1m);[0m
-       [1msize_t ss8_find_first_of_cstr(ss8str const *[4m[22mhaystack[24m[1m,[0m
-                                [1msize_t [4m[22mstart[24m[1m, char const *[4m[22mneedles[24m[1m);[0m
-       [1msize_t ss8_find_first_of_bytes(ss8str const *[4m[22mhaystack[24m[1m,[0m
-                                [1msize_t [4m[22mstart[24m[1m, char const *[4m[22mneedles[24m[1m,[0m
-                                [1msize_t [4m[22mcount[24m[1m);[0m
+       <b>size_t ss8_find_first_of(ss8str const *</b><i>haystack</i><b>, size_t</b> <i>start</i><b>,</b>
+                                <b>ss8str const *</b><i>needles</i><b>);</b>
+       <b>size_t ss8_find_first_of_cstr(ss8str const *</b><i>haystack</i><b>,</b>
+                                <b>size_t</b> <i>start</i><b>, char const *</b><i>needles</i><b>);</b>
+       <b>size_t ss8_find_first_of_bytes(ss8str const *</b><i>haystack</i><b>,</b>
+                                <b>size_t</b> <i>start</i><b>, char const *</b><i>needles</i><b>,</b>
+                                <b>size_t</b> <i>count</i><b>);</b>
 
-       [1msize_t ss8_find_first_not_of(ss8str const *[4m[22mhaystack[24m[1m,[0m
-                                [1msize_t [4m[22mstart[24m[1m, ss8str const *[4m[22mneedles[24m[1m);[0m
-       [1msize_t ss8_find_first_not_of_cstr(ss8str const *[4m[22mhaystack[24m[1m,[0m
-                                [1msize_t [4m[22mstart[24m[1m, char const *[4m[22mneedles[24m[1m);[0m
-       [1msize_t ss8_find_first_not_of_bytes(ss8str const *[4m[22mhaystack[24m[1m,[0m
-                                [1msize_t [4m[22mstart[24m[1m, char const *[4m[22mneedles[24m[1m,[0m
-                                [1msize_t [4m[22mcount[24m[1m);[0m
+       <b>size_t ss8_find_first_not_of(ss8str const *</b><i>haystack</i><b>,</b>
+                                <b>size_t</b> <i>start</i><b>, ss8str const *</b><i>needles</i><b>);</b>
+       <b>size_t ss8_find_first_not_of_cstr(ss8str const *</b><i>haystack</i><b>,</b>
+                                <b>size_t</b> <i>start</i><b>, char const *</b><i>needles</i><b>);</b>
+       <b>size_t ss8_find_first_not_of_bytes(ss8str const *</b><i>haystack</i><b>,</b>
+                                <b>size_t</b> <i>start</i><b>, char const *</b><i>needles</i><b>,</b>
+                                <b>size_t</b> <i>count</i><b>);</b>
 
-       [1msize_t ss8_find_last_of(ss8str const *[4m[22mhaystack[24m[1m, size_t [4m[22mstart[24m[1m,[0m
-                                [1mss8str const *[4m[22mneedles[24m[1m);[0m
-       [1msize_t ss8_find_last_of_cstr(ss8str const *[4m[22mhaystack[24m[1m,[0m
-                                [1msize_t [4m[22mstart[24m[1m, char const *[4m[22mneedles[24m[1m);[0m
-       [1msize_t ss8_find_last_of_bytes(ss8str const *[4m[22mhaystack[24m[1m,[0m
-                                [1msize_t [4m[22mstart[24m[1m, char const *[4m[22mneedles[24m[1m,[0m
-                                [1msize_t [4m[22mcount[24m[1m);[0m
+       <b>size_t ss8_find_last_of(ss8str const *</b><i>haystack</i><b>, size_t</b> <i>start</i><b>,</b>
+                                <b>ss8str const *</b><i>needles</i><b>);</b>
+       <b>size_t ss8_find_last_of_cstr(ss8str const *</b><i>haystack</i><b>,</b>
+                                <b>size_t</b> <i>start</i><b>, char const *</b><i>needles</i><b>);</b>
+       <b>size_t ss8_find_last_of_bytes(ss8str const *</b><i>haystack</i><b>,</b>
+                                <b>size_t</b> <i>start</i><b>, char const *</b><i>needles</i><b>,</b>
+                                <b>size_t</b> <i>count</i><b>);</b>
 
-       [1msize_t ss8_find_last_not_of(ss8str const *[4m[22mhaystack[24m[1m,[0m
-                                [1msize_t [4m[22mstart[24m[1m, ss8str const *[4m[22mneedles[24m[1m);[0m
-       [1msize_t ss8_find_last_not_of_cstr(ss8str const *[4m[22mhaystack[24m[1m,[0m
-                                [1msize_t [4m[22mstart[24m[1m, char const *[4m[22mneedles[24m[1m);[0m
-       [1msize_t ss8_find_last_not_of_bytes(ss8str const *[4m[22mhaystack[24m[1m,[0m
-                                [1msize_t [4m[22mstart[24m[1m, char const *[4m[22mneedles[24m[1m,[0m
-                                [1msize_t [4m[22mcount[24m[1m);[0m
+       <b>size_t ss8_find_last_not_of(ss8str const *</b><i>haystack</i><b>,</b>
+                                <b>size_t</b> <i>start</i><b>, ss8str const *</b><i>needles</i><b>);</b>
+       <b>size_t ss8_find_last_not_of_cstr(ss8str const *</b><i>haystack</i><b>,</b>
+                                <b>size_t</b> <i>start</i><b>, char const *</b><i>needles</i><b>);</b>
+       <b>size_t ss8_find_last_not_of_bytes(ss8str const *</b><i>haystack</i><b>,</b>
+                                <b>size_t</b> <i>start</i><b>, char const *</b><i>needles</i><b>,</b>
+                                <b>size_t</b> <i>count</i><b>);</b>
 
-[1mDESCRIPTION[0m
-       [1mss8_find_first_of[22m() finds the first occurrence of any of the bytes that
-       appear in the [1mss8str [22mat [4mneedles[24m, in the [1mss8str [22mat [4mhaystack[24m.  The search
-       begins at byte position [4mstart[24m.  Behavior is undefined  unless  [4mhaystack[0m
-       and  [4mneedles[24m  both point to valid [1mss8str [22mobjects and [4mstart[24m is less than
+<b>DESCRIPTION</b>
+       <b>ss8_find_first_of</b>() finds the first occurrence of any of the bytes that
+       appear in the <b>ss8str</b> at <i>needles</i>, in the <b>ss8str</b> at <i>haystack</i>.  The search
+       begins at byte position <i>start</i>.  Behavior is undefined  unless  <i>haystack</i>
+       and  <i>needles</i>  both point to valid <b>ss8str</b> objects and <i>start</i> is less than
        or equal to the length of the haystack string.
 
-       [1mss8_find_first_of_cstr[22m() is  like  [1mss8_find_first_of[22m()  but  finds  the
+       <b>ss8_find_first_of_cstr</b>() is  like  <b>ss8_find_first_of</b>()  but  finds  the
        first occurrence of any of the bytes that appear in the null-terminated
-       byte string [4mneedles[24m.  Behavior is undefined unless [4mhaystack[24m points to a
-       valid  [1mss8str  [22mobject, [4mstart[24m is less than or equal to the length of the
-       haystack string, and [4mneedles[24m is a null-terminated byte string.
+       byte string <i>needles</i>.  Behavior is undefined unless <i>haystack</i> points to a
+       valid  <b>ss8str</b>  object, <i>start</i> is less than or equal to the length of the
+       haystack string, and <i>needles</i> is a null-terminated byte string.
 
-       [1mss8_find_first_of_bytes[22m() is like  [1mss8_find_first_of[22m()  but  finds  the
+       <b>ss8_find_first_of_bytes</b>() is like  <b>ss8_find_first_of</b>()  but  finds  the
        first  occurrence of any of the bytes that appear in the byte string of
-       length [4mcount[24m located at [4mneedles[24m.  Behavior is undefined unless [4mhaystack[0m
-       points to a valid [1mss8str [22mobject, [4mstart[24m is less than  or  equal  to  the
-       length of the haystack string, and [4mneedles[24m is not NULL and points to an
-       array of at least [4mcount[24m bytes.
+       length <i>count</i> located at <i>needles</i>.  Behavior is undefined unless <i>haystack</i>
+       points to a valid <b>ss8str</b> object, <i>start</i> is less than  or  equal  to  the
+       length of the haystack string, and <i>needles</i> is not NULL and points to an
+       array of at least <i>count</i> bytes.
 
-       [1mss8_find_first_not_of[22m(),        [1mss8_find_first_not_of_cstr[22m(),       and
-       [1mss8_find_first_not_of_bytes[22m()  are  like  the  corresponding  functions
-       without the [1mnot [22min the name, except that they find the first occurrence
-       of a byte that does not appear in [4mneedles[24m.
+       <b>ss8_find_first_not_of</b>(),        <b>ss8_find_first_not_of_cstr</b>(),       and
+       <b>ss8_find_first_not_of_bytes</b>()  are  like  the  corresponding  functions
+       without the <b>not</b> in the name, except that they find the first occurrence
+       of a byte that does not appear in <i>needles</i>.
 
-       [1mss8_find_last_of[22m(),             [1mss8_find_last_of_cstr[22m(),            and
-       [1mss8_find_last_of_bytes[22m() are  like  the  corresponding  functions  with
-       [1mfirst  [22minstead  of [1mlast [22min the name, except that they find the last oc‐
-       currence of a byte that appears in [4mneedles[24m.
+       <b>ss8_find_last_of</b>(),             <b>ss8_find_last_of_cstr</b>(),            and
+       <b>ss8_find_last_of_bytes</b>() are  like  the  corresponding  functions  with
+       <b>first</b>  instead  of <b>last</b> in the name, except that they find the last oc‐
+       currence of a byte that appears in <i>needles</i>.
 
-       [1mss8_find_last_not_of[22m(),        [1mss8_find_last_not_of_cstr[22m(),         and
-       [1mss8_find_last_not_of_bytes[22m() are like the corresponding functions with‐
-       out the [1mnot [22min the name, except that they find the last occurrence of a
-       byte that does not appear in [4mneedles[24m.
+       <b>ss8_find_last_not_of</b>(),        <b>ss8_find_last_not_of_cstr</b>(),         and
+       <b>ss8_find_last_not_of_bytes</b>() are like the corresponding functions with‐
+       out the <b>not</b> in the name, except that they find the last occurrence of a
+       byte that does not appear in <i>needles</i>.
 
-[1mRETURN VALUE[0m
+<b>RETURN VALUE</b>
        All  12  functions  return the position, counting from the beginning of
        the haystack string, of the matching byte.  If  there  is  no  matching
-       byte, [1mSIZE_MAX [22mis returned.
+       byte, <b>SIZE_MAX</b> is returned.
 
-[1mSEE ALSO[0m
-       [1mss8_find[22m(3), [1mss8_strip[22m(3), [1mssstr[22m(7)
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_find.3.html"><b>ss8_find</b>(3)</a>, <a href="../man3/ss8_strip.3.html"><b>ss8_strip</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
 
-SSSTR                             2023-12-30              [4mSS8_FIND_FIRST_OF[24m(3)
+SSSTR                             2023-12-30              <i>SS8_FIND_FIRST_OF</i>(3)
 </pre>
 </body>
 </html>

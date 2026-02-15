@@ -6,58 +6,58 @@
 </head>
 <body>
 <pre>
-[4mSS8_INIT_COPY[24m(3)                 Ssstr Manual                 [4mSS8_INIT_COPY[24m(3)
+<i>SS8_INIT_COPY</i>(3)                 Ssstr Manual                 <i>SS8_INIT_COPY</i>(3)
 
-[1mNAME[0m
+<b>NAME</b>
        ss8_init_copy,         ss8_init_copy_cstr,         ss8_init_copy_bytes,
        ss8_init_copy_ch, ss8_init_copy_ch_n - initialize an ssstr byte  string
        from a string or characters
 
-[1mSYNOPSIS[0m
-       [1m#include &lt;ss8str.h&gt;[0m
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
 
-       [1mss8str *ss8_init_copy(ss8str *restrict [4m[22mstr[24m[1m,[0m
-                             [1mss8str const *restrict [4m[22msrc[24m[1m);[0m
-       [1mss8str *ss8_init_copy_cstr(ss8str *restrict [4m[22mstr[24m[1m,[0m
-                             [1mchar const *restrict [4m[22msrc[24m[1m);[0m
-       [1mss8str *ss8_init_copy_bytes(ss8str *restrict [4m[22mstr[24m[1m,[0m
-                             [1mchar const *restrict [4m[22msrc[24m[1m, size_t [4m[22mlen[24m[1m);[0m
-       [1mss8str *ss8_init_copy_ch(ss8str *[4m[22mstr[24m[1m, char [4m[22mch[24m[1m);[0m
-       [1mss8str *ss8_init_copy_ch_n(ss8str *[4m[22mstr[24m[1m, char [4m[22mch[24m[1m,[0m
-                             [1msize_t [4m[22mcount[24m[1m);[0m
+       <b>ss8str *ss8_init_copy(ss8str *restrict</b> <i>str</i><b>,</b>
+                             <b>ss8str const *restrict</b> <i>src</i><b>);</b>
+       <b>ss8str *ss8_init_copy_cstr(ss8str *restrict</b> <i>str</i><b>,</b>
+                             <b>char const *restrict</b> <i>src</i><b>);</b>
+       <b>ss8str *ss8_init_copy_bytes(ss8str *restrict</b> <i>str</i><b>,</b>
+                             <b>char const *restrict</b> <i>src</i><b>, size_t</b> <i>len</i><b>);</b>
+       <b>ss8str *ss8_init_copy_ch(ss8str *</b><i>str</i><b>, char</b> <i>ch</i><b>);</b>
+       <b>ss8str *ss8_init_copy_ch_n(ss8str *</b><i>str</i><b>, char</b> <i>ch</i><b>,</b>
+                             <b>size_t</b> <i>count</i><b>);</b>
 
-[1mDESCRIPTION[0m
-       [1mss8_init_copy[22m()  initializes  the [1mss8str [22mobject that [4mstr[24m points to, and
-       sets its value to a copy of the value of the [1mss8str [22mobject at [4msrc[24m.  Be‐
-       havior is undefined unless [4mstr[24m points to an invalid  (that  is,  unini‐
-       tialized  or  previously freed) [1mss8str [22mobject and [4msrc[24m points to a valid
-       [1mss8str [22mobject.
+<b>DESCRIPTION</b>
+       <b>ss8_init_copy</b>()  initializes  the <b>ss8str</b> object that <i>str</i> points to, and
+       sets its value to a copy of the value of the <b>ss8str</b> object at <i>src</i>.  Be‐
+       havior is undefined unless <i>str</i> points to an invalid  (that  is,  unini‐
+       tialized  or  previously freed) <b>ss8str</b> object and <i>src</i> points to a valid
+       <b>ss8str</b> object.
 
-       [1mss8_init_copy_cstr[22m() initializes the [1mss8str [22mobject at [4mstr[24m and sets  its
-       value  to  a  copy of the null-terminated byte string [4msrc[24m.  Behavior is
-       undefined unless [4mstr[24m points to an invalid [1mss8str [22mobject and  [4msrc[24m  is  a
+       <b>ss8_init_copy_cstr</b>() initializes the <b>ss8str</b> object at <i>str</i> and sets  its
+       value  to  a  copy of the null-terminated byte string <i>src</i>.  Behavior is
+       undefined unless <i>str</i> points to an invalid <b>ss8str</b> object and  <i>src</i>  is  a
        null-terminated byte string.
 
-       [1mss8_init_copy_bytes[22m() initializes the [1mss8str [22mobject at [4mstr[24m and sets its
-       value  to  a copy of the byte string of length [4mlen[24m located at [4msrc[24m.  Be‐
-       havior is undefined unless [4mstr[24m points to an invalid [1mss8str  [22mobject  and
-       [4msrc[24m points to an array of at least [4mlen[24m bytes.
+       <b>ss8_init_copy_bytes</b>() initializes the <b>ss8str</b> object at <i>str</i> and sets its
+       value  to  a copy of the byte string of length <i>len</i> located at <i>src</i>.  Be‐
+       havior is undefined unless <i>str</i> points to an invalid <b>ss8str</b>  object  and
+       <i>src</i> points to an array of at least <i>len</i> bytes.
 
-       [1mss8_init_copy_ch[22m()  initializes  the  [1mss8str [22mobject at [4mstr[24m and sets its
-       value to the string consisting of the single byte [4mch[24m.  Behavior is  un‐
-       defined unless [4mstr[24m points to an invalid [1mss8str [22mobject.
+       <b>ss8_init_copy_ch</b>()  initializes  the  <b>ss8str</b> object at <i>str</i> and sets its
+       value to the string consisting of the single byte <i>ch</i>.  Behavior is  un‐
+       defined unless <i>str</i> points to an invalid <b>ss8str</b> object.
 
-       [1mss8_init_copy_ch_n[22m()  initializes the [1mss8str [22mobject at [4mstr[24m and sets its
-       value to the string consisting of [4mcount[24m copies of the byte [4mch[24m.   Behav‐
-       ior is undefined unless [4mstr[24m points to an invalid [1mss8str [22mobject.
+       <b>ss8_init_copy_ch_n</b>()  initializes the <b>ss8str</b> object at <i>str</i> and sets its
+       value to the string consisting of <i>count</i> copies of the byte <i>ch</i>.   Behav‐
+       ior is undefined unless <i>str</i> points to an invalid <b>ss8str</b> object.
 
-[1mRETURN VALUE[0m
-       All 5 functions return [4mstr[24m.
+<b>RETURN VALUE</b>
+       All 5 functions return <i>str</i>.
 
-[1mSEE ALSO[0m
-       [1mss8_copy[22m(3), [1mss8_destroy[22m(3), [1mss8_init[22m(3), [1mss8_init_move[22m(3), [1mssstr[22m(7)
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_copy.3.html"><b>ss8_copy</b>(3)</a>, <a href="../man3/ss8_init.3.html"><b>ss8_destroy</b>(3)</a>, <a href="../man3/ss8_init.3.html"><b>ss8_init</b>(3)</a>, <a href="../man3/ss8_init_move.3.html"><b>ss8_init_move</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
 
-SSSTR                             2023-12-30                  [4mSS8_INIT_COPY[24m(3)
+SSSTR                             2023-12-30                  <i>SS8_INIT_COPY</i>(3)
 </pre>
 </body>
 </html>

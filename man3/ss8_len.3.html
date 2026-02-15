@@ -6,44 +6,44 @@
 </head>
 <body>
 <pre>
-[4mSS8_LEN[24m(3)                       Ssstr Manual                       [4mSS8_LEN[24m(3)
+<i>SS8_LEN</i>(3)                       Ssstr Manual                       <i>SS8_LEN</i>(3)
 
-[1mNAME[0m
+<b>NAME</b>
        ss8_len, ss8_is_empty - query length of ssstr byte string
 
-[1mSYNOPSIS[0m
-       [1m#include &lt;ss8str.h&gt;[0m
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
 
-       [1msize_t ss8_len(ss8str const *[4m[22mstr[24m[1m);[0m
-       [1mbool   ss8_is_empty(ss8str const *[4m[22mstr[24m[1m);[0m
+       <b>size_t ss8_len(ss8str const *</b><i>str</i><b>);</b>
+       <b>bool   ss8_is_empty(ss8str const *</b><i>str</i><b>);</b>
 
-[1mDESCRIPTION[0m
-       [1mss8_len[22m() queries the length of the [1mss8str [22mpointed to by [4mstr[24m.
+<b>DESCRIPTION</b>
+       <b>ss8_len</b>() queries the length of the <b>ss8str</b> pointed to by <i>str</i>.
 
-       [1mss8_is_empty[22m()  tests  whether  the  [1mss8str [22mpointed to by [4mstr[24m is empty,
+       <b>ss8_is_empty</b>()  tests  whether  the  <b>ss8str</b> pointed to by <i>str</i> is empty,
        that is, has a length of zero.
 
-       For either function, behavior is undefined unless [4mstr[24m points to a valid
-       [1mss8str [22mobject.
+       For either function, behavior is undefined unless <i>str</i> points to a valid
+       <b>ss8str</b> object.
 
-       The length of an [1mss8str [22mis stored explicitly and is not affected by the
+       The length of an <b>ss8str</b> is stored explicitly and is not affected by the
        byte string it contains.  Specifically, if the byte string contains em‐
-       bedded null bytes, its length will differ from what [1mstrlen[22m() would  re‐
+       bedded null bytes, its length will differ from what <b>strlen</b>() would  re‐
        turn when called on the equivalent string.
 
-[1mRETURN VALUE[0m
-       [1mss8_len[22m()  returns  the length, in bytes, of the string at [4mstr[24m, not in‐
+<b>RETURN VALUE</b>
+       <b>ss8_len</b>()  returns  the length, in bytes, of the string at <i>str</i>, not in‐
        cluding the null terminator that would  be  part  of  the  string  when
        viewed  as  a  null-terminated byte string.  Any embedded null bytes in
        the string do not affect the length.
 
-       [1mss8_is_empty[22m() returns [1mtrue [22mwhen [4mstr[24m has a length of zero; otherwise it
-       returns [1mfalse[22m.
+       <b>ss8_is_empty</b>() returns <b>true</b> when <i>str</i> has a length of zero; otherwise it
+       returns <b>false</b>.
 
-[1mSEE ALSO[0m
-       [1mss8_capacity[22m(3), [1mss8_set_len[22m(3), [1mssstr[22m(7)
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_capacity.3.html"><b>ss8_capacity</b>(3)</a>, <a href="../man3/ss8_set_len.3.html"><b>ss8_set_len</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
 
-SSSTR                             2023-12-30                        [4mSS8_LEN[24m(3)
+SSSTR                             2023-12-30                        <i>SS8_LEN</i>(3)
 </pre>
 </body>
 </html>

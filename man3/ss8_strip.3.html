@@ -6,77 +6,77 @@
 </head>
 <body>
 <pre>
-[4mSS8_STRIP[24m(3)                     Ssstr Manual                     [4mSS8_STRIP[24m(3)
+<i>SS8_STRIP</i>(3)                     Ssstr Manual                     <i>SS8_STRIP</i>(3)
 
-[1mNAME[0m
+<b>NAME</b>
        ss8_strip,  ss8_strip_cstr,  ss8_strip_bytes, ss8_strip_ch, ss8_lstrip,
        ss8_lstrip_cstr,    ss8_lstrip_bytes,    ss8_lstrip_ch,     ss8_rstrip,
        ss8_rstrip_cstr, ss8_rstrip_bytes, ss8_rstrip_ch - remove certain char‐
        acters from the ends of an ssstr byte string
 
-[1mSYNOPSIS[0m
-       [1m#include &lt;ss8str.h&gt;[0m
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
 
-       [1mss8str *ss8_strip(ss8str *restrict [4m[22mstr[24m[1m,[0m
-                         [1mss8str const *restrict [4m[22mchars[24m[1m);[0m
-       [1mss8str *ss8_strip_cstr(ss8str *restrict [4m[22mstr[24m[1m,[0m
-                         [1mchar const *restrict [4m[22mchars[24m[1m);[0m
-       [1mss8str *ss8_strip_bytes(ss8str *restrict [4m[22mstr[24m[1m,[0m
-                         [1mchar const *restrict [4m[22mchars[24m[1m, size_t [4m[22mcount[24m[1m);[0m
-       [1mss8str *ss8_strip_ch(ss8str *[4m[22mstr[24m[1m, char [4m[22mch[24m[1m);[0m
+       <b>ss8str *ss8_strip(ss8str *restrict</b> <i>str</i><b>,</b>
+                         <b>ss8str const *restrict</b> <i>chars</i><b>);</b>
+       <b>ss8str *ss8_strip_cstr(ss8str *restrict</b> <i>str</i><b>,</b>
+                         <b>char const *restrict</b> <i>chars</i><b>);</b>
+       <b>ss8str *ss8_strip_bytes(ss8str *restrict</b> <i>str</i><b>,</b>
+                         <b>char const *restrict</b> <i>chars</i><b>, size_t</b> <i>count</i><b>);</b>
+       <b>ss8str *ss8_strip_ch(ss8str *</b><i>str</i><b>, char</b> <i>ch</i><b>);</b>
 
-       [1mss8str *ss8_lstrip(ss8str *restrict [4m[22mstr[24m[1m,[0m
-                         [1mss8str const *restrict [4m[22mchars[24m[1m);[0m
-       [1mss8str *ss8_lstrip_cstr(ss8str *restrict [4m[22mstr[24m[1m,[0m
-                         [1mchar const *restrict [4m[22mchars[24m[1m);[0m
-       [1mss8str *ss8_lstrip_bytes(ss8str *restrict [4m[22mstr[24m[1m,[0m
-                         [1mchar const *restrict [4m[22mchars[24m[1m, size_t [4m[22mcount[24m[1m);[0m
-       [1mss8str *ss8_lstrip_ch(ss8str *[4m[22mstr[24m[1m, char [4m[22mch[24m[1m);[0m
+       <b>ss8str *ss8_lstrip(ss8str *restrict</b> <i>str</i><b>,</b>
+                         <b>ss8str const *restrict</b> <i>chars</i><b>);</b>
+       <b>ss8str *ss8_lstrip_cstr(ss8str *restrict</b> <i>str</i><b>,</b>
+                         <b>char const *restrict</b> <i>chars</i><b>);</b>
+       <b>ss8str *ss8_lstrip_bytes(ss8str *restrict</b> <i>str</i><b>,</b>
+                         <b>char const *restrict</b> <i>chars</i><b>, size_t</b> <i>count</i><b>);</b>
+       <b>ss8str *ss8_lstrip_ch(ss8str *</b><i>str</i><b>, char</b> <i>ch</i><b>);</b>
 
-       [1mss8str *ss8_rstrip(ss8str *restrict [4m[22mstr[24m[1m,[0m
-                         [1mss8str const *restrict [4m[22mchars[24m[1m);[0m
-       [1mss8str *ss8_rstrip_cstr(ss8str *restrict [4m[22mstr[24m[1m,[0m
-                         [1mchar const *restrict [4m[22mchars[24m[1m);[0m
-       [1mss8str *ss8_rstrip_bytes(ss8str *restrict [4m[22mstr[24m[1m,[0m
-                         [1mchar const *restrict [4m[22mchars[24m[1m, size_t [4m[22mcount[24m[1m);[0m
-       [1mss8str *ss8_rstrip_ch(ss8str *[4m[22mstr[24m[1m, char [4m[22mch[24m[1m);[0m
+       <b>ss8str *ss8_rstrip(ss8str *restrict</b> <i>str</i><b>,</b>
+                         <b>ss8str const *restrict</b> <i>chars</i><b>);</b>
+       <b>ss8str *ss8_rstrip_cstr(ss8str *restrict</b> <i>str</i><b>,</b>
+                         <b>char const *restrict</b> <i>chars</i><b>);</b>
+       <b>ss8str *ss8_rstrip_bytes(ss8str *restrict</b> <i>str</i><b>,</b>
+                         <b>char const *restrict</b> <i>chars</i><b>, size_t</b> <i>count</i><b>);</b>
+       <b>ss8str *ss8_rstrip_ch(ss8str *</b><i>str</i><b>, char</b> <i>ch</i><b>);</b>
 
-[1mDESCRIPTION[0m
-       [1mss8_strip[22m() removes the prefix and suffix of the [1mss8str [22mat [4mstr[24m consist‐
-       ing of bytes that appear in the [1mss8str [22mat [4mchars[24m.  Behavior is undefined
-       unless [4mstr[24m and [4mchars[24m point to valid and distinct [1mss8str [22mobjects.
+<b>DESCRIPTION</b>
+       <b>ss8_strip</b>() removes the prefix and suffix of the <b>ss8str</b> at <i>str</i> consist‐
+       ing of bytes that appear in the <b>ss8str</b> at <i>chars</i>.  Behavior is undefined
+       unless <i>str</i> and <i>chars</i> point to valid and distinct <b>ss8str</b> objects.
 
-       [1mss8_strip_cstr[22m()  removes  the  prefix  and suffix of the [1mss8str [22mat [4mstr[0m
+       <b>ss8_strip_cstr</b>()  removes  the  prefix  and suffix of the <b>ss8str</b> at <i>str</i>
        consisting of bytes that appear  in  the  null-terminated  byte  string
-       [4mchars[24m.   Behavior  is undefined unless [4mstr[24m points to a valid [1mss8str [22mob‐
-       ject and [4mchars[24m is a null-terminated byte string.
+       <i>chars</i>.   Behavior  is undefined unless <i>str</i> points to a valid <b>ss8str</b> ob‐
+       ject and <i>chars</i> is a null-terminated byte string.
 
-       [1mss8_strip_bytes[22m() removes the prefix and suffix of the  [1mss8str  [22mat  [4mstr[0m
-       consisting  of bytes that appear in the byte string of length [4mcount[24m lo‐
-       cated at [4mchars[24m.  Behavior is undefined unless [4mstr[24m  points  to  a  valid
-       [1mss8str [22mobject and [4mchars[24m points to an array of at least [4mcount[24m bytes.
+       <b>ss8_strip_bytes</b>() removes the prefix and suffix of the  <b>ss8str</b>  at  <i>str</i>
+       consisting  of bytes that appear in the byte string of length <i>count</i> lo‐
+       cated at <i>chars</i>.  Behavior is undefined unless <i>str</i>  points  to  a  valid
+       <b>ss8str</b> object and <i>chars</i> points to an array of at least <i>count</i> bytes.
 
-       [1mss8_strip_ch[22m()  removes the prefix and suffix of the [1mss8str [22mat [4mstr[24m con‐
-       sisting of any number of copies of the byte [4mch[24m.  Behavior is  undefined
-       unless [4mstr[24m points to a valid [1mss8str [22mobject.
+       <b>ss8_strip_ch</b>()  removes the prefix and suffix of the <b>ss8str</b> at <i>str</i> con‐
+       sisting of any number of copies of the byte <i>ch</i>.  Behavior is  undefined
+       unless <i>str</i> points to a valid <b>ss8str</b> object.
 
-       [1mss8_lstrip[22m(),      [1mss8_lstrip_cstr[22m(),      [1mss8_lstrip_bytes[22m(),      and
-       [1mss8_lstrip_ch[22m() are like the corresponding functions without the  [1ml  [22min
-       the  name,  except that they only remove the prefix consisting of [4mchars[0m
-       or [4mch[24m.
+       <b>ss8_lstrip</b>(),      <b>ss8_lstrip_cstr</b>(),      <b>ss8_lstrip_bytes</b>(),      and
+       <b>ss8_lstrip_ch</b>() are like the corresponding functions without the  <b>l</b>  in
+       the  name,  except that they only remove the prefix consisting of <i>chars</i>
+       or <i>ch</i>.
 
-       [1mss8_rstrip[22m(),      [1mss8_rstrip_cstr[22m(),      [1mss8_rstrip_bytes[22m(),      and
-       [1mss8_rstrip_ch[22m()  are  like the corresponding functions without the [1mr [22min
-       the name, except that they only remove the suffix consisting  of  [4mchars[0m
-       or [4mch[24m.
+       <b>ss8_rstrip</b>(),      <b>ss8_rstrip_cstr</b>(),      <b>ss8_rstrip_bytes</b>(),      and
+       <b>ss8_rstrip_ch</b>()  are  like the corresponding functions without the <b>r</b> in
+       the name, except that they only remove the suffix consisting  of  <i>chars</i>
+       or <i>ch</i>.
 
-[1mRETURN VALUE[0m
-       All 12 functions return [4mstr[24m.
+<b>RETURN VALUE</b>
+       All 12 functions return <i>str</i>.
 
-[1mSEE ALSO[0m
-       [1mss8_find_first_of[22m(3), [1mssstr[22m(7)
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_find_first_of.3.html"><b>ss8_find_first_of</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
 
-SSSTR                             2023-12-30                      [4mSS8_STRIP[24m(3)
+SSSTR                             2023-12-30                      <i>SS8_STRIP</i>(3)
 </pre>
 </body>
 </html>

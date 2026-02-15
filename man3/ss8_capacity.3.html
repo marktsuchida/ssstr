@@ -6,76 +6,76 @@
 </head>
 <body>
 <pre>
-[4mSS8_CAPACITY[24m(3)                  Ssstr Manual                  [4mSS8_CAPACITY[24m(3)
+<i>SS8_CAPACITY</i>(3)                  Ssstr Manual                  <i>SS8_CAPACITY</i>(3)
 
-[1mNAME[0m
+<b>NAME</b>
        ss8_capacity,  ss8_reserve, ss8_shrink_to_fit - query and modify buffer
        capacity of ssstr byte strings
 
-[1mSYNOPSIS[0m
-       [1m#include &lt;ss8str.h&gt;[0m
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
 
-       [1msize_t  ss8_capacity(ss8str const *[4m[22mstr[24m[1m);[0m
-       [1mss8str *ss8_reserve(ss8str *[4m[22mstr[24m[1m, size_t [4m[22mcapacity[24m[1m);[0m
-       [1mss8str *ss8_shrink_to_fit(ss8str *[4m[22mstr[24m[1m);[0m
+       <b>size_t  ss8_capacity(ss8str const *</b><i>str</i><b>);</b>
+       <b>ss8str *ss8_reserve(ss8str *</b><i>str</i><b>, size_t</b> <i>capacity</i><b>);</b>
+       <b>ss8str *ss8_shrink_to_fit(ss8str *</b><i>str</i><b>);</b>
 
-[1mDESCRIPTION[0m
-       [1mss8_capacity[22m() queries the [1mss8str [22mat [4mstr[24m for its capacity, which is the
+<b>DESCRIPTION</b>
+       <b>ss8_capacity</b>() queries the <b>ss8str</b> at <i>str</i> for its capacity, which is the
        maximum length of the byte string that it can hold without the need  to
        allocate additional (or any) dynamic storage.
 
-       [1mss8_reserve[22m() ensures that the [1mss8str [22mat [4mstr[24m has at least the given [4mca‐[0m
-       [4mpacity[24m  by  enlarging its buffer if necessary.  The length and contents
-       of the string do not change.  [1mss8_reserve[22m() never lessens the capacity.
+       <b>ss8_reserve</b>() ensures that the <b>ss8str</b> at <i>str</i> has at least the given <i>ca‐</i>
+       <i>pacity</i>  by  enlarging its buffer if necessary.  The length and contents
+       of the string do not change.  <b>ss8_reserve</b>() never lessens the capacity.
 
        Reserving capacity ahead of time can improve efficiency  when  a  large
        number  of  insertions, concatenations, or replacements are about to be
        performed and the final length of the string is known, either precisely
        or approximately.
 
-       Reserved  capacity  is  not  available  length;  writing  to  [1mss8_muta‐[0m
-       [1mble_cstr([4m[22mstr[24m[1m)  [22mbeyond the length of [1m*[4m[22mstr[24m results in undefined behavior.
-       See [1mss8_set_len[22m(3) for ways to change the available length.
+       Reserved  capacity  is  not  available  length;  writing  to  <b>ss8_muta‐</b>
+       <b>ble_cstr(</b><i>str</i><b>)</b>  beyond the length of <b>*</b><i>str</i> results in undefined behavior.
+       See <a href="../man3/ss8_set_len.3.html"><b>ss8_set_len</b>(3)</a> for ways to change the available length.
 
-       [1mss8_shrink_to_fit[22m() reallocates the internal buffer of  the  [1mss8str  [22mat
-       [4mstr[24m so that it is the minimum size required to hold its contents.
+       <b>ss8_shrink_to_fit</b>() reallocates the internal buffer of  the  <b>ss8str</b>  at
+       <i>str</i> so that it is the minimum size required to hold its contents.
 
-       Shrinking  to fit may improve memory usage if an [1mss8str [22mis shortened by
+       Shrinking  to fit may improve memory usage if an <b>ss8str</b> is shortened by
        a large factor and then retained for a long duration.
 
-       Behavior of these 3 functions is undefined unless [4mstr[24m points to a valid
-       [1mss8str [22mobject.
+       Behavior of these 3 functions is undefined unless <i>str</i> points to a valid
+       <b>ss8str</b> object.
 
-[1mRETURN VALUE[0m
-       [1mss8_capacity[22m() returns the maximum length of the byte string  that  the
-       [1mss8str [22mpointed to by [4mstr[24m can hold without allocating additional dynamic
+<b>RETURN VALUE</b>
+       <b>ss8_capacity</b>() returns the maximum length of the byte string  that  the
+       <b>ss8str</b> pointed to by <i>str</i> can hold without allocating additional dynamic
        storage.
 
-       [1mss8_reserve[22m() and [1mss8_shrink_to_fit[22m() return [4mstr[24m.
+       <b>ss8_reserve</b>() and <b>ss8_shrink_to_fit</b>() return <i>str</i>.
 
-[1mNOTES[0m
-       The  capacity  of  an [1mss8str [22mis never zero but has a platform-dependent
+<b>NOTES</b>
+       The  capacity  of  an <b>ss8str</b> is never zero but has a platform-dependent
        fixed minimum.  Therefore, the capacity after performing
 
-           [1mss8_shrink_to_fit(ss8_clear([4m[22mstr[24m[1m));[0m
+           <b>ss8_shrink_to_fit(ss8_clear(</b><i>str</i><b>));</b>
 
        is guaranteed to be greater than zero.  This also means that the capac‐
        ity   does   not   necessarily   match   the   length   after   calling
-       [1mss8_shrink_to_fit[22m().
+       <b>ss8_shrink_to_fit</b>().
 
-       In  general,  [1mss8str [22mfunctions that assign (copy) a string reserve just
+       In  general,  <b>ss8str</b> functions that assign (copy) a string reserve just
        the capacity needed for the destination string.  Functions that insert,
        append, or replace a substring heuristically grow the  capacity  in  an
        attempt  to  minimize reallocation.  When a function shortens a string,
        or does not require more than its current capacity, it does  not  alter
-       its  capacity.  Only a call to [1mss8_shrink_to_fit[22m() decreases the capac‐
-       ity of an [1mss8str[22m.
+       its  capacity.  Only a call to <b>ss8_shrink_to_fit</b>() decreases the capac‐
+       ity of an <b>ss8str</b>.
 
-[1mSEE ALSO[0m
-       [1mss8_grow_len[22m(3), [1mss8_len[22m(3), [1mss8_set_len[22m(3), [1mss8_set_len_to_cstrlen[22m(3),
-       [1mssstr[22m(7)
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_set_len.3.html"><b>ss8_grow_len</b>(3)</a>, <a href="../man3/ss8_len.3.html"><b>ss8_len</b>(3)</a>, <a href="../man3/ss8_set_len.3.html"><b>ss8_set_len</b>(3)</a>, <a href="../man3/ss8_set_len.3.html"><b>ss8_set_len_to_cstrlen</b>(3)</a>,
+       <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
 
-SSSTR                             2023-12-30                   [4mSS8_CAPACITY[24m(3)
+SSSTR                             2023-12-30                   <i>SS8_CAPACITY</i>(3)
 </pre>
 </body>
 </html>

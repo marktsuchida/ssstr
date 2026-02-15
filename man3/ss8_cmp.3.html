@@ -6,55 +6,55 @@
 </head>
 <body>
 <pre>
-[4mSS8_CMP[24m(3)                       Ssstr Manual                       [4mSS8_CMP[24m(3)
+<i>SS8_CMP</i>(3)                       Ssstr Manual                       <i>SS8_CMP</i>(3)
 
-[1mNAME[0m
+<b>NAME</b>
        ss8_cmp,  ss8_cmp_cstr,  ss8_cmp_bytes, ss8_cmp_ch - compare ssstr byte
        string with string or character
 
-[1mSYNOPSIS[0m
-       [1m#include &lt;ss8str.h&gt;[0m
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
 
-       [1mint ss8_cmp(ss8str const *[4m[22mlhs[24m[1m, ss8str const *[4m[22mrhs[24m[1m);[0m
-       [1mint ss8_cmp_cstr(ss8str const *[4m[22mlhs[24m[1m, char const *[4m[22mrhs[24m[1m);[0m
-       [1mint ss8_cmp_bytes(ss8str const *[4m[22mlhs[24m[1m, char const *[4m[22mrhs[24m[1m,[0m
-                         [1msize_t [4m[22mrhslen[24m[1m);[0m
-       [1mint ss8_cmp_ch(ss8str const *[4m[22mlhs[24m[1m, char [4m[22mrhs[24m[1m);[0m
+       <b>int ss8_cmp(ss8str const *</b><i>lhs</i><b>, ss8str const *</b><i>rhs</i><b>);</b>
+       <b>int ss8_cmp_cstr(ss8str const *</b><i>lhs</i><b>, char const *</b><i>rhs</i><b>);</b>
+       <b>int ss8_cmp_bytes(ss8str const *</b><i>lhs</i><b>, char const *</b><i>rhs</i><b>,</b>
+                         <b>size_t</b> <i>rhslen</i><b>);</b>
+       <b>int ss8_cmp_ch(ss8str const *</b><i>lhs</i><b>, char</b> <i>rhs</i><b>);</b>
 
-[1mDESCRIPTION[0m
-       [1mss8_cmp[22m() compares the [1mss8str [22mat [4mlhs[24m with the [1mss8str [22mat [4mrhs[24m.   Behavior
-       is undefined unless both [4mlhs[24m and [4mrhs[24m point to valid [1mss8str [22mobjects.
+<b>DESCRIPTION</b>
+       <b>ss8_cmp</b>() compares the <b>ss8str</b> at <i>lhs</i> with the <b>ss8str</b> at <i>rhs</i>.   Behavior
+       is undefined unless both <i>lhs</i> and <i>rhs</i> point to valid <b>ss8str</b> objects.
 
-       [1mss8_cmp_cstr[22m() compares the [1mss8str [22mat [4mlhs[24m with the null-terminated byte
-       string  [4mrhs[24m.  Behavior is undefined unless [4mlhs[24m points to a valid [1mss8str[0m
-       object and [4mrhs[24m is a null-terminated byte string.
+       <b>ss8_cmp_cstr</b>() compares the <b>ss8str</b> at <i>lhs</i> with the null-terminated byte
+       string  <i>rhs</i>.  Behavior is undefined unless <i>lhs</i> points to a valid <b>ss8str</b>
+       object and <i>rhs</i> is a null-terminated byte string.
 
-       [1mss8_cmp_bytes[22m() compares the [1mss8str [22mat [4mlhs[24m  with  the  byte  string  of
-       length  [4mrhslen[24m located at [4mrhs[24m.  Behavior is undefined unless [4mlhs[24m points
-       to a valid [1mss8str [22mobject and [4mrhs[24m is not NULL and points to an array  of
-       at least [4mrhslen[24m bytes.
+       <b>ss8_cmp_bytes</b>() compares the <b>ss8str</b> at <i>lhs</i>  with  the  byte  string  of
+       length  <i>rhslen</i> located at <i>rhs</i>.  Behavior is undefined unless <i>lhs</i> points
+       to a valid <b>ss8str</b> object and <i>rhs</i> is not NULL and points to an array  of
+       at least <i>rhslen</i> bytes.
 
-       [1mss8_cmp_ch[22m() compares the [1mss8str [22mat [4mlhs[24m with the byte string consisting
-       of  the  single byte [4mrhs[24m.  Behavior is undefined unless [4mlhs[24m points to a
-       valid [1mss8str [22mobject.
+       <b>ss8_cmp_ch</b>() compares the <b>ss8str</b> at <i>lhs</i> with the byte string consisting
+       of  the  single byte <i>rhs</i>.  Behavior is undefined unless <i>lhs</i> points to a
+       valid <b>ss8str</b> object.
 
-[1mRETURN VALUE[0m
+<b>RETURN VALUE</b>
        All 4 functions return a negative, zero,  or  positive  value,  respec‐
-       tively,  if [4mlhs[24m is less than, equal to, or greater than [4mrhs[24m, in a byte-
+       tively,  if <i>lhs</i> is less than, equal to, or greater than <i>rhs</i>, in a byte-
        wise lexicographical comparison.
 
-[1mNOTES[0m
+<b>NOTES</b>
        The byte-wise lexicographical comparison performed by  these  functions
        does not take into account the encoding of the strings.  If the strings
        are  UTF-8-encoded,  the comparison will be equivalent to a code-point-
        wise lexicographical comparison, but will not take into account canoni‐
        cal equivalents if the strings are not normalized ahead of time.
 
-[1mSEE ALSO[0m
-       [1mss8_contains[22m(3), [1mss8_ends_with[22m(3),  [1mss8_equals[22m(3),  [1mss8_starts_with[22m(3),
-       [1mssstr[22m(7)
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_contains.3.html"><b>ss8_contains</b>(3)</a>, <a href="../man3/ss8_starts_with.3.html"><b>ss8_ends_with</b>(3)</a>,  <a href="../man3/ss8_equals.3.html"><b>ss8_equals</b>(3)</a>,  <a href="../man3/ss8_starts_with.3.html"><b>ss8_starts_with</b>(3)</a>,
+       <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
 
-SSSTR                             2023-12-30                        [4mSS8_CMP[24m(3)
+SSSTR                             2023-12-30                        <i>SS8_CMP</i>(3)
 </pre>
 </body>
 </html>

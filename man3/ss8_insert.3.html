@@ -6,62 +6,62 @@
 </head>
 <body>
 <pre>
-[4mSS8_INSERT[24m(3)                    Ssstr Manual                    [4mSS8_INSERT[24m(3)
+<i>SS8_INSERT</i>(3)                    Ssstr Manual                    <i>SS8_INSERT</i>(3)
 
-[1mNAME[0m
+<b>NAME</b>
        ss8_insert,  ss8_insert_cstr,  ss8_insert_bytes, ss8_insert_ch, ss8_in‐
        sert_ch_n - insert a string or characters at a  given  position  of  an
        ssstr byte string
 
-[1mSYNOPSIS[0m
-       [1m#include &lt;ss8str.h&gt;[0m
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
 
-       [1mss8str *ss8_insert(ss8str *restrict [4m[22mdest[24m[1m, size_t [4m[22mpos[24m[1m,[0m
-                          [1mss8str const *restrict [4m[22msrc[24m[1m);[0m
-       [1mss8str *ss8_insert_cstr(ss8str *restrict [4m[22mdest[24m[1m, size_t [4m[22mpos[24m[1m,[0m
-                          [1mchar const *restrict [4m[22msrc[24m[1m);[0m
-       [1mss8str *ss8_insert_bytes(ss8str *restrict [4m[22mdest[24m[1m, size_t [4m[22mpos[24m[1m,[0m
-                          [1mchar const *restrict [4m[22msrc[24m[1m, size_t [4m[22msrclen[24m[1m);[0m
-       [1mss8str *ss8_insert_ch(ss8str *[4m[22mdest[24m[1m, size_t [4m[22mpos[24m[1m, char [4m[22mch[24m[1m);[0m
-       [1mss8str *ss8_insert_ch_n(ss8str *[4m[22mdest[24m[1m, size_t [4m[22mpos[24m[1m, char [4m[22mch[24m[1m,[0m
-                          [1msize_t [4m[22mcount[24m[1m);[0m
+       <b>ss8str *ss8_insert(ss8str *restrict</b> <i>dest</i><b>, size_t</b> <i>pos</i><b>,</b>
+                          <b>ss8str const *restrict</b> <i>src</i><b>);</b>
+       <b>ss8str *ss8_insert_cstr(ss8str *restrict</b> <i>dest</i><b>, size_t</b> <i>pos</i><b>,</b>
+                          <b>char const *restrict</b> <i>src</i><b>);</b>
+       <b>ss8str *ss8_insert_bytes(ss8str *restrict</b> <i>dest</i><b>, size_t</b> <i>pos</i><b>,</b>
+                          <b>char const *restrict</b> <i>src</i><b>, size_t</b> <i>srclen</i><b>);</b>
+       <b>ss8str *ss8_insert_ch(ss8str *</b><i>dest</i><b>, size_t</b> <i>pos</i><b>, char</b> <i>ch</i><b>);</b>
+       <b>ss8str *ss8_insert_ch_n(ss8str *</b><i>dest</i><b>, size_t</b> <i>pos</i><b>, char</b> <i>ch</i><b>,</b>
+                          <b>size_t</b> <i>count</i><b>);</b>
 
-[1mDESCRIPTION[0m
-       [1mss8_insert[22m()  inserts  the  [1mss8str  [22mat  [4msrc[24m at byte position [4mpos[24m of the
-       [1mss8str [22mat [4mdest[24m.  Behavior is undefined unless [4mdest[24m  and  [4msrc[24m  point  to
-       valid  and distinct [1mss8str [22mobjects and [4mpos[24m is less than or equal to the
+<b>DESCRIPTION</b>
+       <b>ss8_insert</b>()  inserts  the  <b>ss8str</b>  at  <i>src</i> at byte position <i>pos</i> of the
+       <b>ss8str</b> at <i>dest</i>.  Behavior is undefined unless <i>dest</i>  and  <i>src</i>  point  to
+       valid  and distinct <b>ss8str</b> objects and <i>pos</i> is less than or equal to the
        length of the destination string.
 
-       [1mss8_insert_cstr[22m() inserts the null-terminated byte string [4msrc[24m  at  byte
-       position  [4mpos[24m of the [1mss8str [22mat [4mdest[24m.  Behavior is undefined unless [4mdest[0m
-       points to a valid [1mss8str [22mobject, [4mpos[24m is  less  than  or  equal  to  the
-       length  of  the  destination  string, and [4msrc[24m is a null-terminated byte
-       string that does not overlap with the internal buffer of [4mdest[24m.
+       <b>ss8_insert_cstr</b>() inserts the null-terminated byte string <i>src</i>  at  byte
+       position  <i>pos</i> of the <b>ss8str</b> at <i>dest</i>.  Behavior is undefined unless <i>dest</i>
+       points to a valid <b>ss8str</b> object, <i>pos</i> is  less  than  or  equal  to  the
+       length  of  the  destination  string, and <i>src</i> is a null-terminated byte
+       string that does not overlap with the internal buffer of <i>dest</i>.
 
-       [1mss8_insert_bytes[22m() inserts the byte string of length [4msrclen[24m located  at
-       [4msrc[24m  at byte position [4mpos[24m of the [1mss8str [22mat [4mdest[24m.  Behavior is undefined
-       unless [4mdest[24m points to a valid [1mss8str [22mobject, [4mpos[24m is less than or  equal
-       to the length of the destination string, and [4msrc[24m is not NULL and points
-       to an array of at least [4msrclen[24m bytes that does not overlap with the in‐
-       ternal buffer of [4mdest[24m.
+       <b>ss8_insert_bytes</b>() inserts the byte string of length <i>srclen</i> located  at
+       <i>src</i>  at byte position <i>pos</i> of the <b>ss8str</b> at <i>dest</i>.  Behavior is undefined
+       unless <i>dest</i> points to a valid <b>ss8str</b> object, <i>pos</i> is less than or  equal
+       to the length of the destination string, and <i>src</i> is not NULL and points
+       to an array of at least <i>srclen</i> bytes that does not overlap with the in‐
+       ternal buffer of <i>dest</i>.
 
-       [1mss8_insert_ch[22m()  inserts the single byte [4mch[24m at byte position [4mpos[24m of the
-       [1mss8str [22mat [4mdest[24m.  Behavior is undefined unless [4mdest[24m points  to  a  valid
-       [1mss8str [22mobject and [4mpos[24m is less than or equal to the length of the desti‐
+       <b>ss8_insert_ch</b>()  inserts the single byte <i>ch</i> at byte position <i>pos</i> of the
+       <b>ss8str</b> at <i>dest</i>.  Behavior is undefined unless <i>dest</i> points  to  a  valid
+       <b>ss8str</b> object and <i>pos</i> is less than or equal to the length of the desti‐
        nation string.
 
-       [1mss8_insert_ch_n[22m()  inserts [4mcount[24m copies of the byte [4mch[24m at byte position
-       [4mpos[24m of the [1mss8str [22mat [4mdest[24m.  Behavior is undefined unless [4mdest[24m points to
-       a valid [1mss8str [22mobject and [4mpos[24m is less than or equal to  the  length  of
+       <b>ss8_insert_ch_n</b>()  inserts <i>count</i> copies of the byte <i>ch</i> at byte position
+       <i>pos</i> of the <b>ss8str</b> at <i>dest</i>.  Behavior is undefined unless <i>dest</i> points to
+       a valid <b>ss8str</b> object and <i>pos</i> is less than or equal to  the  length  of
        the destination string.
 
-[1mRETURN VALUE[0m
-       All 5 functions return [4mdest[24m.
+<b>RETURN VALUE</b>
+       All 5 functions return <i>dest</i>.
 
-[1mSEE ALSO[0m
-       [1mss8_cat[22m(3), [1mss8_erase[22m(3), [1mss8_replace[22m(3), [1mssstr[22m(7)
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_cat.3.html"><b>ss8_cat</b>(3)</a>, <a href="../man3/ss8_erase.3.html"><b>ss8_erase</b>(3)</a>, <a href="../man3/ss8_replace.3.html"><b>ss8_replace</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
 
-SSSTR                             2023-12-30                     [4mSS8_INSERT[24m(3)
+SSSTR                             2023-12-30                     <i>SS8_INSERT</i>(3)
 </pre>
 </body>
 </html>

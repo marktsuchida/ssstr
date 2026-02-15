@@ -6,47 +6,47 @@
 </head>
 <body>
 <pre>
-[4mSS8_CONTAINS[24m(3)                  Ssstr Manual                  [4mSS8_CONTAINS[24m(3)
+<i>SS8_CONTAINS</i>(3)                  Ssstr Manual                  <i>SS8_CONTAINS</i>(3)
 
-[1mNAME[0m
+<b>NAME</b>
        ss8_contains,  ss8_contains_cstr, ss8_contains_bytes, ss8_contains_ch -
        check if an ssstr byte string contains a string
 
-[1mSYNOPSIS[0m
-       [1m#include &lt;ss8str.h&gt;[0m
+<b>SYNOPSIS</b>
+       <b>#include &lt;ss8str.h&gt;</b>
 
-       [1mbool ss8_contains(ss8str const *[4m[22mstr[24m[1m, ss8str const *[4m[22minfix[24m[1m);[0m
-       [1mbool ss8_contains_cstr(ss8str const *[4m[22mstr[24m[1m, char const *[4m[22minfix[24m[1m);[0m
-       [1mbool ss8_contains_bytes(ss8str const *[4m[22mstr[24m[1m,[0m
-                               [1mchar const *[4m[22minfix[24m[1m, size_t [4m[22minfixlen[24m[1m);[0m
-       [1mbool ss8_contains_ch(ss8str const *[4m[22mstr[24m[1m, char [4m[22mch[24m[1m);[0m
+       <b>bool ss8_contains(ss8str const *</b><i>str</i><b>, ss8str const *</b><i>infix</i><b>);</b>
+       <b>bool ss8_contains_cstr(ss8str const *</b><i>str</i><b>, char const *</b><i>infix</i><b>);</b>
+       <b>bool ss8_contains_bytes(ss8str const *</b><i>str</i><b>,</b>
+                               <b>char const *</b><i>infix</i><b>, size_t</b> <i>infixlen</i><b>);</b>
+       <b>bool ss8_contains_ch(ss8str const *</b><i>str</i><b>, char</b> <i>ch</i><b>);</b>
 
-[1mDESCRIPTION[0m
-       [1mss8_contains[22m() tests whether the [1mss8str [22mat [4mstr[24m contains as a  substring
-       the  [1mss8str  [22mat [4minfix[24m.  Behavior is undefined unless both [4mstr[24m and [4minfix[0m
-       point to valid [1mss8str [22mobjects.
+<b>DESCRIPTION</b>
+       <b>ss8_contains</b>() tests whether the <b>ss8str</b> at <i>str</i> contains as a  substring
+       the  <b>ss8str</b>  at <i>infix</i>.  Behavior is undefined unless both <i>str</i> and <i>infix</i>
+       point to valid <b>ss8str</b> objects.
 
-       [1mss8_contains_cstr[22m() tests whether the [1mss8str [22mat [4mstr[24m contains as a  sub‐
-       string  the  null-terminated  byte string [4minfix[24m.  Behavior is undefined
-       unless [4mstr[24m points to a valid [1mss8str [22mobject and [4minfix[24m is  a  null-termi‐
+       <b>ss8_contains_cstr</b>() tests whether the <b>ss8str</b> at <i>str</i> contains as a  sub‐
+       string  the  null-terminated  byte string <i>infix</i>.  Behavior is undefined
+       unless <i>str</i> points to a valid <b>ss8str</b> object and <i>infix</i> is  a  null-termi‐
        nated byte string.
 
-       [1mss8_contains_bytes[22m() tests whether the [1mss8str [22mat [4mstr[24m contains as a sub‐
-       string  the  byte string of length [4minfixlen[24m located at [4minfix[24m.  Behavior
-       is undefined unless [4mstr[24m points to  a  valid  [1mss8str  [22mobject  and  [4minfix[0m
-       points to an array of at least [4minfixlen[24m bytes.
+       <b>ss8_contains_bytes</b>() tests whether the <b>ss8str</b> at <i>str</i> contains as a sub‐
+       string  the  byte string of length <i>infixlen</i> located at <i>infix</i>.  Behavior
+       is undefined unless <i>str</i> points to  a  valid  <b>ss8str</b>  object  and  <i>infix</i>
+       points to an array of at least <i>infixlen</i> bytes.
 
-       [1mss8_contains_ch[22m() tests whether the [1mss8str [22mat [4mstr[24m contains the byte [4mch[24m.
-       Behavior is undefined unless [4mstr[24m points to a valid [1mss8str [22mobject.
+       <b>ss8_contains_ch</b>() tests whether the <b>ss8str</b> at <i>str</i> contains the byte <i>ch</i>.
+       Behavior is undefined unless <i>str</i> points to a valid <b>ss8str</b> object.
 
-[1mRETURN VALUE[0m
-       All  4  functions return [1mtrue [22mif [4minfix[24m is found in [4mstr[24m; otherwise, they
-       return [1mfalse[22m.
+<b>RETURN VALUE</b>
+       All  4  functions return <b>true</b> if <i>infix</i> is found in <i>str</i>; otherwise, they
+       return <b>false</b>.
 
-[1mSEE ALSO[0m
-       [1mss8_ends_with[22m(3), [1mss8_find[22m(3), [1mss8_starts_with[22m(3), [1mssstr[22m(7)
+<b>SEE ALSO</b>
+       <a href="../man3/ss8_starts_with.3.html"><b>ss8_ends_with</b>(3)</a>, <a href="../man3/ss8_find.3.html"><b>ss8_find</b>(3)</a>, <a href="../man3/ss8_starts_with.3.html"><b>ss8_starts_with</b>(3)</a>, <a href="../man7/ssstr.7.html"><b>ssstr</b>(7)</a>
 
-SSSTR                             2023-12-30                   [4mSS8_CONTAINS[24m(3)
+SSSTR                             2023-12-30                   <i>SS8_CONTAINS</i>(3)
 </pre>
 </body>
 </html>
