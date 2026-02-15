@@ -32,6 +32,10 @@ import re
 import sys
 
 
+class CheckError(Exception):
+    pass
+
+
 def parse_snippet_lines(lines):
     it = enumerate(lines)
     i = -1
@@ -48,11 +52,9 @@ def parse_snippet_lines(lines):
             elif line.startswith("%"):
                 lineno = i + 1
                 directive = line.split(None, 1)[0]
-                print(
-                    f"Unknown directive {directive} at line {lineno}",
-                    file=sys.stderr,
+                raise CheckError(
+                    f"unknown directive {directive} at line {lineno}"
                 )
-                assert False
             elif line.rstrip() == "```c":
                 start = i
                 lines = []
@@ -75,14 +77,18 @@ def assemble_snippets(parser):
             compile_only = "COMPILE_ONLY" in content
             file_scope = "FILE_SCOPE" in content
             for flag in content:
-                assert flag in ("COMPILE_ONLY", "FILE_SCOPE")
+                if flag not in ("COMPILE_ONLY", "FILE_SCOPE"):
+                    raise CheckError(f"unknown snippet flag {flag!r}")
             while True:
                 i, kind, content = next(parser)
                 if kind == "prologue":
                     lines.append(content)
                 else:
                     break
-            assert kind == "code"
+            if kind != "code":
+                raise CheckError(
+                    f"expected code block after snippet directive, found {kind}"
+                )
             lines.extend(content)
             while True:
                 i, kind, content = next(parser)
@@ -99,11 +105,9 @@ def assemble_snippets(parser):
             return
         else:
             lineno = i + 1
-            print(
-                f"Expected snippet or end of file; found {kind} at line {lineno}",
-                file=sys.stderr,
+            raise CheckError(
+                f"expected snippet or end of file; found {kind} at line {lineno}"
             )
-            assert False
 
 
 def write_snippet_tests(readme_path, test_source_path):
@@ -199,4 +203,8 @@ if __name__ == "__main__":
     test_source_path = args.pop(0)
     readme_path = args.pop(0)
     manpage_paths = args
-    check(readme_path, test_source_path, manpage_paths)
+    try:
+        check(readme_path, test_source_path, manpage_paths)
+    except CheckError as e:
+        print(f"error: {e}", file=sys.stderr)
+        sys.exit(1)

@@ -16,6 +16,10 @@ import sys
 from dataclasses import dataclass, field
 
 
+class CheckError(Exception):
+    pass
+
+
 @dataclass
 class SoPage:
     path: str
@@ -61,7 +65,8 @@ class CheckedIntroPage(CheckedPage):
 
 def unescape_roff(s):
     s = s.replace("\\(rs", "\\")
-    assert "\\(" not in s  # Not strictly a violation
+    if "\\(" in s:
+        raise CheckError(f"unhandled roff escape sequence in: {s!r}")
     return s
 
 
@@ -70,7 +75,8 @@ def split_sections(lines, request=".SH"):
     sections = []
     while len(lines):
         sh = lines.pop(0)
-        assert sh.startswith(request)
+        if not sh.startswith(request):
+            raise CheckError(f"expected {request}, got: {sh.rstrip()!r}")
         heading = sh.split(None, 1)[1].rstrip()
         content = []
         while len(lines) and not lines[0].startswith(request):
@@ -84,22 +90,22 @@ def read_page(path: str) -> SoPage | ParsedPage:
     primary, section = filename.split(".")
     with open(path) as f:
         lines = f.readlines()
-        assert len(lines), f"{path} has no lines"
-        assert lines[-1].endswith(
-            "\n"
-        ), f"{path} is missing newline at end of last line"
+        if not len(lines):
+            raise CheckError(f"{path} has no lines")
+        if not lines[-1].endswith("\n"):
+            raise CheckError(f"{path} is missing newline at end of last line")
 
         i = 0
         while lines[i].startswith(r".\""):
             i += 1
         firstline = lines[i]
         if firstline.startswith(".so "):
-            assert (
-                len(firstline.split()) == 2
-            ), ".so must be followed by one word"
-            assert (
-                len(lines) == i + 1
-            ), "file with .so must not have additional lines"
+            if len(firstline.split()) != 2:
+                raise CheckError(".so must be followed by one word")
+            if len(lines) != i + 1:
+                raise CheckError(
+                    "file with .so must not have additional lines"
+                )
             return SoPage(
                 path=path,
                 primary=primary,
@@ -107,11 +113,11 @@ def read_page(path: str) -> SoPage | ParsedPage:
                 so=firstline.split()[1],
             )
 
-        assert firstline.startswith(".TH "), "first line must be .so or .TH"
+        if not firstline.startswith(".TH "):
+            raise CheckError("first line must be .so or .TH")
         items = shlex.split(firstline, posix=False)
-        assert (
-            len(items) == 6
-        ), ".TH must be followed by 5 possibly-quoted words"
+        if len(items) != 6:
+            raise CheckError(".TH must be followed by 5 possibly-quoted words")
         return ParsedPage(
             path=path,
             primary=primary,
@@ -126,10 +132,20 @@ def read_page(path: str) -> SoPage | ParsedPage:
 
 
 def _validate_header(page: ParsedPage) -> None:
-    assert page.section == page.header_section
-    assert page.primary.upper() == page.header_title
-    assert page.header_source == "SSSTR"
-    assert page.header_manual == '"Ssstr Manual"'
+    if page.section != page.header_section:
+        raise CheckError(
+            f"section mismatch: filename has {page.section}, .TH has {page.header_section}"
+        )
+    if page.primary.upper() != page.header_title:
+        raise CheckError(
+            f"title mismatch: expected {page.primary.upper()}, got {page.header_title}"
+        )
+    if page.header_source != "SSSTR":
+        raise CheckError(f"expected source SSSTR, got {page.header_source}")
+    if page.header_manual != '"Ssstr Manual"':
+        raise CheckError(
+            f"expected manual '\"Ssstr Manual\"', got {page.header_manual}"
+        )
 
 
 def _extract_sections(
@@ -142,19 +158,20 @@ def _extract_sections(
     result: dict[str, list[str]] = {}
     for name in required_first:
         heading, lines = sections.pop(0)
-        assert heading == name, f"expected section {name}, found {heading}"
+        if heading != name:
+            raise CheckError(f"expected section {name}, found {heading}")
         result[name] = lines
     for name in reversed(required_last):
         heading, lines = sections.pop()
-        assert heading == name
+        if heading != name:
+            raise CheckError(f"expected section {name}, found {heading}")
         result[name] = lines
     for name in optional_order:
         if sections and sections[0][0] == name:
             result[name] = sections.pop(0)[1]
     section_names = [s[0] for s in sections]
     if section_names:
-        print(f"Unrecognized sections: {section_names}")
-    assert not section_names
+        raise CheckError(f"unrecognized sections: {section_names}")
     return result
 
 
@@ -162,62 +179,95 @@ def _check_name(
     lines: list[str], primary: str, section: str
 ) -> tuple[list[str], str]:
     oneline = " ".join(line.strip() for line in lines)
-    assert len(oneline.split(" \\- ")) == 2
+    if len(oneline.split(" \\- ")) != 2:
+        raise CheckError(
+            "NAME section must contain exactly one ' \\- ' separator"
+        )
     items, brief = oneline.split(" \\- ")
     items = items.split(", ")
     for item in items:
-        assert " " not in item
-        assert "," not in item
-        if section == "3":
-            assert item.startswith("ss8_")
-    assert len(items)
-    assert items[0] == primary
+        if " " in item:
+            raise CheckError(f"NAME item {item!r} contains a space")
+        if "," in item:
+            raise CheckError(f"NAME item {item!r} contains a comma")
+        if section == "3" and not item.startswith("ss8_"):
+            raise CheckError(
+                f"section 3 NAME item {item!r} does not start with ss8_"
+            )
+    if not len(items):
+        raise CheckError("NAME section has no items")
+    if items[0] != primary:
+        raise CheckError(
+            f"first NAME item {items[0]!r} does not match primary {primary!r}"
+        )
     return items, brief
 
 
 def _check_synopsis(lines: list[str], name_items: list[str]) -> list[str]:
     lines = lines[:]
-    assert lines.pop(0).rstrip() == ".nf"
-    assert lines.pop().rstrip() == ".fi"
-    assert lines.pop(0).rstrip() == ".B #include <ss8str.h>"
-    assert lines.pop(0).rstrip() == ".PP"
+    if lines.pop(0).rstrip() != ".nf":
+        raise CheckError("SYNOPSIS must start with .nf")
+    if lines.pop().rstrip() != ".fi":
+        raise CheckError("SYNOPSIS must end with .fi")
+    if lines.pop(0).rstrip() != ".B #include <ss8str.h>":
+        raise CheckError("SYNOPSIS must have .B #include <ss8str.h>")
+    if lines.pop(0).rstrip() != ".PP":
+        raise CheckError("expected .PP after #include in SYNOPSIS")
     proto_lines = []  # Prototype lines, .BI removed
     for line in lines:
         if line.rstrip() == ".PP":
             continue
-        assert line.startswith(".BI ")
+        if not line.startswith(".BI "):
+            raise CheckError(
+                f"expected .BI in SYNOPSIS, got: {line.rstrip()!r}"
+            )
         proto_lines.append(line[len(".BI ") :].rstrip())
     prototypes = []
     for line in proto_lines:
         if "SS8_STATIC_INITIALIZER" in line:  # Special case
             continue
         tokens = shlex.split(line.rstrip(), posix=False)
-        assert len(tokens) % 2 == 1
+        if len(tokens) % 2 != 1:
+            raise CheckError(
+                f"expected odd number of tokens in .BI line: {line}"
+            )
         for odd_tok in tokens[0::2]:
-            assert odd_tok.startswith('"') and odd_tok.endswith('"'), f"{line}"
+            if not (odd_tok.startswith('"') and odd_tok.endswith('"')):
+                raise CheckError(f"expected quoted token in .BI line: {line}")
         for even_tok in tokens[1::2]:
-            assert '"' not in even_tok, f"{line}"
+            if '"' in even_tok:
+                raise CheckError(
+                    f"unexpected quote in unquoted token in .BI line: {line}"
+                )
         unquoted = "".join(tok.strip('"') for tok in tokens)
         if unquoted.startswith(" "):
-            assert prototypes[-1].endswith(",")
+            if not prototypes[-1].endswith(","):
+                raise CheckError(
+                    f"continuation line without trailing comma: {line}"
+                )
             prototypes[-1] = " ".join((prototypes[-1], unquoted.strip()))
         else:
             prototypes.append(unquoted)
     prototypes = [" ".join(proto.split()) for proto in prototypes]
     proto_names = []
     for proto in prototypes:
-        assert proto.endswith(";")
+        if not proto.endswith(";"):
+            raise CheckError(f"prototype does not end with semicolon: {proto}")
         for word in proto.split():
             if "(" in word:
                 name = word.split("(", 1)[0].lstrip("*")
                 proto_names.append(name)
                 break
-    assert proto_names == name_items
+    if proto_names != name_items:
+        raise CheckError(
+            f"prototype names {proto_names} do not match NAME items {name_items}"
+        )
     return prototypes
 
 
 def _check_description(lines: list[str]) -> None:
-    assert len(lines)
+    if not len(lines):
+        raise CheckError("DESCRIPTION section is empty")
 
 
 def _check_return_value(
@@ -229,27 +279,29 @@ def _check_return_value(
             pass
         else:
             n_nonvoid_func += 1
-    assert (
-        (lines is not None) == (n_nonvoid_func > 0)
-    ), f"page has {n_nonvoid_func} non-void functions, mismatched with presence of RETURN VALUE section"
-    if lines is not None:
-        assert len(lines)
+    if (lines is not None) != (n_nonvoid_func > 0):
+        raise CheckError(
+            f"page has {n_nonvoid_func} non-void functions, mismatched with presence of RETURN VALUE section"
+        )
+    if lines is not None and not len(lines):
+        raise CheckError("RETURN VALUE section is empty")
 
 
 def _check_errors(lines: list[str] | None) -> None:
-    if lines is not None:
-        assert len(lines)
+    if lines is not None and not len(lines):
+        raise CheckError("ERRORS section is empty")
 
 
 def _check_notes(lines: list[str] | None) -> None:
-    if lines is not None:
-        assert len(lines)
+    if lines is not None and not len(lines):
+        raise CheckError("NOTES section is empty")
 
 
 def _check_examples(lines: list[str] | None) -> list[str] | None:
     if lines is None:
         return None
-    assert len(lines)
+    if not len(lines):
+        raise CheckError("EXAMPLES section is empty")
     lines = [line.rstrip() for line in lines]
     snippets = []
     while True:
@@ -257,49 +309,62 @@ def _check_examples(lines: list[str] | None) -> list[str] | None:
             ex_lineno = lines.index(".EX")
         except ValueError:
             break
-        assert lines[ex_lineno - 1] == ".nf"
+        if lines[ex_lineno - 1] != ".nf":
+            raise CheckError("expected .nf before .EX in EXAMPLES")
         ee_lineno = lines.index(".EE")
-        assert lines[ee_lineno + 1] == ".fi"
+        if lines[ee_lineno + 1] != ".fi":
+            raise CheckError("expected .fi after .EE in EXAMPLES")
         snippet_lines = lines[ex_lineno + 1 : ee_lineno]
         snippets.append(
             unescape_roff("".join(line + "\n" for line in snippet_lines))
         )
         lines = lines[ee_lineno + 1 :]
-    assert len(snippets)
+    if not len(snippets):
+        raise CheckError("EXAMPLES section has no snippets")
     return snippets
 
 
 def _check_see_also(lines: list[str], section: str) -> list[tuple[str, str]]:
     items = []
     for line in lines:
-        assert line.startswith(".BR ")
+        if not line.startswith(".BR "):
+            raise CheckError(
+                f"expected .BR in SEE ALSO, got: {line.rstrip()!r}"
+            )
         items.append(line[len(".BR ") :].rstrip())
-    assert len(items)
-    assert items[-1].endswith(")"), "last SEE ALSO item must end with ')'"
+    if not len(items):
+        raise CheckError("SEE ALSO section is empty")
+    if not items[-1].endswith(")"):
+        raise CheckError("last SEE ALSO item must end with ')'")
     for item in items[:-1]:
-        assert item.endswith(","), "non-last SEE ALSO item must end with ','"
+        if not item.endswith(","):
+            raise CheckError("non-last SEE ALSO item must end with ','")
     items = [item.rstrip(",") for item in items]
     item_sect = []
     for item in items:
-        assert len(item.split()) == 2, f"{item}"
+        if len(item.split()) != 2:
+            raise CheckError(f"bad SEE ALSO item format: {item}")
         name, sect = item.split()
-        assert sect.startswith("(") and sect.endswith(")")
+        if not (sect.startswith("(") and sect.endswith(")")):
+            raise CheckError(
+                f"SEE ALSO section must be in parentheses: {sect}"
+            )
         sect = sect[1:-1]
-        assert sect in [str(i) for i in range(1, 9)]
+        if sect not in [str(i) for i in range(1, 9)]:
+            raise CheckError(f"invalid manual section number: {sect}")
         item_sect.append((name, sect))
     if section == "3":
-        assert item_sect[-1] == (
-            "ssstr",
-            "7",
-        ), "last item of SEE ALSO must be ssstr(7)"
+        if item_sect[-1] != ("ssstr", "7"):
+            raise CheckError("last item of SEE ALSO must be ssstr(7)")
         sorted_item_sect = sorted(
             item_sect[:-1], key=lambda i: (i[1], i[0])
         ) + [item_sect[-1]]
     else:
         sorted_item_sect = sorted(item_sect, key=lambda i: (i[1], i[0]))
-    assert (
-        item_sect == sorted_item_sect
-    ), f"found SEE ALSO items {item_sect}; should be sorted {sorted_item_sect}"
+    if item_sect != sorted_item_sect:
+        raise CheckError(
+            f"found SEE ALSO items {item_sect}; should be sorted {sorted_item_sect}"
+        )
     return item_sect
 
 
@@ -309,37 +374,55 @@ def parse_function_variant_suffixes(lines):
     line = lines.pop(0)
     items = line.split()
     if items[0] == ".B":
-        assert len(items) == 2
+        if len(items) != 2:
+            raise CheckError(
+                f"expected .B with one argument, got: {line.rstrip()!r}"
+            )
         suffixes.append(items[1])
         line = lines.pop(0)
-        assert line.rstrip() == "or"
+        if line.rstrip() != "or":
+            raise CheckError(f"expected 'or', got: {line.rstrip()!r}")
     else:
-        assert len(items) == 3
-        assert items[0] == ".BR"
-        assert items[2] == ","
+        if len(items) != 3:
+            raise CheckError(f"expected 3 items, got: {line.rstrip()!r}")
+        if items[0] != ".BR":
+            raise CheckError(f"expected .BR, got: {line.rstrip()!r}")
+        if items[2] != ",":
+            raise CheckError(f"expected comma, got: {line.rstrip()!r}")
         suffixes.append(items[1])
         while True:
             line = lines.pop(0)
             items = line.split()
             if line.rstrip() == "or":
                 break
-            assert len(items) == 3
-            assert items[0] == ".BR"
-            assert items[2] == ","
+            if len(items) != 3:
+                raise CheckError(f"expected 3 items, got: {line.rstrip()!r}")
+            if items[0] != ".BR":
+                raise CheckError(f"expected .BR, got: {line.rstrip()!r}")
+            if items[2] != ",":
+                raise CheckError(f"expected comma, got: {line.rstrip()!r}")
             suffixes.append(items[1])
-        assert len(suffixes) > 1
+        if len(suffixes) <= 1:
+            raise CheckError("expected more than 1 suffix before 'or'")
     line = lines.pop(0)
     items = line.split()
     if items[0] == ".B":
-        assert len(items) == 2
+        if len(items) != 2:
+            raise CheckError(
+                f"expected .B with one argument, got: {line.rstrip()!r}"
+            )
         suffixes.append(items[1])
         return suffixes, False
     elif items[0] == ".BR":
-        assert len(items) == 3
-        assert items[2] == ";"
+        if len(items) != 3:
+            raise CheckError(
+                f"expected .BR with two arguments, got: {line.rstrip()!r}"
+            )
+        if items[2] != ";":
+            raise CheckError(f"expected semicolon, got: {line.rstrip()!r}")
         suffixes.append(items[1])
         return suffixes, True
-    assert False
+    raise CheckError(f"expected .B or .BR, got: {line.rstrip()!r}")
 
 
 def expand_function_variants(funcs, suffixes):
@@ -347,9 +430,11 @@ def expand_function_variants(funcs, suffixes):
     for func in funcs:
         if "printf" in func:  # Grandfathered
             func = "_".join(func.split("_")[:-1])
-            assert "printf" not in func
+            if "printf" in func:
+                raise CheckError(f"failed to strip printf suffix from {func}")
         for suffix in suffixes:
-            assert suffix.startswith("_")
+            if not suffix.startswith("_"):
+                raise CheckError(f"suffix {suffix!r} does not start with '_'")
             ret.append(func + suffix)
     return ret
 
@@ -357,12 +442,18 @@ def expand_function_variants(funcs, suffixes):
 def parse_function_variants_specific(plain_funcs, lines):
     line = lines.pop(0)
     items = line.split()
-    assert len(items) == 2
-    assert items[0] == ".B"
+    if len(items) != 2:
+        raise CheckError(
+            f"expected .B with one argument, got: {line.rstrip()!r}"
+        )
+    if items[0] != ".B":
+        raise CheckError(f"expected .B, got: {line.rstrip()!r}")
     func = items[1]
-    assert func in plain_funcs
+    if func not in plain_funcs:
+        raise CheckError(f"function {func!r} not in listed functions")
     line = lines.pop(0)
-    assert line.rstrip() == "with"
+    if line.rstrip() != "with":
+        raise CheckError(f"expected 'with', got: {line.rstrip()!r}")
     suffixes, continued = parse_function_variant_suffixes(lines)
     return expand_function_variants([func], suffixes), continued
 
@@ -374,43 +465,73 @@ def parse_function_variants(plain_funcs, lines):
 
 def parse_function_subsect(subsection, lines):
     funcs = []
-    assert lines, f"empty subsection {subsection} of FUNCTIONS"
+    if not lines:
+        raise CheckError(f"empty subsection {subsection} of FUNCTIONS")
     can_continue = True
     can_continue_plain = True
     plainly_listed_funcs = []
     while lines:
-        assert can_continue
+        if not can_continue:
+            raise CheckError(
+                f"unexpected continuation in FUNCTIONS subsection {subsection}"
+            )
         line = lines.pop(0)
         items = line.split()
-        assert items
+        if not items:
+            raise CheckError(
+                f"blank line in FUNCTIONS subsection {subsection}"
+            )
         if items[0] == ".BR":
-            assert can_continue_plain
-            assert len(items) == 3
-            assert items[1].startswith("ss8_")
-            assert items[2] == "(3)" or items[2] == "(3),"
+            if not can_continue_plain:
+                raise CheckError(
+                    f"unexpected plain listing in FUNCTIONS subsection {subsection}"
+                )
+            if len(items) != 3:
+                raise CheckError(
+                    f"expected .BR with 2 arguments, got: {line.rstrip()!r}"
+                )
+            if not items[1].startswith("ss8_"):
+                raise CheckError(
+                    f"function name does not start with ss8_: {items[1]!r}"
+                )
+            if items[2] not in ("(3)", "(3),"):
+                raise CheckError(
+                    f"expected (3) or (3), after function name, got: {items[2]!r}"
+                )
             plainly_listed_funcs.append(items[1])
             funcs.append(items[1])
             if items[2].endswith(","):
-                assert (
-                    lines
-                ), f"trailing comma in FUNCTIONS subsection {subsection}"
+                if not lines:
+                    raise CheckError(
+                        f"trailing comma in FUNCTIONS subsection {subsection}"
+                    )
             else:
                 can_continue_plain = False
             continue
         if line.rstrip() == "and variants of":
-            assert len(plainly_listed_funcs) > 1
+            if len(plainly_listed_funcs) <= 1:
+                raise CheckError(
+                    "'and variants of' requires more than 1 listed function"
+                )
             fs, cont = parse_function_variants_specific(
                 plainly_listed_funcs, lines
             )
         elif line.rstrip() == "and its variants with":
-            assert len(plainly_listed_funcs) == 1
+            if len(plainly_listed_funcs) != 1:
+                raise CheckError(
+                    "'and its variants with' requires exactly 1 listed function"
+                )
             fs, cont = parse_function_variants(plainly_listed_funcs, lines)
         elif line.rstrip() == "and their variants with":
-            assert len(plainly_listed_funcs) > 1
+            if len(plainly_listed_funcs) <= 1:
+                raise CheckError(
+                    "'and their variants with' requires more than 1 listed function"
+                )
             fs, cont = parse_function_variants(plainly_listed_funcs, lines)
         else:
-            line = line.rstrip()
-            assert False, f"bad line in FUNCTIONS subsection {subsection}"
+            raise CheckError(
+                f"bad line in FUNCTIONS subsection {subsection}: {line.rstrip()!r}"
+            )
         funcs.extend(fs)
         can_continue = cont
         can_continue_plain = cont
@@ -422,7 +543,8 @@ def parse_function_lines(lines):
     subsections = split_sections(lines, ".SS")
     funcs = set()
     for subsection, lines in subsections:
-        assert subsection
+        if not subsection:
+            raise CheckError("empty FUNCTIONS subsection heading")
         funcs.update(parse_function_subsect(subsection, lines))
     return funcs
 
@@ -433,7 +555,10 @@ def _check_functions(lines: list[str]) -> set[str]:
 
 def check_func_page(page: ParsedPage) -> CheckedFuncPage:
     _validate_header(page)
-    assert page.primary.startswith("ss8_")
+    if not page.primary.startswith("ss8_"):
+        raise CheckError(
+            f"function page primary {page.primary!r} does not start with ss8_"
+        )
     sects = _extract_sections(
         page.sections,
         required_first=["NAME", "SYNOPSIS", "DESCRIPTION"],
@@ -465,14 +590,16 @@ def check_func_page(page: ParsedPage) -> CheckedFuncPage:
 
 def check_intro_page(page: ParsedPage) -> CheckedIntroPage:
     _validate_header(page)
-    assert page.primary == "ssstr"
+    if page.primary != "ssstr":
+        raise CheckError(f"intro page primary {page.primary!r} is not 'ssstr'")
     sects = _extract_sections(
         page.sections,
         required_first=["NAME", "SYNOPSIS", "DESCRIPTION"],
         required_last=["SEE ALSO"],
         optional_order=["FUNCTIONS"],
     )
-    assert "FUNCTIONS" in sects
+    if "FUNCTIONS" not in sects:
+        raise CheckError("intro page is missing FUNCTIONS section")
     name_items, name_brief = _check_name(
         sects["NAME"], page.primary, page.section
     )
@@ -496,13 +623,21 @@ def check_so_target(
 ) -> None:
     target = so_page.so
     dir, name = target.split("/")
-    assert dir == f"man{section}"
+    if dir != f"man{section}":
+        raise CheckError(
+            f".so target directory {dir!r} does not match section {section}"
+        )
     suffix = f".{section}"
-    assert name.endswith(suffix)
+    if not name.endswith(suffix):
+        raise CheckError(f".so target {name!r} does not end with {suffix!r}")
     name = name[: -len(suffix)]
-    assert name in pages
+    if name not in pages:
+        raise CheckError(f".so target page {name!r} not found")
     target_page = pages[name]
-    assert name in target_page.name_items
+    if name not in target_page.name_items:
+        raise CheckError(
+            f".so target {name!r} not listed in target page NAME items"
+        )
 
 
 def check_nonprimaries_have_so(
@@ -512,10 +647,14 @@ def check_nonprimaries_have_so(
     so_target = f"man{section}/{primary}.{section}"
     nonprimaries = page.name_items[1:]
     for nonp in nonprimaries:
-        assert (
-            nonp in so_pages
-        ), f"need .so page for {nonp} with target {so_target}"
-        assert so_pages[nonp].so == so_target
+        if nonp not in so_pages:
+            raise CheckError(
+                f"need .so page for {nonp} with target {so_target}"
+            )
+        if so_pages[nonp].so != so_target:
+            raise CheckError(
+                f".so page for {nonp} targets {so_pages[nonp].so!r}, expected {so_target!r}"
+            )
 
 
 def check_see_also_targets(
@@ -524,11 +663,15 @@ def check_see_also_targets(
     so_pages: dict[str, SoPage],
 ) -> None:
     for item, section in page.see_also:
-        if item.startswith("ss8_") and section == "3":
-            path = page.path
-            assert (
-                item in pages or item in so_pages
-            ), f"page not found for {item} listed in SEE ALSO of {path}"
+        if (
+            item.startswith("ss8_")
+            and section == "3"
+            and item not in pages
+            and item not in so_pages
+        ):
+            raise CheckError(
+                f"page not found for {item} listed in SEE ALSO of {page.path}"
+            )
 
 
 def check_dates_equal(pages: list[CheckedPage]) -> None:
@@ -536,20 +679,18 @@ def check_dates_equal(pages: list[CheckedPage]) -> None:
     for page in pages:
         if date is None:
             date = page.header_date
-        else:
-            path = page.path
-            assert (
-                page.header_date == date
-            ), f"date in {path} differs from other pages"
+        elif page.header_date != date:
+            raise CheckError(f"date in {page.path} differs from other pages")
 
 
 def check_duplicate_items(pages: dict[str, CheckedFuncPage]) -> None:
     all_items = set()
     for page in pages.values():
         for item in page.name_items:
-            assert (
-                item not in all_items
-            ), f"{item} appears more than once in manual pages"
+            if item in all_items:
+                raise CheckError(
+                    f"{item} appears more than once in manual pages"
+                )
             all_items.add(item)
 
 
@@ -570,23 +711,29 @@ def check_manpages(paths):
             elif raw.section == "7":
                 intro_so_pages[raw.primary] = raw
             else:
-                assert False, f"unrecognized manual section {raw.section}"
+                raise CheckError(f"unrecognized manual section {raw.section}")
         else:
             try:
                 if raw.section == "3":
                     func_pages[raw.primary] = check_func_page(raw)
                 elif raw.section == "7":
-                    assert intro_page is None
+                    if intro_page is not None:
+                        raise CheckError(
+                            "multiple section 7 intro pages found"
+                        )
                     intro_page = check_intro_page(raw)
                 else:
-                    assert False, f"unrecognized manual section {raw.section}"
+                    raise CheckError(
+                        f"unrecognized manual section {raw.section}"
+                    )
             except BaseException:
                 print(f"While checking {path}:", file=sys.stderr)
                 raise
 
     for so in func_so_pages:
         check_so_target(func_so_pages[so], func_pages, "3")
-    assert intro_page is not None
+    if intro_page is None:
+        raise CheckError("no section 7 intro page found")
     for so in intro_so_pages:
         check_so_target(intro_so_pages[so], {"ssstr": intro_page}, "7")
 
@@ -649,8 +796,14 @@ def check_prototypes(
         for proto in sorted(not_in_header):
             print(proto, file=sys.stderr)
 
-    assert not not_in_man
-    assert not not_in_header
+    if not_in_man:
+        raise CheckError(
+            f"{n_not_in_man} prototypes in header but not in man pages"
+        )
+    if not_in_header:
+        raise CheckError(
+            f"{n_not_in_header} prototypes in man pages but not in header"
+        )
 
 
 def get_prototype_func_name(prototype):
@@ -660,7 +813,7 @@ def get_prototype_func_name(prototype):
         if "(" in word:
             before_paren = word.split("(")[0]
             return before_paren.lstrip("*")
-    assert False, "failed to parse prototype"
+    raise CheckError(f"failed to parse prototype: {prototype}")
 
 
 def check_intro_listing(
@@ -686,8 +839,14 @@ def check_intro_listing(
         for func in sorted(not_in_header):
             print(func, file=sys.stderr)
 
-    assert not not_in_intro
-    assert not not_in_header
+    if not_in_intro:
+        raise CheckError(
+            f"{n_not_in_intro} functions in header but not in ssstr.7"
+        )
+    if not_in_header:
+        raise CheckError(
+            f"{n_not_in_header} functions in ssstr.7 but not in header"
+        )
 
 
 def normalize_snippet(snippet):
@@ -719,7 +878,8 @@ def read_test_snippets(paths):
             snippet_lines.extend(lines[begin + 1 : end])
             lines = lines[end + 1 :]
         snippet = "".join(snippet_lines)
-        assert snippet, f"{path} must contain snippet segments"
+        if not snippet:
+            raise CheckError(f"{path} must contain snippet segments")
         snippets.append(snippet)
     return snippets
 
@@ -756,9 +916,8 @@ def check_examples(
                 candidates = difflib.get_close_matches(normsnip, candidates)
                 for snip in candidates:
                     print(normalize_snippet(snip), file=sys.stderr)
-            assert (
-                man_cksum in test_cksums
-            ), f"snippet in {title} must match test"
+            if man_cksum not in test_cksums:
+                raise CheckError(f"snippet in {title} must match test")
 
 
 def check(header_path, example_test_paths, manpage_paths):
@@ -788,4 +947,8 @@ if __name__ == "__main__":
         usage()
     example_test_paths = args[:dashdash]
     manpage_paths = args[dashdash + 1 :]
-    check(header_path, example_test_paths, manpage_paths)
+    try:
+        check(header_path, example_test_paths, manpage_paths)
+    except CheckError as e:
+        print(f"error: {e}", file=sys.stderr)
+        sys.exit(1)

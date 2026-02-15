@@ -13,11 +13,16 @@ import subprocess
 import sys
 
 
+class CheckError(Exception):
+    pass
+
+
 def get_dest_for_src(manpage_path, destdir):
     path, name = os.path.split(manpage_path)
     _, dir = os.path.split(path)
     name, section = name.split(".")
-    assert dir in (f"man{section}", f"link{section}")
+    if dir not in (f"man{section}", f"link{section}"):
+        raise CheckError(f"unexpected directory {dir!r} for section {section}")
     return os.path.join(destdir, f"man{section}", f"{name}.{section}.html")
 
 
@@ -36,7 +41,10 @@ def get_link_targets(manpage_paths):
                     if not line.startswith(r".\""):
                         break
                 words = line.split()
-                assert len(words) == 2 and words[0] == ".so"
+                if len(words) != 2 or words[0] != ".so":
+                    raise CheckError(
+                        f"expected .so directive with one argument, got: {line.rstrip()!r}"
+                    )
                 target = words[1]
                 path = os.path.join(parent, target)
         ret[f"{name}({section})"] = get_dest_for_src(path, "..")
@@ -71,7 +79,8 @@ def generate_redirect(dest, src, link_targets):
             if not line.startswith('.\\"'):
                 break
         words = line.split()
-        assert words[0] == ".so"
+        if words[0] != ".so":
+            raise CheckError(f"expected .so directive, got: {line.rstrip()!r}")
         realpage = words[1]
 
     dir, name = realpage.split("/")
@@ -97,7 +106,8 @@ def sgr_to_html(text):
                 else [0]
             )
             for code in codes:
-                assert code in known_codes, f"unknown SGR code: {code}"
+                if code not in known_codes:
+                    raise CheckError(f"unknown SGR code: {code}")
                 if code == 0:
                     bold = False
                     italic = False
@@ -110,9 +120,10 @@ def sgr_to_html(text):
                 elif code == 24:
                     italic = False
         else:
-            assert (
-                "\x1b" not in part
-            ), f"unexpected escape sequence in groff output: {part!r}"
+            if "\x1b" in part:
+                raise CheckError(
+                    f"unexpected escape sequence in groff output: {part!r}"
+                )
             escaped = html.escape(part, quote=False)
             if bold and italic:
                 result.append(f"<b><i>{escaped}</i></b>")
@@ -226,9 +237,10 @@ def generate_html(dest, src, groff, link_targets):
         [groff, "-Tutf8", "-man", src], check=True, capture_output=True
     )
     text = nroff_result.stdout.decode()
-    assert (
-        "\x08" not in text
-    ), "groff produced overprint (backspace) output; expected SGR sequences"
+    if "\x08" in text:
+        raise CheckError(
+            "groff produced overprint (backspace) output; expected SGR sequences"
+        )
     text = sgr_to_html(text)
     text = hyperlink(text, link_targets)
     text = simplify_html_styling(text)
@@ -276,4 +288,8 @@ if __name__ == "__main__":
     destdir = args.pop(0)
     groff = args.pop(0)
     manpage_paths = args
-    generate(destdir, groff, manpage_paths)
+    try:
+        generate(destdir, groff, manpage_paths)
+    except CheckError as e:
+        print(f"error: {e}", file=sys.stderr)
+        sys.exit(1)
