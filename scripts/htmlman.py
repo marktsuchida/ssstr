@@ -215,7 +215,22 @@ def add_html_header_footer(src, text):
 <head>
   <meta charset="utf-8">
   <title>{title}</title>
-  <style>pre {{ width: fit-content; margin: 0 auto; }}</style>
+  <style>
+    body {{ background: #fff; color: #000; }}
+    pre {{ width: fit-content; margin: 0 auto; }}
+    pre b {{ color: #1a1a8a; }}
+    pre i {{ color: #8a1a1a; }}
+    pre a b, pre a i {{ color: inherit; }}
+    a {{ color: #0e6e6e; }}
+    a:visited {{ color: #551a8a; }}
+    @media (prefers-color-scheme: dark) {{
+      body {{ background: #1a1a1a; color: #d4d4d4; }}
+      pre b {{ color: #7a9aef; }}
+      pre i {{ color: #ef7a7a; }}
+      a {{ color: #5ac8c8; }}
+      a:visited {{ color: #b07aef; }}
+    }}
+  </style>
 </head>
 <body>
 {text}
