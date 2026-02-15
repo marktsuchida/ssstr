@@ -2,9 +2,8 @@
 # Copyright 2022-2023 Board of Regents of the University of Wisconsin System
 # SPDX-License-Identifier: MIT
 
-[tool.ruff]
 line-length = 79
 
-[tool.ruff.lint]
+[lint]
 select = ["E", "F", "UP", "B", "SIM", "I"]
 ignore = ["B011", "E501"]
